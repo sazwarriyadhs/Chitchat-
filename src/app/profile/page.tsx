@@ -30,25 +30,22 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!currentUserId) return;
     setFetching(true);
-    fetch(`/api/presentations?senderId=${currentUserId}`)
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch presentations');
-        return res.json();
-      })
-      .then(data => {
-        setPresentations(data);
-      })
-      .catch(error => {
-        console.error(error);
+    try {
+        const storedPresentations = localStorage.getItem(`presentations_${currentUserId}`);
+        if (storedPresentations) {
+            setPresentations(JSON.parse(storedPresentations));
+        }
+    } catch (error) {
+        console.error("Could not load presentations from localStorage", error);
         toast({
             variant: "destructive",
             title: "Error",
-            description: "Could not fetch your presentations.",
+            description: "Could not load your presentations.",
         });
-      })
-      .finally(() => setFetching(false));
+    } finally {
+        setFetching(false);
+    }
   }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,36 +62,37 @@ export default function ProfilePage() {
     });
 
     setLoading(true);
-    const formData = new FormData();
-    formData.append('presentation', file);
-    formData.append('senderId', currentUserId);
+    
+    // Mock upload
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
+      const newPresentation: Presentation = {
+        id: Date.now(),
+        file_name: file.name,
+        file_url: URL.createObjectURL(file),
+        uploaded_at: new Date().toISOString(),
+      };
+      
+      const updatedPresentations = [newPresentation, ...presentations];
+      setPresentations(updatedPresentations);
+      localStorage.setItem(`presentations_${currentUserId}`, JSON.stringify(updatedPresentations));
+
+      setFile(null);
+      if(fileInputRef.current) {
+          fileInputRef.current.value = "";
+      }
+
+      toast({
+          title: 'Upload Successful',
+          description: `"${newPresentation.file_name}" has been uploaded.`,
       });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        setPresentations(prev => [data.presentation, ...prev]);
-        setFile(null); // Reset file state
-        if(fileInputRef.current) {
-            fileInputRef.current.value = ""; // Reset file input
-        }
-        toast({
-            title: 'Upload Successful',
-            description: `"${data.presentation.file_name}" has been uploaded.`,
-        });
-      } else {
-        throw new Error(data.error || 'Upload failed');
-      }
     } catch(error: any) {
         toast({
             variant: 'destructive',
             title: 'Upload Failed',
-            description: error.message || 'An unknown error occurred.',
+            description: 'An unknown error occurred during mock upload.',
         });
     } finally {
         setLoading(false);
