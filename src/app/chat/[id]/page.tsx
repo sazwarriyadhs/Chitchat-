@@ -16,12 +16,16 @@ export default function ChatPage() {
     const chatId = typeof params.id === 'string' ? params.id : '';
     const chat = chats.find(c => c.id === chatId);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
-
+    
+    // We use a state to trigger re-renders when messages are added
     const [messages, setMessages] = useState(chat?.messages || []);
 
     useEffect(() => {
         if (scrollAreaRef.current) {
-            scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight });
+            const viewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
+            if (viewport) {
+                viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
+            }
         }
     }, [messages]);
     
@@ -36,6 +40,14 @@ export default function ChatPage() {
             timestamp: new Date(),
             senderId: currentUser.id,
         };
+        
+        // Find the chat in the main data and update it
+        const chatIndex = chats.findIndex(c => c.id === chatId);
+        if (chatIndex !== -1) {
+            chats[chatIndex].messages.push(message);
+        }
+
+        // Update the local state to trigger a re-render
         setMessages(prevMessages => [...prevMessages, message]);
     };
 
