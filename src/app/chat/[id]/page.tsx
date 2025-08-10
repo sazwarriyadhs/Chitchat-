@@ -51,7 +51,13 @@ export default function ChatPage() {
 
     return (
         <AppContainer>
-            <ChatHeader name={name} avatarUrl={avatar} status={status} />
+            <ChatHeader 
+                name={name} 
+                avatarUrl={avatar} 
+                status={status || ''} 
+                chatId={chat.id}
+                chatType={chat.type}
+            />
             <ScrollArea className="flex-1 bg-muted/30" ref={scrollAreaRef}>
                 <div className="p-4 space-y-4">
                     {messages.map(message => (

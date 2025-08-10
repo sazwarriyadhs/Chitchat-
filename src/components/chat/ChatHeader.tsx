@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, MoreVertical, Phone, User as UserIcon } from "lucide-react";
+import { ArrowLeft, MoreVertical, Phone, Video, User as UserIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,9 +18,11 @@ type ChatHeaderProps = {
   name: string;
   avatarUrl: string;
   status: string;
+  chatId: string;
+  chatType: 'private' | 'group';
 };
 
-export function ChatHeader({ name, avatarUrl, status }: ChatHeaderProps) {
+export function ChatHeader({ name, avatarUrl, status, chatId, chatType }: ChatHeaderProps) {
   const router = useRouter();
   
   return (
@@ -38,9 +40,16 @@ export function ChatHeader({ name, avatarUrl, status }: ChatHeaderProps) {
         <h2 className="text-base font-bold font-headline">{name}</h2>
         <p className="text-xs text-muted-foreground">{status}</p>
       </div>
-      <Button variant="ghost" size="icon">
-        <Phone className="w-5 h-5" />
-      </Button>
+       <Link href={`/call?id=${chatId}&type=${chatType}&video=false`} passHref>
+        <Button variant="ghost" size="icon">
+            <Phone className="w-5 h-5" />
+        </Button>
+       </Link>
+       <Link href={`/call?id=${chatId}&type=${chatType}&video=true`} passHref>
+        <Button variant="ghost" size="icon">
+            <Video className="w-5 h-5" />
+        </Button>
+       </Link>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon">
