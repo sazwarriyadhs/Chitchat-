@@ -1,30 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import twilio from 'twilio';
 
-const { AccessToken } = twilio.jwt;
-const { VideoGrant } = AccessToken;
+const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID!;
+const twilioApiKey = process.env.TWILIO_API_KEY_SID!;
+const twilioApiSecret = process.env.TWilio_API_KEY_SECRET!;
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const identity = searchParams.get('identity');
-  const room = searchParams.get('room');
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const identity = searchParams.get('identity') || 'user-' + Math.floor(Math.random() * 1000);
+  const roomName = searchParams.get('room') || 'test-room';
 
-  if (!identity || !room) {
-    return NextResponse.json({ error: 'Missing identity or room name' }, { status: 400 });
-  }
+  const AccessToken = twilio.jwt.AccessToken;
+  const VideoGrant = AccessToken.VideoGrant;
 
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const apiKey = process.env.TWILIO_API_KEY_SID;
-  const apiSecret = process.env.TWILIO_API_KEY_SECRET;
+  const token = new AccessToken(twilioAccountSid, twilioApiKey, twilioApiSecret, { identity });
 
-  if (!accountSid || !apiKey || !apiSecret) {
-      return NextResponse.json({ error: 'Twilio credentials are not configured on the server.' }, { status: 500 });
-  }
-
-  const token = new AccessToken(accountSid, apiKey, apiSecret, { identity });
-
-  const videoGrant = new VideoGrant({ room });
+  const videoGrant = new VideoGrant({ room: roomName });
   token.addGrant(videoGrant);
 
-  return NextResponse.json({ token: token.toJwt() });
+  return NextResponse.json({ token: token.toJwt(), identity, roomName });
 }
