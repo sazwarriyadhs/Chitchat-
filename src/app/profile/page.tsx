@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ArrowLeft, Camera, Edit, FileUp, Loader2, Plus, Presentation as PresentationIcon, Share2, User, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { users } from '@/lib/data';
+import { users, stories } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Image from 'next/image';
@@ -103,6 +103,37 @@ export default function ProfilePage() {
     }
     toast({ title: "Profile Saved", description: "Your changes have been saved locally."});
     setIsEditing(false);
+  };
+  
+  const handleAddToStory = () => {
+    if (!storyImage || storyImage === "https://placehold.co/600x400.png") {
+      toast({
+        variant: 'destructive',
+        title: 'No image selected',
+        description: 'Please choose a photo for your story.',
+      });
+      return;
+    }
+
+    const newStory = {
+      id: `story-${Date.now()}`,
+      user: currentUser,
+      imageUrl: storyImage,
+      timestamp: new Date(),
+      viewed: false,
+    };
+    
+    stories.unshift(newStory);
+
+    toast({
+      title: 'Story Added!',
+      description: 'Your new story is now visible to your friends.',
+    });
+    
+    setStoryImage("https://placehold.co/600x400.png");
+    if(storyImageInputRef.current) {
+        storyImageInputRef.current.value = "";
+    }
   };
 
   const handleUpload = async () => {
@@ -233,7 +264,7 @@ export default function ProfilePage() {
                                     </div>
                                 )}
                             </div>
-                            <Button variant="outline" className="mt-4"><Plus className="w-4 h-4 mr-2" />Add to Story</Button>
+                            <Button variant="outline" className="mt-4" onClick={handleAddToStory}><Plus className="w-4 h-4 mr-2" />Add to Story</Button>
                         </CardContent>
                     </Card>
                 </TabsContent>
