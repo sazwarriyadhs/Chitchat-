@@ -14,7 +14,7 @@ type ChatHeaderProps = {
 export function ChatHeader({ name, avatarUrl, status }: ChatHeaderProps) {
   return (
     <header className="flex items-center p-2 border-b gap-2 sticky top-0 bg-card z-10">
-      <Link href="/" passHref>
+      <Link href="/home" passHref>
         <Button variant="ghost" size="icon">
           <ArrowLeft className="w-5 h-5" />
         </Button>
