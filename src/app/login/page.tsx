@@ -24,7 +24,7 @@ export default function LoginPage() {
     <AppContainer className="bg-transparent shadow-none">
       <div className="flex flex-col items-center justify-center h-full p-8 bg-card md:rounded-2xl">
         <div className="flex flex-col items-center text-center mb-8">
-          <Image src="/image/logo.png" alt="ChitChat Logo" width={80} height={40} className="w-auto h-10 mb-4" />
+          <Image src="/image/logo.png" alt="ChitChat Logo" width={320} height={160} className="w-auto h-40 mb-4" />
           <p className="text-muted-foreground">Sign in to continue</p>
         </div>
 
