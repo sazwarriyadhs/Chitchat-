@@ -46,7 +46,7 @@ export default function SplashPage() {
                 delay: 0.2,
               }}
             >
-              <Image src="/image/logo.png" alt="ChitChat Logo" width={320} height={160} className="w-auto h-20" />
+              <Image src="/logo.png" alt="ChitChat Logo" width={320} height={160} className="w-auto h-10" />
             </motion.div>
           </motion.div>
         )}
