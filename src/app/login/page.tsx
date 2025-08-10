@@ -56,7 +56,7 @@ export default function LoginPage() {
           </TabsContent>
         </Tabs>
         
-        <Separator className="my-6" />
+        <Separator className="my-6 bg-border/40" />
 
         <p className="px-8 text-center text-sm text-muted-foreground">
           By clicking continue, you agree to our{" "}
