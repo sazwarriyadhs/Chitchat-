@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, MoreVertical, Phone, Video, User as UserIcon } from "lucide-react";
+import { ArrowLeft, MoreVertical, Phone, Video, User as UserIcon, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { useRouter } from "next/navigation";
 
@@ -25,6 +26,11 @@ type ChatHeaderProps = {
 export function ChatHeader({ name, avatarUrl, status, chatId, chatType }: ChatHeaderProps) {
   const router = useRouter();
   
+  const handleLogout = () => {
+    // In a real app, this would clear session/token
+    router.push('/login');
+  }
+
   return (
     <header className="flex items-center p-2 border-b gap-2 sticky top-0 bg-card z-10">
       <Link href="/home" passHref>
@@ -60,6 +66,11 @@ export function ChatHeader({ name, avatarUrl, status, chatId, chatType }: ChatHe
           <DropdownMenuItem onClick={() => router.push('/profile')}>
             <UserIcon className="mr-2 h-4 w-4" />
             <span>Profile</span>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+           <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive focus:bg-destructive/10">
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Log Out</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
