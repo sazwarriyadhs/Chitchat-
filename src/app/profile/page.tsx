@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AppContainer } from '@/components/AppContainer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,6 +27,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!currentUserId) return;
@@ -78,7 +79,10 @@ export default function ProfilePage() {
 
       if (res.ok) {
         setPresentations(prev => [data.presentation, ...prev]);
-        setFile(null); // Reset file input
+        setFile(null); // Reset file state
+        if(fileInputRef.current) {
+            fileInputRef.current.value = ""; // Reset file input
+        }
         toast({
             title: 'Upload Successful',
             description: `"${data.presentation.file_name}" has been uploaded.`,
@@ -124,7 +128,7 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent>
                     <div className="flex flex-col sm:flex-row items-center gap-4">
-                        <Input id="presentation-upload" type="file" accept=".ppt,.pptx,.pdf" onChange={handleFileChange} className="flex-1" />
+                        <Input id="presentation-upload" type="file" accept=".ppt,.pptx,.pdf" onChange={handleFileChange} className="flex-1" ref={fileInputRef}/>
                         <Button onClick={handleUpload} disabled={loading || !file} className="w-full sm:w-auto">
                             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileUp className="mr-2 h-4 w-4" />}
                             {loading ? 'Uploading...' : 'Upload'}
