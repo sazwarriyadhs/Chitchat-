@@ -26,7 +26,7 @@ export default function SplashPage() {
   }, [router]);
 
   return (
-    <AppContainer className="bg-white dark:bg-white">
+    <AppContainer className="bg-card">
       <AnimatePresence>
         {isShowing && (
           <motion.div
@@ -45,16 +45,8 @@ export default function SplashPage() {
                 delay: 0.2,
               }}
             >
-              <Image src="/image/logo.png" alt="ChattyLite Logo" width={384} height={384} className="w-96 h-96" />
+              <Image src="/image/chitchat-logo.png" alt="ChitChat Logo" width={160} height={80} className="w-auto h-20" />
             </motion.div>
-            <motion.h1
-              className="text-4xl font-bold text-primary mt-4"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-            >
-              ChattyLite
-            </motion.h1>
           </motion.div>
         )}
       </AnimatePresence>

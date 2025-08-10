@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,10 +21,10 @@ export default function LoginPage() {
   }
 
   return (
-    <AppContainer>
-      <div className="flex flex-col items-center justify-center h-full p-8">
+    <AppContainer className="bg-transparent shadow-none">
+      <div className="flex flex-col items-center justify-center h-full p-8 bg-card md:rounded-2xl">
         <div className="flex flex-col items-center text-center mb-8">
-          <Image src="/image/logo.png" alt="ChattyLite Logo" width={64} height={64} className="w-16 h-16 mb-4" />
+          <Image src="/image/chitchat-logo.png" alt="ChitChat Logo" width={80} height={40} className="w-auto h-10 mb-4" />
           <p className="text-muted-foreground">Sign in to continue</p>
         </div>
 
@@ -34,34 +35,32 @@ export default function LoginPage() {
                 <TabsTrigger value="phone">Phone</TabsTrigger>
             </TabsList>
             <TabsContent value="email">
-                <div className="space-y-4 pt-4">
-                <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="m@example.com" />
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input id="password" type="password" />
-                </div>
-                <Button className="w-full" onClick={handleLogin}>Sign In with Email</Button>
+                <div className="space-y-4 pt-4 text-left">
+                  <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input id="email" type="email" placeholder="m@example.com" defaultValue="andi@example.com" className="text-gray-900" />
+                  </div>
+                  <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <Input id="password" type="password" defaultValue="password" className="text-gray-900"/>
+                  </div>
+                  <Button className="w-full" onClick={handleLogin}>Sign In with Email</Button>
                 </div>
             </TabsContent>
             <TabsContent value="phone">
-                <div className="space-y-4 pt-4">
-                <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" type="tel" placeholder="+1 (555) 000-0000" />
-                </div>
-                <Button className="w-full" onClick={handleLogin}>Send Code</Button>
+                <div className="space-y-4 pt-4 text-left">
+                  <div className="space-y-2">
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input id="phone" type="tel" placeholder="+1 (555) 000-0000" className="text-gray-900" />
+                  </div>
+                  <Button className="w-full" onClick={handleLogin}>Send Code</Button>
                 </div>
             </TabsContent>
             </Tabs>
         </div>
         
         <div className="absolute bottom-8">
-            <Separator className="my-6 bg-border/40" />
-
-            <p className="px-8 text-center text-sm text-muted-foreground">
+            <p className="px-8 text-center text-xs text-muted-foreground">
             By clicking continue, you agree to our{" "}
             <Link
                 href="/terms"
