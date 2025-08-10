@@ -6,13 +6,15 @@ import { ChatMessage } from '@/components/chat/ChatMessage';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { chats, users } from '@/lib/data';
 import { Chat, Message, User } from '@/lib/types';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 
 const currentUser = users[0];
 
-export default function ChatPage({ params }: { params: { id: string } }) {
-    const chat = chats.find(c => c.id === params.id);
+export default function ChatPage() {
+    const params = useParams();
+    const chatId = typeof params.id === 'string' ? params.id : '';
+    const chat = chats.find(c => c.id === chatId);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
 
     const [messages, setMessages] = useState(chat?.messages || []);
