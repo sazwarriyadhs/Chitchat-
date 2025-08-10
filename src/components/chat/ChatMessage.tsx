@@ -1,10 +1,11 @@
 import { cn } from "@/lib/utils";
-import { Message, User } from "@/lib/types";
+import { Message } from "@/lib/types";
 import { users } from "@/lib/data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { FileText, MapPin, Presentation, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
+import { LocationMessage } from "./LocationMessage";
 
 type ChatMessageProps = {
   message: Message;
@@ -51,17 +52,16 @@ const MessageContent = ({ message }: { message: Message }) => {
       return <p className="text-sm">{message.body}</p>;
     case 'image':
       return <Card className="bg-transparent border-0 shadow-none">
-          <CardHeader className="p-0">
+          <CardContent className="p-0">
             <Image src="https://placehold.co/600x400.png" width={250} height={150} alt="Shared image" className="rounded-lg" data-ai-hint="chat image" />
-          </CardHeader>
-          <CardContent className="p-0 pt-2">
-            <p className="text-sm">{message.body}</p>
+            {message.body && <p className="text-sm pt-2">{message.body}</p>}
           </CardContent>
         </Card>
     case 'file':
       return <FileCard icon={FileText} title={message.meta?.fileName || 'File'} description={message.body} />
     case 'location':
-      return <FileCard icon={MapPin} title="Location" description={message.body} />
+      const { latitude, longitude } = message.meta as { latitude: number; longitude: number };
+      return <LocationMessage latitude={latitude} longitude={longitude} description={message.body} />;
     case 'presentation':
       return <FileCard icon={Presentation} title={message.meta?.fileName || 'Presentation'} description={message.body} />
     default:

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Message } from "@/lib/types";
+import { useToast } from "@/hooks/use-toast";
 
 type ChatInputProps = {
   onSendMessage: (message: Omit<Message, 'id' | 'timestamp' | 'senderId' | 'read' | 'delivered'>) => void;
@@ -13,6 +14,7 @@ type ChatInputProps = {
 
 export function ChatInput({ onSendMessage }: ChatInputProps) {
   const [message, setMessage] = useState("");
+  const { toast } = useToast();
 
   const handleSend = () => {
     if (message.trim()) {
@@ -21,10 +23,34 @@ export function ChatInput({ onSendMessage }: ChatInputProps) {
     }
   };
   
-  const handleSendFile = (type: Message['type'], body: string, fileName?: string) => {
-    const meta = fileName ? { fileName } : {};
+  const handleSendFile = (type: Message['type'], body: string, meta?: Message['meta']) => {
     onSendMessage({ body, type, meta });
   };
+  
+  const handleShareLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          handleSendFile('location', 'Shared a location', { latitude, longitude });
+        },
+        (error) => {
+          toast({
+            variant: 'destructive',
+            title: 'Could not get location',
+            description: error.message,
+          });
+        }
+      );
+    } else {
+       toast({
+            variant: 'destructive',
+            title: 'Geolocation not supported',
+            description: 'Your browser does not support geolocation.',
+       });
+    }
+  };
+
 
   return (
     <footer className="p-2 border-t sticky bottom-0 bg-card z-10">
@@ -37,10 +63,10 @@ export function ChatInput({ onSendMessage }: ChatInputProps) {
           </PopoverTrigger>
           <PopoverContent className="w-auto p-2">
             <div className="grid grid-cols-2 gap-2">
-                <AttachmentButton icon={Image} label="Image" onClick={() => handleSendFile('image', 'Sent an image', 'image.jpg')} />
-                <AttachmentButton icon={FileText} label="Document" onClick={() => handleSendFile('file', 'Sent a document', 'document.pdf')} />
-                <AttachmentButton icon={MapPin} label="Location" onClick={() => handleSendFile('location', 'Shared a location')} />
-                <AttachmentButton icon={PresentationIcon} label="Presentation" onClick={() => handleSendFile('presentation', 'Shared a presentation', 'deck.pptx')} />
+                <AttachmentButton icon={Image} label="Image" onClick={() => handleSendFile('image', 'Sent an image', { fileName: 'image.jpg' })} />
+                <AttachmentButton icon={FileText} label="Document" onClick={() => handleSendFile('file', 'Sent a document', { fileName: 'document.pdf' })} />
+                <AttachmentButton icon={MapPin} label="Location" onClick={handleShareLocation} />
+                <AttachmentButton icon={PresentationIcon} label="Presentation" onClick={() => handleSendFile('presentation', 'Shared a presentation', { fileName: 'deck.pptx' })} />
             </div>
           </PopoverContent>
         </Popover>
