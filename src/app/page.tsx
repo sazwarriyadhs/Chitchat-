@@ -27,7 +27,7 @@ export default function SplashPage() {
   }, [router]);
 
   return (
-    <AppContainer className="bg-white">
+    <AppContainer className="bg-card">
       <AnimatePresence>
         {isShowing && (
           <motion.div
@@ -46,7 +46,7 @@ export default function SplashPage() {
                 delay: 0.2,
               }}
             >
-              <Image src="/logo.png" alt="ChitChat Logo" width={320} height={160} className="w-auto h-40" />
+              <Image src="/image/logo.png" alt="ChitChat Logo" width={320} height={160} className="w-auto h-40" />
             </motion.div>
           </motion.div>
         )}
