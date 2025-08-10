@@ -1,6 +1,8 @@
+
 "use client"
 import Link from 'next/link';
 import { Plus, Search } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 import { AppContainer } from '@/components/AppContainer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -72,6 +74,14 @@ function ChatListItem({ chat }: { chat: Chat }) {
   };
 
   const { name, avatar, user } = getParticipantInfo();
+  
+  const [formattedTime, setFormattedTime] = useState('');
+
+  useEffect(() => {
+    if (lastMessage) {
+      setFormattedTime(format(new Date(lastMessage.timestamp), 'p'));
+    }
+  }, [lastMessage]);
 
   return (
     <Link href={`/chat/${chat.id}`} passHref>
@@ -86,7 +96,7 @@ function ChatListItem({ chat }: { chat: Chat }) {
         <div className="flex-1 overflow-hidden">
           <div className="flex items-baseline justify-between">
             <p className="font-semibold truncate font-headline">{name}</p>
-            <p className="text-xs text-muted-foreground">{format(lastMessage.timestamp, 'p')}</p>
+            <p className="text-xs text-muted-foreground">{formattedTime}</p>
           </div>
           <p className="text-sm truncate text-muted-foreground">{lastMessage.body}</p>
         </div>
