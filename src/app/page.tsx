@@ -26,7 +26,7 @@ export default function SplashPage() {
   }, [router]);
 
   return (
-    <AppContainer className="bg-primary dark:bg-primary">
+    <AppContainer className="bg-white dark:bg-white">
       <AnimatePresence>
         {isShowing && (
           <motion.div
@@ -45,10 +45,10 @@ export default function SplashPage() {
                 delay: 0.2,
               }}
             >
-              <Image src="/image/logo.png" alt="ChattyLite Logo" width={96} height={96} className="w-24 h-24" />
+              <Image src="/image/logo.png" alt="ChattyLite Logo" width={384} height={384} className="w-96 h-96" />
             </motion.div>
             <motion.h1
-              className="text-4xl font-bold text-primary-foreground mt-4"
+              className="text-4xl font-bold text-primary mt-4"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.5 }}

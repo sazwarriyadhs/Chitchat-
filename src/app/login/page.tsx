@@ -23,7 +23,6 @@ export default function LoginPage() {
       <div className="flex flex-col items-center justify-center h-full p-8">
         <div className="flex flex-col items-center text-center mb-8">
           <Image src="/image/logo.png" alt="ChattyLite Logo" width={64} height={64} className="w-16 h-16 mb-4" />
-          <h1 className="text-2xl font-bold">Welcome to ChattyLite</h1>
           <p className="text-muted-foreground">Sign in to continue</p>
         </div>
 
