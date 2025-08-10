@@ -17,7 +17,6 @@ export default function ChatPage() {
     const chat = chats.find(c => c.id === chatId);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     
-    // We use a state to trigger re-renders when messages are added
     const [messages, setMessages] = useState(chat?.messages || []);
 
     useEffect(() => {
@@ -33,21 +32,21 @@ export default function ChatPage() {
         notFound();
     }
     
-    const handleSendMessage = (newMessage: Omit<Message, 'id' | 'timestamp' | 'senderId'>) => {
+    const handleSendMessage = (newMessage: Omit<Message, 'id' | 'timestamp' | 'senderId' | 'read' | 'delivered'>) => {
         const message: Message = {
             ...newMessage,
             id: `msg-${Date.now()}`,
             timestamp: new Date(),
             senderId: currentUser.id,
+            read: false,
+            delivered: true, // Mock delivered status
         };
         
-        // Find the chat in the main data and update it
         const chatIndex = chats.findIndex(c => c.id === chatId);
         if (chatIndex !== -1) {
             chats[chatIndex].messages.push(message);
         }
 
-        // Update the local state to trigger a re-render
         setMessages(prevMessages => [...prevMessages, message]);
     };
 

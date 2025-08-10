@@ -14,13 +14,9 @@ type ChatMessageProps = {
 export function ChatMessage({ message, isCurrentUser }: ChatMessageProps) {
   const sender = users.find((u) => u.id === message.senderId);
 
-  // If sender is not found, it might be the current user based on an old ID. 
-  // We can use a fallback or just not render the message if sender is essential.
   if (!sender) {
-    // This is a graceful fallback. Depending on requirements, you could show an error.
     return null;
   }
-
 
   return (
     <div
@@ -52,22 +48,22 @@ export function ChatMessage({ message, isCurrentUser }: ChatMessageProps) {
 const MessageContent = ({ message }: { message: Message }) => {
   switch (message.type) {
     case 'text':
-      return <p className="text-sm">{message.text}</p>;
+      return <p className="text-sm">{message.body}</p>;
     case 'image':
       return <Card className="bg-transparent border-0 shadow-none">
           <CardHeader className="p-0">
             <Image src="https://placehold.co/600x400.png" width={250} height={150} alt="Shared image" className="rounded-lg" data-ai-hint="chat image" />
           </CardHeader>
           <CardContent className="p-0 pt-2">
-            <p className="text-sm">{message.text}</p>
+            <p className="text-sm">{message.body}</p>
           </CardContent>
         </Card>
     case 'file':
-      return <FileCard icon={FileText} title={message.fileName || 'File'} description={message.text} />
+      return <FileCard icon={FileText} title={message.meta?.fileName || 'File'} description={message.body} />
     case 'location':
-      return <FileCard icon={MapPin} title="Location" description={message.text} />
+      return <FileCard icon={MapPin} title="Location" description={message.body} />
     case 'presentation':
-      return <FileCard icon={Presentation} title={message.fileName || 'Presentation'} description={message.text} />
+      return <FileCard icon={Presentation} title={message.meta?.fileName || 'Presentation'} description={message.body} />
     default:
       return null;
   }

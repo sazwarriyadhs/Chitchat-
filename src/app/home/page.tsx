@@ -88,7 +88,7 @@ function ChatListItem({ chat }: { chat: Chat }) {
             <p className="font-semibold truncate font-headline">{name}</p>
             <p className="text-xs text-muted-foreground">{format(lastMessage.timestamp, 'p')}</p>
           </div>
-          <p className="text-sm truncate text-muted-foreground">{lastMessage.text}</p>
+          <p className="text-sm truncate text-muted-foreground">{lastMessage.body}</p>
         </div>
       </Card>
     </Link>

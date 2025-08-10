@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Message } from "@/lib/types";
 
 type ChatInputProps = {
-  onSendMessage: (message: Omit<Message, 'id' | 'timestamp' | 'senderId'>) => void;
+  onSendMessage: (message: Omit<Message, 'id' | 'timestamp' | 'senderId' | 'read' | 'delivered'>) => void;
 };
 
 export function ChatInput({ onSendMessage }: ChatInputProps) {
@@ -16,13 +16,14 @@ export function ChatInput({ onSendMessage }: ChatInputProps) {
 
   const handleSend = () => {
     if (message.trim()) {
-      onSendMessage({ text: message, type: 'text' });
+      onSendMessage({ body: message, type: 'text' });
       setMessage("");
     }
   };
   
-  const handleSendFile = (type: Message['type'], text: string, fileName?: string) => {
-    onSendMessage({ text, type, fileName });
+  const handleSendFile = (type: Message['type'], body: string, fileName?: string) => {
+    const meta = fileName ? { fileName } : {};
+    onSendMessage({ body, type, meta });
   };
 
   return (

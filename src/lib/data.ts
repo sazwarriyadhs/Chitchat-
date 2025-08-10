@@ -12,7 +12,6 @@ export const users: User[] = [
   { id: '551ad56c-3de7-4d0d-b33c-2ae21780cc15', name: 'Charlie Brown', avatar: 'https://example.com/avatar/charlie.png', status: 'Good grief!', online: true },
 ];
 
-// Let's assume the first user in the new list is the current user
 const currentUser = users[0];
 
 export const chats: Chat[] = [
@@ -21,9 +20,9 @@ export const chats: Chat[] = [
     type: 'private',
     participants: [currentUser, users[1]],
     messages: [
-      { id: 'msg-1-1', senderId: users[1].id, text: 'Hey, how is it going?', timestamp: subMinutes(new Date(), 5), type: 'text' },
-      { id: 'msg-1-2', senderId: currentUser.id, text: 'Pretty good! Just working on the new chat app. What do you think?', timestamp: subMinutes(new Date(), 4), type: 'text' },
-      { id: 'msg-1-3', senderId: users[1].id, text: 'Looks amazing! The UI is so clean.', timestamp: subMinutes(new Date(), 3), type: 'text' },
+      { id: 'msg-1-1', senderId: users[1].id, body: 'Hey, how is it going?', timestamp: subMinutes(new Date(), 5), type: 'text', read: true, delivered: true },
+      { id: 'msg-1-2', senderId: currentUser.id, body: 'Pretty good! Just working on the new chat app. What do you think?', timestamp: subMinutes(new Date(), 4), type: 'text', read: true, delivered: true },
+      { id: 'msg-1-3', senderId: users[1].id, body: 'Looks amazing! The UI is so clean.', timestamp: subMinutes(new Date(), 3), type: 'text', read: false, delivered: true },
     ],
   },
   {
@@ -31,8 +30,8 @@ export const chats: Chat[] = [
     type: 'private',
     participants: [currentUser, users[2]],
     messages: [
-      { id: 'msg-2-1', senderId: users[2].id, text: 'Can you send me the file?', timestamp: subHours(new Date(), 1), type: 'text' },
-      { id: 'msg-2-2', senderId: currentUser.id, text: 'Sure, here it is.', timestamp: subHours(new Date(), 1), type: 'file', fileName: 'project-brief.pdf' },
+      { id: 'msg-2-1', senderId: users[2].id, body: 'Can you send me the file?', timestamp: subHours(new Date(), 1), type: 'text', read: true, delivered: true },
+      { id: 'msg-2-2', senderId: currentUser.id, body: 'Sure, here it is.', timestamp: subHours(new Date(), 1), type: 'file', meta: { fileName: 'project-brief.pdf' }, read: true, delivered: true },
     ],
   },
   {
@@ -42,10 +41,10 @@ export const chats: Chat[] = [
     avatar: 'https://placehold.co/100x100.png',
     participants: [currentUser, users[1], users[3]],
     messages: [
-      { id: 'msg-3-1', senderId: users[3].id, text: 'Team, let\'s sync up at 3 PM.', timestamp: subHours(new Date(), 2), type: 'text' },
-      { id: 'msg-3-2', senderId: currentUser.id, text: 'Sounds good!', timestamp: subHours(new Date(), 2), type: 'text' },
-      { id: 'msg-3-3', senderId: users[1].id, text: 'I\'ll be there.', timestamp: subHours(new Date(), 2), type: 'text' },
-      { id: 'msg-3-4', senderId: currentUser.id, text: 'I\'m sharing the presentation for the meeting.', timestamp: subMinutes(new Date(), 90), type: 'presentation', fileName: 'Q3-roadmap.pptx' },
+      { id: 'msg-3-1', senderId: users[3].id, body: 'Team, let\'s sync up at 3 PM.', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
+      { id: 'msg-3-2', senderId: currentUser.id, body: 'Sounds good!', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
+      { id: 'msg-3-3', senderId: users[1].id, body: 'I\'ll be there.', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
+      { id: 'msg-3-4', senderId: currentUser.id, body: 'I\'m sharing the presentation for the meeting.', timestamp: subMinutes(new Date(), 90), type: 'presentation', meta: { fileName: 'Q3-roadmap.pptx' }, read: true, delivered: true },
     ],
   },
   {
@@ -53,8 +52,8 @@ export const chats: Chat[] = [
     type: 'private',
     participants: [currentUser, users[4]],
     messages: [
-      { id: 'msg-4-1', senderId: users[4].id, text: 'Where should we meet for lunch?', timestamp: subDays(new Date(), 1), type: 'text' },
-      { id: 'msg-4-2', senderId: currentUser.id, text: 'How about The Corner Cafe?', timestamp: subDays(new Date(), 1), type: 'location', content: 'The Corner Cafe' },
+      { id: 'msg-4-1', senderId: users[4].id, body: 'Where should we meet for lunch?', timestamp: subDays(new Date(), 1), type: 'text', read: true, delivered: true },
+      { id: 'msg-4-2', senderId: currentUser.id, body: 'How about The Corner Cafe?', timestamp: subDays(new Date(), 1), type: 'location', meta: { location: 'The Corner Cafe' }, read: true, delivered: true },
     ],
   },
 ];

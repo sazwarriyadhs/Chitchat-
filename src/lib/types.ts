@@ -9,11 +9,12 @@ export type User = {
 export type Message = {
   id: string;
   senderId: string;
-  text: string;
+  body: string;
   timestamp: Date;
   type: 'text' | 'image' | 'file' | 'location' | 'presentation';
-  content?: string;
-  fileName?: string;
+  meta?: { [key: string]: any };
+  delivered: boolean;
+  read: boolean;
 };
 
 export type Chat = {
