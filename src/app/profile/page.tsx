@@ -95,9 +95,12 @@ export default function ProfilePage() {
   };
 
   const handleSave = () => {
-    currentUser.name = name;
-    currentUser.status = status;
-    currentUser.avatar = profileImage;
+    const userIndex = users.findIndex(u => u.id === currentUser.id);
+    if (userIndex !== -1) {
+        users[userIndex].name = name;
+        users[userIndex].status = status;
+        users[userIndex].avatar = profileImage;
+    }
     toast({ title: "Profile Saved", description: "Your changes have been saved locally."});
     setIsEditing(false);
   };
