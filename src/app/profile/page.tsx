@@ -7,7 +7,8 @@ import { AppContainer } from '@/components/AppContainer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Camera, Edit, FileUp, Loader2, Plus, Presentation as PresentationIcon, Share2, User } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { ArrowLeft, Camera, Edit, FileUp, Loader2, Plus, Presentation as PresentationIcon, Share2, User, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { users } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -18,7 +19,7 @@ const currentUser = users[0];
 const currentUserId = currentUser.id;
 
 type Presentation = {
-  id: number;
+  id: string | number;
   file_name: string;
   file_url: string;
   uploaded_at: string;
@@ -33,6 +34,7 @@ export default function ProfilePage() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const profileImageInputRef = useRef<HTMLInputElement>(null);
@@ -40,6 +42,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchPresentations = async () => {
         setFetching(true);
+        setError(null);
         try {
             const response = await fetch(`/api/presentations?senderId=${currentUserId}`);
             if (!response.ok) {
@@ -50,10 +53,11 @@ export default function ProfilePage() {
             setPresentations(data);
         } catch (error: any) {
             console.error("Could not load presentations:", error);
+            setError("Could not load your presentations. Please try again later.");
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: "Could not load your presentations. Is the database running?",
+                description: "Could not load your presentations.",
             });
         } finally {
             setFetching(false);
@@ -79,7 +83,6 @@ export default function ProfilePage() {
   };
 
   const handleSave = () => {
-    // In a real app, this would save to a backend
     currentUser.name = name;
     currentUser.status = status;
     currentUser.avatar = profileImage;
@@ -95,15 +98,21 @@ export default function ProfilePage() {
     });
 
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const formData = new FormData();
+    formData.append('file', file);
     
     try {
-        const newPresentation: Presentation = {
-            id: Date.now(),
-            file_name: file.name,
-            file_url: URL.createObjectURL(file), // Temporary URL
-            uploaded_at: new Date().toISOString(),
-        };
+        const response = await fetch(`/api/presentations?senderId=${currentUserId}`, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Upload failed');
+        }
+
+        const newPresentation = await response.json();
         
         setPresentations(prev => [newPresentation, ...prev]);
         setFile(null);
@@ -112,7 +121,7 @@ export default function ProfilePage() {
         }
 
         toast({
-            title: 'Upload Successful (Mock)',
+            title: 'Upload Successful',
             description: `"${newPresentation.file_name}" has been added.`,
         });
 
@@ -120,7 +129,7 @@ export default function ProfilePage() {
         toast({
             variant: 'destructive',
             title: 'Upload Failed',
-            description: 'An unknown error occurred during mock upload.',
+            description: error.message || 'An unknown error occurred.',
         });
     } finally {
         setLoading(false);
@@ -228,6 +237,14 @@ export default function ProfilePage() {
                         <CardContent>
                             {fetching ? (
                                 <div className="text-center text-muted-foreground"><Loader2 className="mx-auto h-6 w-6 animate-spin" /><p>Loading...</p></div>
+                            ) : error ? (
+                                <Alert variant="destructive">
+                                    <XCircle className="h-4 w-4" />
+                                    <AlertTitle>Loading Error</AlertTitle>
+                                    <AlertDescription>
+                                        {error}
+                                    </AlertDescription>
+                                </Alert>
                             ) : presentations.length === 0 ? (
                                 <div className="text-center text-muted-foreground py-8">
                                     <PresentationIcon className="mx-auto h-12 w-12 text-gray-400" />
@@ -255,5 +272,3 @@ export default function ProfilePage() {
     </AppContainer>
   );
 }
-
-    
