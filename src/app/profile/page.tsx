@@ -10,22 +10,16 @@ import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ArrowLeft, Camera, Edit, FileUp, Loader2, Plus, Presentation as PresentationIcon, Share2, User, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { users, stories } from '@/lib/data';
+import { dataStore } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Image from 'next/image';
-
-const currentUser = users[0];
-const currentUserId = currentUser.id;
-
-type Presentation = {
-  id: string | number;
-  file_name: string;
-  file_url: string;
-  uploaded_at: string;
-};
+import { Presentation } from '@/lib/types';
 
 export default function ProfilePage() {
+  const { currentUser, updateUser, addStory, addPresentation, getPresentationsByUserId } = dataStore;
+  const currentUserId = currentUser.id;
+
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(currentUser.name);
   const [status, setStatus] = useState(currentUser.status || '');
@@ -39,19 +33,15 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const profileImageInputRef = useRef<HTMLInputElement>(null);
   const storyImageInputRef = useRef<HTMLInputElement>(null);
-  const [storyImage, setStoryImage] = useState<string | null>("https://placehold.co/600x400.png");
+  const [storyImage, setStoryImage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPresentations = async () => {
         setFetching(true);
         setError(null);
         try {
-            const response = await fetch(`/api/presentations?senderId=${currentUserId}`);
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to fetch presentations');
-            }
-            const data = await response.json();
+            // Using the mock data store directly
+            const data = getPresentationsByUserId(currentUserId);
             setPresentations(data);
         } catch (error: any) {
             console.error("Could not load presentations:", error);
@@ -66,7 +56,7 @@ export default function ProfilePage() {
         }
     };
     fetchPresentations();
-  }, []);
+  }, [currentUserId, getPresentationsByUserId, toast]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -95,18 +85,17 @@ export default function ProfilePage() {
   };
 
   const handleSave = () => {
-    const userIndex = users.findIndex(u => u.id === currentUser.id);
-    if (userIndex !== -1) {
-        users[userIndex].name = name;
-        users[userIndex].status = status;
-        users[userIndex].avatar = profileImage;
-    }
-    toast({ title: "Profile Saved", description: "Your changes have been saved locally."});
+    updateUser(currentUser.id, {
+        name,
+        status,
+        avatar: profileImage
+    });
+    toast({ title: "Profile Saved", description: "Your changes have been saved."});
     setIsEditing(false);
   };
   
   const handleAddToStory = () => {
-    if (!storyImage || storyImage === "https://placehold.co/600x400.png") {
+    if (!storyImage) {
       toast({
         variant: 'destructive',
         title: 'No image selected',
@@ -115,22 +104,14 @@ export default function ProfilePage() {
       return;
     }
 
-    const newStory = {
-      id: `story-${Date.now()}`,
-      user: currentUser,
-      imageUrl: storyImage,
-      timestamp: new Date(),
-      viewed: false,
-    };
-    
-    stories.unshift(newStory);
+    addStory(currentUser.id, storyImage);
 
     toast({
       title: 'Story Added!',
       description: 'Your new story is now visible to your friends.',
     });
     
-    setStoryImage("https://placehold.co/600x400.png");
+    setStoryImage(null);
     if(storyImageInputRef.current) {
         storyImageInputRef.current.value = "";
     }
@@ -144,21 +125,11 @@ export default function ProfilePage() {
     });
 
     setLoading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-    
+    // Simulate upload delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     try {
-        const response = await fetch(`/api/presentations?senderId=${currentUserId}`, {
-            method: 'POST',
-            body: formData,
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Upload failed');
-        }
-
-        const newPresentation = await response.json();
+        const newPresentation = addPresentation(currentUser.id, file.name);
         
         setPresentations(prev => [newPresentation, ...prev]);
         setFile(null);
@@ -183,9 +154,12 @@ export default function ProfilePage() {
   };
 
   const handleShareToChat = (presentation: Presentation) => {
+    // This part would require more complex state management (e.g. Redux or Zustand)
+    // or passing state through router, which is complex for this demo.
+    // For now, we just show a toast.
     toast({
-        title: "Shared to Chat",
-        description: `Your presentation "${presentation.file_name}" is ready to be sent.`
+        title: "Share feature not fully implemented",
+        description: `This would open a chat to share "${presentation.file_name}".`
     });
   };
 
@@ -254,7 +228,7 @@ export default function ProfilePage() {
                         </CardHeader>
                         <CardContent className="text-center">
                             <input type="file" accept="image/*" ref={storyImageInputRef} onChange={handleStoryImageChange} className="hidden" />
-                            <div className="w-full aspect-video bg-muted rounded-lg flex flex-col items-center justify-center cursor-pointer" onClick={() => storyImageInputRef.current?.click()}>
+                            <div className="w-full aspect-video bg-muted rounded-lg flex flex-col items-center justify-center cursor-pointer border-2 border-dashed" onClick={() => storyImageInputRef.current?.click()}>
                                 {storyImage ? (
                                     <Image src={storyImage} width={300} height={169} alt="Story preview" className="rounded-md object-cover w-full h-full" data-ai-hint="story preview"/>
                                 ) : (
@@ -264,7 +238,7 @@ export default function ProfilePage() {
                                     </div>
                                 )}
                             </div>
-                            <Button variant="outline" className="mt-4" onClick={handleAddToStory}><Plus className="w-4 h-4 mr-2" />Add to Story</Button>
+                            <Button variant="outline" className="mt-4" onClick={handleAddToStory} disabled={!storyImage}><Plus className="w-4 h-4 mr-2" />Add to Story</Button>
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -308,9 +282,12 @@ export default function ProfilePage() {
                                 <ul className="space-y-3">
                                 {presentations.map((p) => (
                                     <li key={p.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                                        <a href={p.file_url} target="_blank" rel="noopener noreferrer" className="flex-1 truncate hover:underline">
-                                            {p.file_name}
-                                        </a>
+                                        <div className="flex items-center gap-3 flex-1 truncate">
+                                            <PresentationIcon className="w-5 h-5 text-muted-foreground" />
+                                            <a href={p.file_url} target="_blank" rel="noopener noreferrer" className="flex-1 truncate hover:underline">
+                                                {p.file_name}
+                                            </a>
+                                        </div>
                                         <Button size="sm" variant="ghost" onClick={() => handleShareToChat(p)}>
                                             <Share2 className="mr-2 h-4 w-4" /> Share
                                         </Button>

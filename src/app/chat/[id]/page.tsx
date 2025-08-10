@@ -4,20 +4,27 @@ import { ChatHeader } from '@/components/chat/ChatHeader';
 import { ChatInput } from '@/components/chat/ChatInput';
 import { ChatMessage } from '@/components/chat/ChatMessage';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { chats, users } from '@/lib/data';
+import { dataStore } from '@/lib/data';
 import { Chat, Message, User } from '@/lib/types';
 import { notFound, useParams } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 
-const currentUser = users[0];
-
 export default function ChatPage() {
     const params = useParams();
     const chatId = typeof params.id === 'string' ? params.id : '';
-    const chat = chats.find(c => c.id === chatId);
+    const { getChatById, currentUser, addMessageToChat } = dataStore;
+
+    const [chat, setChat] = useState<Chat | undefined>(getChatById(chatId));
+    const [messages, setMessages] = useState(chat?.messages || []);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     
-    const [messages, setMessages] = useState(chat?.messages || []);
+    useEffect(() => {
+        setChat(getChatById(chatId));
+    }, [chatId, getChatById]);
+    
+    useEffect(() => {
+        setMessages(chat?.messages || []);
+    }, [chat]);
 
     useEffect(() => {
         if (scrollAreaRef.current) {
@@ -33,21 +40,10 @@ export default function ChatPage() {
     }
     
     const handleSendMessage = (newMessage: Omit<Message, 'id' | 'timestamp' | 'senderId' | 'read' | 'delivered'>) => {
-        const message: Message = {
-            ...newMessage,
-            id: `msg-${Date.now()}-${Math.random()}`,
-            timestamp: new Date(),
-            senderId: currentUser.id,
-            read: false,
-            delivered: true, // Mock delivered status
-        };
-        
-        const chatIndex = chats.findIndex(c => c.id === chatId);
-        if (chatIndex !== -1) {
-            chats[chatIndex].messages.push(message);
+        const message = addMessageToChat(chatId, newMessage);
+        if (message) {
+            setMessages(prevMessages => [...prevMessages, message]);
         }
-
-        setMessages(prevMessages => [...prevMessages, message]);
     };
 
     const getChatInfo = (chat: Chat, currentUser: User): { name: string, avatar: string, status?: string } => {
@@ -80,7 +76,7 @@ export default function ChatPage() {
                     ))}
                 </div>
             </ScrollArea>
-            <ChatInput onSendMessage={handleSendMessage} />
+            <ChatInput onSendMessage={handleSendMessage} chat={chat} />
         </AppContainer>
     );
 }

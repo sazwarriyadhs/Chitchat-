@@ -28,8 +28,16 @@ export type Chat = {
 
 export type Story = {
   id: string;
-  user: User;
+  userId: string;
   imageUrl: string;
   timestamp: Date;
   viewed: boolean;
+};
+
+export type Presentation = {
+  id: string;
+  userId: string;
+  file_name: string;
+  file_url: string;
+  uploaded_at: string;
 };

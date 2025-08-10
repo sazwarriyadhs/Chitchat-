@@ -9,15 +9,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { chats, users } from '@/lib/data';
+import { dataStore } from '@/lib/data';
 import { Chat, User } from '@/lib/types';
 import { StoryReel } from '@/components/stories/StoryReel';
 import { StatusUpdater } from '@/components/stories/StatusUpdater';
 import { format } from 'date-fns';
 
-const currentUser = users[0];
-
 export default function HomePage() {
+  const { currentUser } = dataStore;
+
   return (
     <AppContainer>
       <header className="flex items-center justify-between p-4 border-b">
@@ -53,6 +53,7 @@ export default function HomePage() {
 }
 
 function ChatList() {
+  const { chats } = dataStore;
   return (
     <div className="p-2 space-y-2">
       {chats.map((chat) => (
@@ -63,6 +64,7 @@ function ChatList() {
 }
 
 function ChatListItem({ chat }: { chat: Chat }) {
+  const { currentUser } = dataStore;
   const otherParticipant = chat.participants.find(p => p.id !== currentUser.id);
   const lastMessage = chat.messages[chat.messages.length - 1];
 

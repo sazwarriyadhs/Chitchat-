@@ -10,18 +10,18 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Users, Camera } from 'lucide-react';
 import Link from 'next/link';
-import { users, chats } from '@/lib/data';
+import { dataStore } from '@/lib/data';
 import { User } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
-const currentUser = users[0];
-const otherUsers = users.filter(u => u.id !== currentUser.id);
 
 export default function NewGroupPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [groupName, setGroupName] = useState('');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const { currentUser, users, createGroupChat } = dataStore;
+  const otherUsers = users.filter(u => u.id !== currentUser.id);
 
   const handleToggleUser = (userId: string) => {
     setSelectedUsers(prev =>
@@ -41,27 +41,9 @@ export default function NewGroupPage() {
         return;
     }
 
-    const participants = [currentUser, ...otherUsers.filter(u => selectedUsers.includes(u.id))];
+    const participantIds = [currentUser.id, ...selectedUsers];
     
-    // In a real app, this would be a call to an API
-    const newGroup = {
-      id: `chat-${Date.now()}`,
-      type: 'group' as const,
-      name: groupName,
-      avatar: 'https://placehold.co/100x100.png',
-      participants: participants,
-      messages: [
-        {
-          id: `msg-${Date.now()}`,
-          senderId: currentUser.id,
-          text: `Welcome to ${groupName}!`,
-          timestamp: new Date(),
-          type: 'text' as const,
-        },
-      ],
-    };
-
-    chats.unshift(newGroup); // Add to the top of the chat list
+    createGroupChat(groupName, participantIds);
 
     toast({
         title: 'Group Created!',

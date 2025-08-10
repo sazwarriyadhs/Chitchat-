@@ -13,14 +13,16 @@ import { Icon, Style } from 'ol/style';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Card, CardContent } from '../ui/card';
+import { cn } from '@/lib/utils';
 
 type LocationMessageProps = {
     latitude: number;
     longitude: number;
     description: string;
+    isCurrentUser: boolean;
 };
 
-export function LocationMessage({ latitude, longitude, description }: LocationMessageProps) {
+export function LocationMessage({ latitude, longitude, description, isCurrentUser }: LocationMessageProps) {
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstance = useRef<Map | null>(null);
 
@@ -32,7 +34,6 @@ export function LocationMessage({ latitude, longitude, description }: LocationMe
                 geometry: new Point(coordinates),
             });
             
-            // Using a public domain pin icon
             const iconStyle = new Style({
                 image: new Icon({
                     anchor: [0.5, 1],
@@ -55,7 +56,9 @@ export function LocationMessage({ latitude, longitude, description }: LocationMe
                 target: mapRef.current,
                 layers: [
                     new TileLayer({
-                        source: new OSM(),
+                        source: new OSM({
+                            attributions: '' // Hide attributions
+                        }),
                     }),
                     vectorLayer,
                 ],
@@ -68,11 +71,13 @@ export function LocationMessage({ latitude, longitude, description }: LocationMe
         }
     }, [latitude, longitude]);
 
+    const textColor = isCurrentUser ? 'text-primary-foreground' : 'text-card-foreground';
+
     return (
         <Card className="bg-transparent border-0 shadow-none">
             <CardContent className="p-0">
                 <div ref={mapRef} className="w-64 h-40 rounded-lg overflow-hidden" data-ai-hint="map location"></div>
-                {description && <p className="text-sm pt-2">{description}</p>}
+                {description && <p className={cn("text-sm pt-2", textColor)}>{description}</p>}
             </CardContent>
         </Card>
     );
