@@ -35,7 +35,7 @@ export default function ChatPage() {
     const handleSendMessage = (newMessage: Omit<Message, 'id' | 'timestamp' | 'senderId' | 'read' | 'delivered'>) => {
         const message: Message = {
             ...newMessage,
-            id: `msg-${Date.now()}`,
+            id: `msg-${Date.now()}-${Math.random()}`,
             timestamp: new Date(),
             senderId: currentUser.id,
             read: false,
