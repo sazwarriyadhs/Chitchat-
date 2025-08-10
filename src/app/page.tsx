@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -26,7 +27,7 @@ export default function SplashPage() {
   }, [router]);
 
   return (
-    <AppContainer className="bg-card">
+    <AppContainer className="bg-white">
       <AnimatePresence>
         {isShowing && (
           <motion.div
@@ -45,7 +46,7 @@ export default function SplashPage() {
                 delay: 0.2,
               }}
             >
-              <Image src="/image/chitchat-logo.png" alt="ChitChat Logo" width={160} height={80} className="w-auto h-20" />
+              <Image src="/logo.png" alt="ChitChat Logo" width={320} height={160} className="w-auto h-40" />
             </motion.div>
           </motion.div>
         )}
