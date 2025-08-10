@@ -11,8 +11,9 @@ import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { users } from '@/lib/data';
 
-// Mock current user ID until auth is implemented
-const currentUserId = 'user-1'; // In a real app this would come from an auth context
+// In a real app this would come from an auth context
+const currentUser = users[0];
+const currentUserId = currentUser.id;
 
 type Presentation = {
   id: number;

@@ -61,7 +61,7 @@ function ChatList() {
 }
 
 function ChatListItem({ chat }: { chat: Chat }) {
-  const otherParticipant = chat.participants.find(p => p.id !== 'user-1');
+  const otherParticipant = chat.participants.find(p => p.id !== currentUser.id);
   const lastMessage = chat.messages[chat.messages.length - 1];
 
   const getParticipantInfo = (): { name: string, avatar: string, user?: User } => {

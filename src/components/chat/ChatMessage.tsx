@@ -12,7 +12,15 @@ type ChatMessageProps = {
 };
 
 export function ChatMessage({ message, isCurrentUser }: ChatMessageProps) {
-  const sender = users.find((u) => u.id === message.senderId) as User;
+  const sender = users.find((u) => u.id === message.senderId);
+
+  // If sender is not found, it might be the current user based on an old ID. 
+  // We can use a fallback or just not render the message if sender is essential.
+  if (!sender) {
+    // This is a graceful fallback. Depending on requirements, you could show an error.
+    return null;
+  }
+
 
   return (
     <div
