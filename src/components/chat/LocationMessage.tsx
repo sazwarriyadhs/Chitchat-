@@ -37,8 +37,8 @@ export function LocationMessage({ latitude, longitude, description, isCurrentUse
             const iconStyle = new Style({
                 image: new Icon({
                     anchor: [0.5, 1],
-                    src: '/marker-icon.png',
-                    scale: 0.05,
+                    src: 'https://placehold.co/32x32.png', // Using a placeholder for the marker
+                    scale: 1,
                 }),
             });
 
