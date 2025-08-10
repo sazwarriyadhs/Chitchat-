@@ -22,12 +22,12 @@ export default function LoginPage() {
   return (
     <AppContainer>
       <div className="flex flex-col items-center justify-center h-full p-8">
-        <div className="flex flex-col items-center text-center mb-8 transform scale-[2] origin-bottom">
+        <div className="flex flex-col items-center text-center mb-8">
           <Image src="/image/logo.png" alt="ChattyLite Logo" width={64} height={64} className="w-16 h-16 mb-4" />
           <p className="text-muted-foreground">Sign in to continue</p>
         </div>
 
-        <div className="transform scale-[2] w-full max-w-sm mt-24">
+        <div className="w-full max-w-sm">
             <Tabs defaultValue="email" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="email">Email</TabsTrigger>
