@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { AppContainer } from "@/components/AppContainer";
-import { ChatLogo } from "@/components/icons/ChatLogo";
+import Image from "next/image";
 
 export default function SplashPage() {
   const [isShowing, setIsShowing] = useState(true);
@@ -45,7 +45,7 @@ export default function SplashPage() {
                 delay: 0.2,
               }}
             >
-              <ChatLogo className="w-24 h-24 text-primary-foreground" />
+              <Image src="/image/logo.png" alt="ChattyLite Logo" width={96} height={96} className="w-24 h-24" />
             </motion.div>
             <motion.h1
               className="text-4xl font-bold text-primary-foreground mt-4"

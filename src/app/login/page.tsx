@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChatLogo } from "@/components/icons/ChatLogo";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function LoginPage() {
     <AppContainer>
       <div className="flex flex-col items-center justify-center h-full p-8">
         <div className="flex flex-col items-center text-center mb-8">
-          <ChatLogo className="w-16 h-16 text-primary mb-4" />
+          <Image src="/image/logo.png" alt="ChattyLite Logo" width={64} height={64} className="w-16 h-16 mb-4" />
           <h1 className="text-2xl font-bold">Welcome to ChattyLite</h1>
           <p className="text-muted-foreground">Sign in to continue</p>
         </div>
