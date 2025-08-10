@@ -38,6 +38,8 @@ export default function ProfilePage() {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const profileImageInputRef = useRef<HTMLInputElement>(null);
+  const storyImageInputRef = useRef<HTMLInputElement>(null);
+  const [storyImage, setStoryImage] = useState<string | null>("https://placehold.co/600x400.png");
 
   useEffect(() => {
     const fetchPresentations = async () => {
@@ -77,6 +79,16 @@ export default function ProfilePage() {
         const reader = new FileReader();
         reader.onload = (event) => {
             setProfileImage(event.target?.result as string);
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    }
+  };
+
+  const handleStoryImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            setStoryImage(event.target?.result as string);
         };
         reader.readAsDataURL(e.target.files[0]);
     }
@@ -204,13 +216,21 @@ export default function ProfilePage() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Update Your Story</CardTitle>
-                             <CardDescription>Share a photo or video with your friends.</CardDescription>
+                             <CardDescription>Share a photo with your friends.</CardDescription>
                         </CardHeader>
                         <CardContent className="text-center">
-                            <div className="w-full aspect-video bg-muted rounded-lg flex flex-col items-center justify-center">
-                                <Image src="https://placehold.co/600x400.png" width={300} height={169} alt="Story preview" className="rounded-md" data-ai-hint="story preview"/>
-                                <Button variant="outline" className="mt-4"><Plus className="w-4 h-4 mr-2" />Add to Story</Button>
+                            <input type="file" accept="image/*" ref={storyImageInputRef} onChange={handleStoryImageChange} className="hidden" />
+                            <div className="w-full aspect-video bg-muted rounded-lg flex flex-col items-center justify-center cursor-pointer" onClick={() => storyImageInputRef.current?.click()}>
+                                {storyImage ? (
+                                    <Image src={storyImage} width={300} height={169} alt="Story preview" className="rounded-md object-cover w-full h-full" data-ai-hint="story preview"/>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center text-muted-foreground">
+                                        <Camera className="w-12 h-12" />
+                                        <p>Click to upload a photo</p>
+                                    </div>
+                                )}
                             </div>
+                            <Button variant="outline" className="mt-4"><Plus className="w-4 h-4 mr-2" />Add to Story</Button>
                         </CardContent>
                     </Card>
                 </TabsContent>
