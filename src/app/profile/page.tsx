@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { users } from '@/lib/data';
 
 // Mock current user ID until auth is implemented
-const currentUserId = users[0].id; 
+const currentUserId = 'user-1'; // In a real app this would come from an auth context
 
 type Presentation = {
   id: number;
@@ -30,22 +30,28 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setFetching(true);
-    try {
-        const storedPresentations = localStorage.getItem(`presentations_${currentUserId}`);
-        if (storedPresentations) {
-            setPresentations(JSON.parse(storedPresentations));
+    const fetchPresentations = async () => {
+        setFetching(true);
+        try {
+            const response = await fetch(`/api/presentations?senderId=${currentUserId}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to fetch presentations');
+            }
+            const data = await response.json();
+            setPresentations(data);
+        } catch (error: any) {
+            console.error("Could not load presentations:", error);
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Could not load your presentations. Is the database running?",
+            });
+        } finally {
+            setFetching(false);
         }
-    } catch (error) {
-        console.error("Could not load presentations from localStorage", error);
-        toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Could not load your presentations.",
-        });
-    } finally {
-        setFetching(false);
-    }
+    };
+    fetchPresentations();
   }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,30 +69,31 @@ export default function ProfilePage() {
 
     setLoading(true);
     
-    // Mock upload
+    // Mock upload - in a real app, this would be a multipart/form-data POST to an upload API
     await new Promise(resolve => setTimeout(resolve, 1000));
-
+    // After a real upload, you would re-fetch the presentations list.
+    
     try {
-      const newPresentation: Presentation = {
-        id: Date.now(),
-        file_name: file.name,
-        file_url: URL.createObjectURL(file),
-        uploaded_at: new Date().toISOString(),
-      };
-      
-      const updatedPresentations = [newPresentation, ...presentations];
-      setPresentations(updatedPresentations);
-      localStorage.setItem(`presentations_${currentUserId}`, JSON.stringify(updatedPresentations));
+        // This part remains a mock for now.
+        const newPresentation: Presentation = {
+            id: Date.now(),
+            file_name: file.name,
+            file_url: URL.createObjectURL(file), // This URL is temporary
+            uploaded_at: new Date().toISOString(),
+        };
+        
+        // Add to the list locally to show immediate feedback
+        setPresentations(prev => [newPresentation, ...prev]);
 
-      setFile(null);
-      if(fileInputRef.current) {
-          fileInputRef.current.value = "";
-      }
+        setFile(null);
+        if(fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
 
-      toast({
-          title: 'Upload Successful',
-          description: `"${newPresentation.file_name}" has been uploaded.`,
-      });
+        toast({
+            title: 'Upload Successful (Mock)',
+            description: `"${newPresentation.file_name}" has been added to the list locally.`,
+        });
 
     } catch(error: any) {
         toast({
