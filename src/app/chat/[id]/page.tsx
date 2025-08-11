@@ -17,7 +17,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, ShoppingCart, MessageSquare, Package } from 'lucide-react';
+import { Plus, ShoppingCart, MessageSquare, Package, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -27,21 +27,24 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     const { getChatById, currentUser, addMessageToChat, addProductToChat, users } = dataStore;
 
     const [chat, setChat] = useState<Chat | undefined>(undefined);
+    const [loading, setLoading] = useState(true);
     
     useEffect(() => {
-        // Initial fetch
         const currentChat = getChatById(chatId);
         if (currentChat) {
             setChat(currentChat);
+        } else {
+            // If chat not found on initial load, it's a 404
+            notFound();
         }
+        setLoading(false);
 
-        // Set up interval to poll for updates
         const interval = setInterval(() => {
             const updatedChat = getChatById(chatId);
             if(updatedChat) {
                 // A simple check to see if messages have changed to avoid unnecessary re-renders
                 setChat(prevChat => {
-                    if (prevChat && prevChat.messages.length === updatedChat.messages.length) {
+                    if (prevChat && JSON.stringify(prevChat) === JSON.stringify(updatedChat)) {
                         return prevChat;
                     }
                     return updatedChat;
@@ -52,15 +55,19 @@ export default function ChatPage({ params }: { params: { id: string } }) {
         return () => clearInterval(interval);
     }, [chatId, getChatById]);
     
+    if (loading) {
+        return (
+            <AppContainer>
+                <div className="flex items-center justify-center h-full">
+                    <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                </div>
+            </AppContainer>
+        );
+    }
+    
     if (!chat) {
-        // You can return a loading state here if you want
-        // For now, it might briefly show a blank screen before finding the chat or 404ing
-        const initialChat = getChatById(chatId);
-        if (!initialChat) {
-            return notFound();
-        }
-        // if chat is found, we set it and continue rendering
-        setChat(initialChat);
+        // This will be caught by the notFound() call in useEffect, but as a fallback
+        return notFound();
     }
     
     const handleSendMessage = (newMessage: Omit<Message, 'id' | 'timestamp' | 'senderId' | 'read' | 'delivered'>) => {
@@ -124,7 +131,7 @@ function ChatMessages({ messages, currentUser }: { messages: Message[], currentU
         if (scrollAreaRef.current) {
             const viewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
             if (viewport) {
-                viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
+                viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'auto' });
             }
         }
     }, [messages]);
@@ -287,3 +294,5 @@ function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
     </DialogContent>
   )
 }
+
+    
