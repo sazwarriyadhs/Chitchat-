@@ -135,7 +135,12 @@ function GroupStore({ products, onAddProduct, users }: { products: Product[], on
         <div className="space-y-4">
             <div className="flex justify-between items-center">
                 <h2 className="text-lg font-bold">Group Store</h2>
-                <AddProductDialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen} onAddProduct={onAddProduct} />
+                <AddProductDialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen} onAddProduct={onAddProduct}>
+                    <Button>
+                        <Plus className="w-4 h-4 mr-2" />
+                        List Item
+                    </Button>
+                </AddProductDialog>
             </div>
 
             {products.length === 0 ? (
@@ -143,9 +148,9 @@ function GroupStore({ products, onAddProduct, users }: { products: Product[], on
                     <CardContent className="flex flex-col items-center justify-center gap-4">
                         <Package className="w-16 h-16 text-muted-foreground" />
                         <p className="text-muted-foreground">No products for sale in this group yet.</p>
-                        <DialogTrigger asChild>
+                        <AddProductDialog onAddProduct={onAddProduct}>
                            <Button variant="outline">List First Item</Button>
-                        </DialogTrigger>
+                        </AddProductDialog>
                     </CardContent>
                 </Card>
             ) : (
@@ -188,13 +193,26 @@ function GroupStore({ products, onAddProduct, users }: { products: Product[], on
     )
 }
 
-function AddProductDialog({ open, onOpenChange, onAddProduct }: { open: boolean, onOpenChange: (open: boolean) => void, onAddProduct: (data: Omit<Product, 'id'|'sellerId'|'chatId'>) => void}) {
+type AddProductDialogProps = {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onAddProduct: (data: Omit<Product, 'id'|'sellerId'|'chatId'>) => void;
+  children: React.ReactNode;
+}
+
+function AddProductDialog({ open, onOpenChange, onAddProduct, children }: AddProductDialogProps) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState('https://placehold.co/600x400.png');
   const { toast } = useToast();
 
+  const internalOnOpenChange = (newOpenState: boolean) => {
+    if (onOpenChange) {
+      onOpenChange(newOpenState);
+    }
+  };
+  
   const handleSubmit = () => {
     if (!name || !price) {
         toast({
@@ -218,16 +236,13 @@ function AddProductDialog({ open, onOpenChange, onAddProduct }: { open: boolean,
     setName('');
     setPrice('');
     setDescription('');
-    onOpenChange(false);
+    internalOnOpenChange(false);
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={internalOnOpenChange}>
         <DialogTrigger asChild>
-            <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                List Item
-            </Button>
+            {children}
         </DialogTrigger>
         <DialogContent>
             <DialogHeader>
