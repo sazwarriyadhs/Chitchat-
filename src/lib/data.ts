@@ -11,11 +11,11 @@ class DataStore {
 
   constructor() {
     this.users = [
-      { id: 'ec4241f4-1cc2-462e-81d7-7725b31a1a1f', name: 'Andi Saputra', avatar: 'https://ik.imagekit.io/demo/avatar1.jpg', status: 'Ngopi dulu...', online: true, role: 'business' },
-      { id: '65a40f57-c574-438d-a21b-cd8472d3c769', name: 'Budi Santoso', avatar: 'https://ik.imagekit.io/demo/avatar2.jpg', status: 'Kerja keras, tidur nyenyak', online: false, role: 'regular' },
-      { id: '969f5a5e-5ff0-406e-9650-821aa22bc886', name: 'Citra Dewi', avatar: 'https://ik.imagekit.io/demo/avatar3.jpg', status: 'Lagi liburan', online: true, role: 'regular' },
-      { id: 'd90de2e2-ea68-43e2-a0aa-92ab4a7b414b', name: 'Dina Pratiwi', avatar: 'https://ik.imagekit.io/demo/avatar4.jpg', status: 'Belajar coding', online: false, role: 'regular' },
-      { id: '36190390-d9fc-45ba-862d-155811dbd129', name: 'Eko Prabowo', avatar: 'https://ik.imagekit.io/demo/avatar5.jpg', status: 'Selalu semangat!', online: true, role: 'business' },
+      { id: 'ec4241f4-1cc2-462e-81d7-7725b31a1a1f', name: 'Andi Saputra', avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/avatars/user-1_CPcW4a7-D.png', status: 'Ngopi dulu...', online: true, role: 'business' },
+      { id: '65a40f57-c574-438d-a21b-cd8472d3c769', name: 'Budi Santoso', avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/avatars/user-2_m-OUtW6n1.png', status: 'Kerja keras, tidur nyenyak', online: false, role: 'regular' },
+      { id: '969f5a5e-5ff0-406e-9650-821aa22bc886', name: 'Citra Dewi', avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/avatars/user-3_xR-f-4_Yy.png', status: 'Lagi liburan', online: true, role: 'regular' },
+      { id: 'd90de2e2-ea68-43e2-a0aa-92ab4a7b414b', name: 'Dina Pratiwi', avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/avatars/user-4_vQW-j-b_t.png', status: 'Belajar coding', online: false, role: 'regular' },
+      { id: '36190390-d9fc-45ba-862d-155811dbd129', name: 'Eko Prabowo', avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/avatars/user-5_b_g-2-g_a.png', status: 'Selalu semangat!', online: true, role: 'business' },
     ];
     this.currentUser = this.users[0];
 
@@ -25,9 +25,9 @@ class DataStore {
         type: 'private',
         participants: [this.users[0], this.users[1]],
         messages: [
-          { id: 'msg-1-1', senderId: this.users[1].id, body: 'Hey, how is it going?', timestamp: subMinutes(new Date(), 5), type: 'text', read: true, delivered: true },
-          { id: 'msg-1-2', senderId: this.users[0].id, body: 'Pretty good! Just working on the new chat app. What do you think?', timestamp: subMinutes(new Date(), 4), type: 'text', read: true, delivered: true },
-          { id: 'msg-1-3', senderId: this.users[1].id, body: 'Looks amazing! The UI is so clean.', timestamp: subMinutes(new Date(), 3), type: 'text', read: false, delivered: true },
+          { id: 'msg-1-1', senderId: this.users[1].id, body: 'Halo, apa kabar?', timestamp: subMinutes(new Date(), 5), type: 'text', read: true, delivered: true },
+          { id: 'msg-1-2', senderId: this.users[0].id, body: 'Baik! Lagi sibuk sama aplikasi chat baru nih. Menurutmu gimana?', timestamp: subMinutes(new Date(), 4), type: 'text', read: true, delivered: true },
+          { id: 'msg-1-3', senderId: this.users[1].id, body: 'Keren banget! Tampilannya bersih dan modern.', timestamp: subMinutes(new Date(), 3), type: 'text', read: false, delivered: true },
         ],
         products: [],
       },
@@ -36,8 +36,8 @@ class DataStore {
         type: 'private',
         participants: [this.users[0], this.users[2]],
         messages: [
-          { id: 'msg-2-1', senderId: this.users[2].id, body: 'Can you send me the file?', timestamp: subHours(new Date(), 1), type: 'text', read: true, delivered: true },
-          { id: 'msg-2-2', senderId: this.users[0].id, body: 'Sure, here it is.', timestamp: subHours(new Date(), 1), type: 'file', meta: { fileName: 'project-brief.pdf', fileUrl: '#' }, read: true, delivered: true },
+          { id: 'msg-2-1', senderId: this.users[2].id, body: 'Bisa kirim filenya?', timestamp: subHours(new Date(), 1), type: 'text', read: true, delivered: true },
+          { id: 'msg-2-2', senderId: this.users[0].id, body: 'Tentu, ini filenya.', timestamp: subHours(new Date(), 1), type: 'file', meta: { fileName: 'rencana-proyek.pdf', fileUrl: '#' }, read: true, delivered: true },
         ],
         products: [],
       },
@@ -46,7 +46,7 @@ class DataStore {
         type: 'group',
         name: 'Kopi Kenangan Senja',
         avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/store-logos/store-1_Yd1mAsVl9.png',
-        participants: [this.users[0], this.users[1], this.users[3]],
+        participants: [this.users[0], this.users[1], this.users[3], this.users[2], this.users[4]],
         messages: [
           { id: 'msg-s1-1', senderId: this.users[3].id, body: 'Selamat datang di Kopi Kenangan Senja!', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
         ],
@@ -63,7 +63,7 @@ class DataStore {
         type: 'group',
         name: 'Toko Buku Aksara',
         avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/store-logos/store-2_6WqpB3B2S.png',
-        participants: [this.users[4], this.users[2], this.users[3]],
+        participants: [this.users[0], this.users[1], this.users[3], this.users[2], this.users[4]],
         messages: [
            { id: 'msg-s2-1', senderId: this.users[2].id, body: 'Cari buku apa hari ini?', timestamp: subHours(new Date(), 3), type: 'text', read: true, delivered: true },
         ],
@@ -80,7 +80,7 @@ class DataStore {
         type: 'group',
         name: 'Fashionista Preloved',
         avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/store-logos/store-3_Bf-pM-b8T.png',
-        participants: [this.users[0], this.users[2], this.users[3]],
+        participants: [this.users[0], this.users[1], this.users[3], this.users[2], this.users[4]],
         messages: [
           { id: 'msg-s3-1', senderId: this.users[3].id, body: 'Happy thrifting!', timestamp: subHours(new Date(), 5), type: 'text', read: true, delivered: true },
         ],
@@ -97,7 +97,7 @@ class DataStore {
         type: 'group',
         name: 'Gamer\'s Garage Sale',
         avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/store-logos/store-4_Jv-1c-w-2.png',
-        participants: [this.users[4], this.users[1], this.users[0]],
+        participants: [this.users[0], this.users[1], this.users[3], this.users[2], this.users[4]],
         messages: [
            { id: 'msg-s4-1', senderId: this.users[1].id, body: 'Jual-beli santai, no tipu-tipu.', timestamp: subHours(new Date(), 6), type: 'text', read: true, delivered: true },
         ],
@@ -114,7 +114,7 @@ class DataStore {
         type: 'group',
         name: 'Dapur Bunda Homemade',
         avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/store-logos/store-5_V-9c-2-v2.png',
-        participants: [this.users[0], this.users[3], this.users[2]],
+        participants: [this.users[0], this.users[1], this.users[3], this.users[2], this.users[4]],
         messages: [
            { id: 'msg-s5-1', senderId: this.users[3].id, body: 'Open PO untuk kue lebaran!', timestamp: subHours(new Date(), 10), type: 'text', read: true, delivered: true },
         ],
@@ -135,7 +135,8 @@ class DataStore {
     ];
     
     this.presentations = [
-        { id: 'pres-1', userId: this.users[0].id, file_name: 'Q3-roadmap.pptx', file_url: '#', uploaded_at: subDays(new Date(), 1).toISOString() }
+        { id: 'pres-1', userId: this.users[0].id, file_name: 'Q3-roadmap.pptx', file_url: '#', uploaded_at: subDays(new Date(), 1).toISOString() },
+        { id: 'pres-2', userId: this.users[4].id, file_name: 'analisis-kompetitor.pptx', file_url: '#', uploaded_at: subDays(new Date(), 3).toISOString() }
     ];
 
     // Bind methods
@@ -201,7 +202,7 @@ class DataStore {
         {
           id: `msg-${Date.now()}`,
           senderId: this.currentUser.id,
-          body: `Welcome to ${groupName}!`,
+          body: `Selamat datang di ${groupName}!`,
           timestamp: new Date(),
           type: 'text',
           read: true,
@@ -346,7 +347,7 @@ class DataStore {
 
   getStores(): Chat[] {
     // A store is a group chat that has a products array defined.
-    return this.chats.filter(chat => chat.type === 'group' && chat.products);
+    return this.chats.filter(chat => chat.type === 'group' && chat.products).sort((a, b) => a.id.localeCompare(b.id));
   }
 
   createUser(userData: Omit<User, 'id' | 'avatar' | 'online' | 'status'> & { password?: string }): User {
@@ -371,3 +372,5 @@ class DataStore {
 
 // Singleton instance of the data store
 export const dataStore = new DataStore();
+
+    
