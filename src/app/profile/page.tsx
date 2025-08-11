@@ -8,17 +8,20 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ArrowLeft, Camera, Edit, FileUp, Loader2, Plus, Presentation as PresentationIcon, Share2, User, XCircle } from 'lucide-react';
+import { ArrowLeft, Camera, Edit, FileUp, Loader2, LogOut, Plus, Presentation as PresentationIcon, Share2, User, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { dataStore } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Image from 'next/image';
 import { Presentation } from '@/lib/types';
+import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 export default function ProfilePage() {
   const { currentUser, updateUser, addStory, addPresentation, getPresentationsByUserId } = dataStore;
   const currentUserId = currentUser.id;
+  const router = useRouter();
 
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(currentUser.name);
@@ -167,6 +170,11 @@ export default function ProfilePage() {
     });
   };
 
+  const handleLogout = () => {
+    router.push('/login');
+    toast({ title: "Logged Out", description: "You have been successfully logged out." });
+  };
+
   return (
     <AppContainer>
         <header className="flex items-center p-2 border-b gap-2 sticky top-0 bg-card z-10">
@@ -306,6 +314,12 @@ export default function ProfilePage() {
                 }
             </Tabs>
         </main>
+        <footer className="p-4 border-t bg-card">
+            <Button variant="destructive" className="w-full" onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Log Out
+            </Button>
+        </footer>
     </AppContainer>
-  );
-}
+
+    
