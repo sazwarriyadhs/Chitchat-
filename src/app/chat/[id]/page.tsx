@@ -132,75 +132,81 @@ function GroupStore({ products, onAddProduct, users }: { products: Product[], on
         })
     }
     
-    return (
-        <div className="space-y-4">
-            <div className="flex justify-between items-center">
-                <h2 className="text-lg font-bold">Group Store</h2>
-                <AddProductDialog onAddProduct={onAddProduct}>
-                    <Button>
-                        <Plus className="w-4 h-4 mr-2" />
-                        List Item
-                    </Button>
-                </AddProductDialog>
-            </div>
+    const handleProductAdded = (productData: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => {
+        onAddProduct(productData);
+        setIsAddProductOpen(false); // Close the dialog
+    }
 
-            {products.length === 0 ? (
-                 <Card className="text-center p-8 border-dashed">
-                    <CardContent className="flex flex-col items-center justify-center gap-4">
-                        <Package className="w-16 h-16 text-muted-foreground" />
-                        <p className="text-muted-foreground">No products for sale in this group yet.</p>
-                         <AddProductDialog onAddProduct={onAddProduct}>
-                           <Button variant="outline">List First Item</Button>
-                        </AddProductDialog>
-                    </CardContent>
-                </Card>
-            ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {products.map(product => {
-                        const seller = users.find(u => u.id === product.sellerId);
-                        return (
-                            <Card key={product.id} className="overflow-hidden">
-                                <CardHeader className="p-0">
-                                    <Image src={product.imageUrl} alt={product.name} width={300} height={200} className="w-full h-32 object-cover" data-ai-hint="product image" />
-                                </CardHeader>
-                                <CardContent className="p-4">
-                                    <CardTitle className="text-base mb-1">{product.name}</CardTitle>
-                                    <CardDescription className="text-xs line-clamp-2 mb-2 h-8">{product.description}</CardDescription>
-                                    <div className="flex items-center justify-between">
-                                        <p className="font-bold text-primary">Rp{product.price.toLocaleString('id-ID')}</p>
-                                        {seller && (
-                                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                                <Avatar className="w-5 h-5">
-                                                    <AvatarImage src={seller.avatar} />
-                                                    <AvatarFallback>{seller.name.charAt(0)}</AvatarFallback>
-                                                </Avatar>
-                                                <span>{seller.name.split(' ')[0]}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </CardContent>
-                                <CardFooter className="p-2">
-                                    <Button className="w-full" onClick={() => handleBuy(product)}>
-                                        <ShoppingCart className="w-4 h-4 mr-2" />
-                                        Buy Now
-                                    </Button>
-                                </CardFooter>
-                            </Card>
-                        )
-                    })}
+    return (
+         <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
+            <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                    <h2 className="text-lg font-bold">Group Store</h2>
+                    <DialogTrigger asChild>
+                        <Button>
+                            <Plus className="w-4 h-4 mr-2" />
+                            List Item
+                        </Button>
+                    </DialogTrigger>
                 </div>
-            )}
-        </div>
+
+                {products.length === 0 ? (
+                    <Card className="text-center p-8 border-dashed">
+                        <CardContent className="flex flex-col items-center justify-center gap-4">
+                            <Package className="w-16 h-16 text-muted-foreground" />
+                            <p className="text-muted-foreground">No products for sale in this group yet.</p>
+                            <DialogTrigger asChild>
+                            <Button variant="outline">List First Item</Button>
+                            </DialogTrigger>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {products.map(product => {
+                            const seller = users.find(u => u.id === product.sellerId);
+                            return (
+                                <Card key={product.id} className="overflow-hidden">
+                                    <CardHeader className="p-0">
+                                        <Image src={product.imageUrl} alt={product.name} width={300} height={200} className="w-full h-32 object-cover" data-ai-hint="product image" />
+                                    </CardHeader>
+                                    <CardContent className="p-4">
+                                        <CardTitle className="text-base mb-1">{product.name}</CardTitle>
+                                        <CardDescription className="text-xs line-clamp-2 mb-2 h-8">{product.description}</CardDescription>
+                                        <div className="flex items-center justify-between">
+                                            <p className="font-bold text-primary">Rp{product.price.toLocaleString('id-ID')}</p>
+                                            {seller && (
+                                                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                                    <Avatar className="w-5 h-5">
+                                                        <AvatarImage src={seller.avatar} />
+                                                        <AvatarFallback>{seller.name.charAt(0)}</AvatarFallback>
+                                                    </Avatar>
+                                                    <span>{seller.name.split(' ')[0]}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </CardContent>
+                                    <CardFooter className="p-2">
+                                        <Button className="w-full" onClick={() => handleBuy(product)}>
+                                            <ShoppingCart className="w-4 h-4 mr-2" />
+                                            Buy Now
+                                        </Button>
+                                    </CardFooter>
+                                </Card>
+                            )
+                        })}
+                    </div>
+                )}
+            </div>
+             <AddProductDialog onAddProduct={handleProductAdded} />
+        </Dialog>
     )
 }
 
 type AddProductDialogProps = {
   onAddProduct: (data: Omit<Product, 'id'|'sellerId'|'chatId'>) => void;
-  children: React.ReactNode;
 }
 
-function AddProductDialog({ onAddProduct, children }: AddProductDialogProps) {
-  const [open, setOpen] = useState(false);
+function AddProductDialog({ onAddProduct }: AddProductDialogProps) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
@@ -230,37 +236,31 @@ function AddProductDialog({ onAddProduct, children }: AddProductDialogProps) {
     setName('');
     setPrice('');
     setDescription('');
-    setOpen(false);
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-            {children}
-        </DialogTrigger>
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle>List a New Item for Sale</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-                <div className="w-full h-40 bg-muted rounded-lg flex items-center justify-center">
-                    <Image src={image} alt="Product image" width={300} height={160} className="object-cover rounded-lg" data-ai-hint="product image"/>
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="name">Product Name</Label>
-                    <Input id="name" placeholder="e.g. Handmade Mug" value={name} onChange={e => setName(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="price">Price (IDR)</Label>
-                    <Input id="price" type="number" placeholder="e.g. 50000" value={price} onChange={e => setPrice(e.target.value)}/>
-                </div>
-                 <div className="space-y-2">
-                    <Label htmlFor="description">Description (optional)</Label>
-                    <Textarea id="description" placeholder="Describe your item" value={description} onChange={e => setDescription(e.target.value)}/>
-                </div>
+    <DialogContent>
+        <DialogHeader>
+            <DialogTitle>List a New Item for Sale</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+            <div className="w-full h-40 bg-muted rounded-lg flex items-center justify-center">
+                <Image src={image} alt="Product image" width={300} height={160} className="object-cover rounded-lg" data-ai-hint="product image"/>
             </div>
-            <Button onClick={handleSubmit}>List Item Now</Button>
-        </DialogContent>
-    </Dialog>
+            <div className="space-y-2">
+                <Label htmlFor="name">Product Name</Label>
+                <Input id="name" placeholder="e.g. Handmade Mug" value={name} onChange={e => setName(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="price">Price (IDR)</Label>
+                <Input id="price" type="number" placeholder="e.g. 50000" value={price} onChange={e => setPrice(e.target.value)}/>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="description">Description (optional)</Label>
+                <Textarea id="description" placeholder="Describe your item" value={description} onChange={e => setDescription(e.target.value)}/>
+            </div>
+        </div>
+        <Button onClick={handleSubmit}>List Item Now</Button>
+    </DialogContent>
   )
 }
