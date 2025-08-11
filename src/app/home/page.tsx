@@ -16,9 +16,33 @@ import { StoryReel } from '@/components/stories/StoryReel';
 import { StatusUpdater } from '@/components/stories/StatusUpdater';
 import { format } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 
 export default function HomePage() {
   const { currentUser } = dataStore;
+  const [activeTab, setActiveTab] = useState("channel");
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+
+  useEffect(() => {
+    if (!carouselApi) return;
+    
+    const onSelect = () => {
+      const newTab = carouselApi.selectedScrollSnap() === 0 ? 'channel' : 'story';
+      setActiveTab(newTab);
+    };
+
+    carouselApi.on("select", onSelect);
+    
+    return () => {
+      carouselApi.off("select", onSelect);
+    };
+  }, [carouselApi]);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    const slide = value === 'channel' ? 0 : 1;
+    carouselApi?.scrollTo(slide);
+  }
 
   return (
     <AppContainer>
@@ -44,22 +68,30 @@ export default function HomePage() {
         </div>
       </header>
       
-        <Tabs defaultValue="channel" className="flex-1 flex flex-col overflow-hidden">
-            <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="channel"><LayoutGrid className="w-4 h-4 mr-2"/>Channel</TabsTrigger>
-                <TabsTrigger value="story"><Users className="w-4 h-4 mr-2"/>Story</TabsTrigger>
-            </TabsList>
-            <TabsContent value="channel" className="flex-1 flex flex-col overflow-y-auto mt-0">
-                <StoreUpdates />
-                <div className="p-2">
-                  <h2 className="text-sm font-semibold text-muted-foreground px-2 py-1">Recent Chats</h2>
-                  <ChatList />
-                </div>
-            </TabsContent>
-            <TabsContent value="story" className="flex-1 overflow-y-auto p-4 mt-0">
-                <StoryReel />
-            </TabsContent>
-        </Tabs>
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="flex-1 flex flex-col overflow-hidden">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="channel"><LayoutGrid className="w-4 h-4 mr-2"/>Channel</TabsTrigger>
+          <TabsTrigger value="story"><Users className="w-4 h-4 mr-2"/>Story</TabsTrigger>
+        </TabsList>
+        <Carousel setApi={setCarouselApi} className="flex-1 w-full">
+            <CarouselContent>
+                <CarouselItem>
+                    <div className="overflow-y-auto h-[calc(100vh_-_110px)] pb-4">
+                        <StoreUpdates />
+                        <div className="p-2">
+                            <h2 className="text-sm font-semibold text-muted-foreground px-2 py-1">Recent Chats</h2>
+                            <ChatList />
+                        </div>
+                    </div>
+                </CarouselItem>
+                 <CarouselItem>
+                    <div className="overflow-y-auto h-[calc(100vh_-_110px)] p-4">
+                        <StoryReel />
+                    </div>
+                </CarouselItem>
+            </CarouselContent>
+        </Carousel>
+      </Tabs>
     </AppContainer>
   );
 }
