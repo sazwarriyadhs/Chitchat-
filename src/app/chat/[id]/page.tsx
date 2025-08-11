@@ -31,18 +31,23 @@ export default function ChatPage() {
     const [loading, setLoading] = useState(true);
     
     useEffect(() => {
-        const currentChat = getChatById(chatId);
-        if (currentChat) {
-            setChat(currentChat);
-        } else {
-            // If chat not found on initial load, it's a 404
-            notFound();
-        }
-        setLoading(false);
+        if (!chatId) return;
+
+        const loadChat = () => {
+            const currentChat = getChatById(chatId as string);
+            if (currentChat) {
+                setChat(currentChat);
+            } else {
+                notFound();
+            }
+            setLoading(false);
+        };
+        
+        loadChat();
 
         const interval = setInterval(() => {
-            const updatedChat = getChatById(chatId);
-            if(updatedChat) {
+            const updatedChat = getChatById(chatId as string);
+             if (updatedChat) {
                 // A simple check to see if messages have changed to avoid unnecessary re-renders
                 setChat(prevChat => {
                     if (prevChat && JSON.stringify(prevChat) === JSON.stringify(updatedChat)) {
@@ -72,13 +77,13 @@ export default function ChatPage() {
     }
     
     const handleSendMessage = (newMessage: Omit<Message, 'id' | 'timestamp' | 'senderId' | 'read' | 'delivered'>) => {
-        addMessageToChat(chatId, newMessage);
-        setChat(getChatById(chatId)); // Force re-render immediately
+        addMessageToChat(chat.id, newMessage);
+        setChat(getChatById(chat.id)); // Force re-render immediately
     };
 
     const handleAddProduct = (productData: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => {
-        addProductToChat(chatId, productData);
-        setChat(getChatById(chatId)); // Force re-render immediately
+        addProductToChat(chat.id, productData);
+        setChat(getChatById(chat.id)); // Force re-render immediately
     };
 
     const getChatInfo = (chat: Chat, currentUser: User): { name: string, avatar: string, status?: string } => {
