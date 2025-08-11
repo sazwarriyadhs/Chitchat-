@@ -200,8 +200,14 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
     const handleBuy = (product: Product) => {
         const seller = users.find(u => u.id === product.sellerId);
         onPurchase({
-            type: 'text',
-            body: `Saya telah membeli ${product.name} dari ${seller?.name || 'penjual'}.`
+            type: 'product',
+            body: `Membeli ${product.name} dari ${seller?.name || 'penjual'}.`,
+            meta: {
+                productId: product.id,
+                productName: product.name,
+                productPrice: product.price,
+                productImage: product.imageUrl,
+            }
         });
         toast({
             title: "Pembelian Berhasil!",

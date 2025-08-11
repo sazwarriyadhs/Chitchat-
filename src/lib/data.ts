@@ -193,12 +193,10 @@ class DataStore {
     
     this.addMessageToChat(chatId, {
         body: `New item for sale: ${newProduct.name}`,
-        type: 'product',
+        type: 'text', // A system-like message
         meta: {
             productId: newProduct.id,
             productName: newProduct.name,
-            productPrice: newProduct.price,
-            productImage: newProduct.imageUrl
         }
     });
 

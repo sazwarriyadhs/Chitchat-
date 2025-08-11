@@ -22,13 +22,14 @@ export function ChatMessage({ message, isCurrentUser }: ChatMessageProps) {
   }
 
   // System message style for product announcements
-  if (message.type === 'product') {
+  if (message.meta?.productId && message.type !== 'product') {
     return (
       <div className="text-center text-xs text-muted-foreground my-2">
         <span className="font-semibold">{isCurrentUser ? 'Anda' : sender.name}</span> mendaftarkan item baru: <span className="font-semibold">{message.meta?.productName}</span>
       </div>
     )
   }
+
 
   return (
     <div
@@ -79,7 +80,6 @@ const MessageContent = ({ message, isCurrentUser }: { message: Message, isCurren
       return <LocationMessage latitude={latitude} longitude={longitude} description={message.body} isCurrentUser={isCurrentUser}/>;
     case 'presentation':
       return <FileCard icon={Presentation} title={message.meta?.fileName || 'Presentation'} description={message.body} isCurrentUser={isCurrentUser} />
-    // Product message type handled above as system message, but can have a card fallback
     case 'product':
         return <ProductCard meta={message.meta} isCurrentUser={isCurrentUser} />;
     default:
@@ -108,16 +108,16 @@ const ProductCard = ({ meta, isCurrentUser }: { meta: any, isCurrentUser: boolea
     const cardBg = isCurrentUser ? 'bg-primary-foreground/10' : 'bg-muted';
     const textColor = isCurrentUser ? 'text-primary-foreground' : 'text-card-foreground';
     return (
-        <Card className={cn("bg-transparent border-0 shadow-none", cardBg)}>
+        <Card className={cn("w-64", isCurrentUser ? 'bg-primary-foreground/10 border-0' : 'bg-card border')}>
             <CardContent className="p-2">
                 <div className="flex gap-3">
                     <Image src={meta.productImage} alt={meta.productName} width={64} height={64} className="rounded-md object-cover h-16 w-16" data-ai-hint="product image thumbnail"/>
                     <div className="flex flex-col justify-between">
                         <div>
                             <p className={cn("font-bold", textColor)}>{meta.productName}</p>
-                            <p className={cn("text-sm font-semibold text-green-500", {'text-green-300': isCurrentUser})}>Rp{meta.productPrice.toLocaleString('id-ID')}</p>
+                            <p className={cn("text-sm font-semibold", isCurrentUser ? 'text-green-300' : 'text-green-500')}>Rp{meta.productPrice.toLocaleString('id-ID')}</p>
                         </div>
-                        <Button size="sm" variant={isCurrentUser ? 'secondary' : 'default'} className="h-7">
+                        <Button size="sm" variant={isCurrentUser ? 'secondary' : 'default'} className="h-7 mt-1">
                             <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
                             Lihat
                         </Button>
