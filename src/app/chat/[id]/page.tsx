@@ -300,3 +300,5 @@ function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
     </DialogContent>
   )
 }
+
+    
