@@ -115,7 +115,8 @@ export default function ChatPage() {
 
     const { name, avatar, status } = getChatInfo(chat, currentUser);
 
-    const defaultTab = "chat";
+    const isStore = chat.type === 'group' && chat.products && chat.products.length > 0;
+    const defaultTab = isStore ? "store" : "chat";
 
     return (
         <AppContainer>
