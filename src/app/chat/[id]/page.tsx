@@ -16,8 +16,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
-import { Plus, ShoppingCart, MessageSquare, Package, Loader2, MoreVertical, Edit, Trash2, Camera } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Plus, ShoppingCart, MessageSquare, Package, Loader2, MoreVertical, Edit, Trash2, Camera, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -196,23 +196,27 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
     const { toast } = useToast();
     const [isAddProductOpen, setIsAddProductOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+    const [checkingOutProduct, setCheckingOutProduct] = useState<Product | null>(null);
 
-    const handleBuy = (product: Product) => {
-        const seller = users.find(u => u.id === product.sellerId);
+    const handleConfirmCheckout = () => {
+        if (!checkingOutProduct) return;
+
+        const seller = users.find(u => u.id === checkingOutProduct.sellerId);
         onPurchase({
             type: 'product',
-            body: `Membeli ${product.name} dari ${seller?.name || 'penjual'}.`,
+            body: `Membeli ${checkingOutProduct.name} dari ${seller?.name || 'penjual'}.`,
             meta: {
-                productId: product.id,
-                productName: product.name,
-                productPrice: product.price,
-                productImage: product.imageUrl,
+                productId: checkingOutProduct.id,
+                productName: checkingOutProduct.name,
+                productPrice: checkingOutProduct.price,
+                productImage: checkingOutProduct.imageUrl,
             }
         });
         toast({
             title: "Pembelian Berhasil!",
-            description: `Anda telah membeli ${product.name}. Sebuah pesan telah dikirim ke obrolan.`
+            description: `Anda telah membeli ${checkingOutProduct.name}. Sebuah pesan telah dikirim ke obrolan.`
         });
+        setCheckingOutProduct(null);
     }
     
     const handleProductAdded = (productData: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => {
@@ -245,6 +249,10 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
             
             <Dialog open={!!editingProduct} onOpenChange={(open) => !open && setEditingProduct(null)}>
                 <AddProductDialog product={editingProduct} onProductSubmit={handleProductUpdated} />
+            </Dialog>
+
+            <Dialog open={!!checkingOutProduct} onOpenChange={(open) => !open && setCheckingOutProduct(null)}>
+                <CheckoutDialog product={checkingOutProduct} onConfirm={handleConfirmCheckout} />
             </Dialog>
 
 
@@ -311,7 +319,7 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
                                     </div>
                                 </CardContent>
                                 <CardFooter className="p-2">
-                                    <Button className="w-full" onClick={() => handleBuy(product)}>
+                                    <Button className="w-full" onClick={() => setCheckingOutProduct(product)}>
                                         <ShoppingCart className="w-4 h-4 mr-2" />
                                         Beli Sekarang
                                     </Button>
@@ -418,4 +426,40 @@ function AddProductDialog({ product, onProductSubmit }: AddProductDialogProps) {
         </DialogClose>
     </DialogContent>
   )
+}
+
+function CheckoutDialog({ product, onConfirm }: { product: Product | null, onConfirm: () => void }) {
+    if (!product) return null;
+
+    return (
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Konfirmasi Pembelian</DialogTitle>
+                <DialogDescription>
+                    Anda akan membeli item berikut. Silakan konfirmasi untuk melanjutkan.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+                <Card className="overflow-hidden">
+                    <CardContent className="p-4 flex gap-4 items-center">
+                        <Image src={product.imageUrl} alt={product.name} width={80} height={80} className="w-20 h-20 object-cover rounded-md" data-ai-hint="product image" />
+                        <div className="flex-1">
+                            <p className="font-semibold">{product.name}</p>
+                            <p className="text-sm text-muted-foreground">{product.description}</p>
+                            <p className="font-bold text-lg text-primary mt-2">Rp{product.price.toLocaleString('id-ID')}</p>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+            <DialogFooter>
+                <DialogClose asChild>
+                    <Button variant="outline">Batal</Button>
+                </DialogClose>
+                <Button onClick={onConfirm}>
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Konfirmasi & Bayar
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    )
 }
