@@ -17,6 +17,7 @@ import { format } from 'date-fns';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function HomePage() {
   const { currentUser } = dataStore;
@@ -62,21 +63,20 @@ export default function HomePage() {
 
 function StoreUpdates() {
   const router = useRouter();
-  const { getRecentProducts, users } = dataStore;
-  const [products, setProducts] = useState<Product[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const { getStores, users } = dataStore;
+  const [stores, setStores] = useState<Chat[]>([]);
+  const [selectedStore, setSelectedStore] = useState<Chat | null>(null);
 
   useEffect(() => {
-    setProducts(getRecentProducts());
-  }, [getRecentProducts]);
+    setStores(getStores());
+  }, [getStores]);
 
-  const handleOrder = () => {
-    if (selectedProduct) {
-      router.push(`/chat/${selectedProduct.chatId}`);
-    }
+  const handleOrder = (storeId: string) => {
+    setSelectedStore(null);
+    router.push(`/chat/${storeId}`);
   };
 
-  if (products.length === 0) {
+  if (stores.length === 0) {
     return null;
   }
   
@@ -88,17 +88,19 @@ function StoreUpdates() {
             loop: false,
         }} className="w-full">
             <CarouselContent className="-ml-2">
-                {products.map(product => {
-                    const seller = users.find(u => u.id === product.sellerId);
+                {stores.map(store => {
                     return (
-                        <CarouselItem key={product.id} className="basis-1/3 pl-2">
-                            <Card className="overflow-hidden cursor-pointer" onClick={() => setSelectedProduct(product)}>
+                        <CarouselItem key={store.id} className="basis-1/3 pl-2">
+                            <Card className="overflow-hidden cursor-pointer" onClick={() => setSelectedStore(store)}>
                                 <CardHeader className="p-0">
-                                    <Image src={product.imageUrl} alt={product.name} width={200} height={120} className="w-full h-24 object-cover" data-ai-hint="product image" />
+                                    <Avatar className="w-full h-24 object-cover rounded-b-none rounded-t-lg">
+                                        <AvatarImage src={store.avatar} alt={store.name} className="object-cover" />
+                                        <AvatarFallback>{store.name?.charAt(0)}</AvatarFallback>
+                                    </Avatar>
                                 </CardHeader>
                                 <CardContent className="p-2">
-                                    <p className="text-sm font-semibold truncate">{product.name}</p>
-                                    <p className="text-xs text-primary font-bold">Rp{product.price.toLocaleString('id-ID')}</p>
+                                    <p className="text-sm font-semibold truncate">{store.name}</p>
+                                    <p className="text-xs text-muted-foreground truncate">{store.participants.length} members</p>
                                 </CardContent>
                             </Card>
                         </CarouselItem>
@@ -106,23 +108,39 @@ function StoreUpdates() {
                 })}
             </CarouselContent>
         </Carousel>
-        <Dialog open={!!selectedProduct} onOpenChange={(open) => !open && setSelectedProduct(null)}>
-            <DialogContent>
-                {selectedProduct && (
+
+        <Dialog open={!!selectedStore} onOpenChange={(open) => !open && setSelectedStore(null)}>
+            <DialogContent className="max-h-[80vh]">
+                {selectedStore && (
                     <>
                         <DialogHeader>
-                            <DialogTitle>{selectedProduct.name}</DialogTitle>
-                            <DialogDescription>{selectedProduct.description}</DialogDescription>
+                            <DialogTitle>Products from {selectedStore.name}</DialogTitle>
+                            <DialogDescription>Browse items available in this store.</DialogDescription>
                         </DialogHeader>
-                        <div className="space-y-4">
-                            <div className="rounded-lg overflow-hidden">
-                                <Image src={selectedProduct.imageUrl} alt={selectedProduct.name} width={400} height={250} className="w-full h-auto object-cover" data-ai-hint="product image" />
-                            </div>
-                            <p className="text-2xl font-bold text-primary">Rp{selectedProduct.price.toLocaleString('id-ID')}</p>
-                            <Button className="w-full" onClick={handleOrder}>
-                               <ShoppingCart className="w-4 h-4 mr-2" /> Order Now
-                            </Button>
+                        <ScrollArea className="pr-4 -mr-4">
+                        <div className="space-y-4 py-2">
+                           {selectedStore.products && selectedStore.products.map(product => {
+                             const seller = users.find(u => u.id === product.sellerId);
+                             return (
+                                <Card key={product.id} className="overflow-hidden">
+                                  <div className="flex gap-4">
+                                      <Image src={product.imageUrl} alt={product.name} width={100} height={100} className="w-24 h-24 object-cover" data-ai-hint="product image" />
+                                      <div className="flex flex-col justify-between p-2 flex-1">
+                                        <div>
+                                          <p className="font-semibold">{product.name}</p>
+                                          <p className="text-sm font-bold text-primary">Rp{product.price.toLocaleString('id-ID')}</p>
+                                          {seller && <p className="text-xs text-muted-foreground">Sold by {seller.name}</p>}
+                                        </div>
+                                         <Button size="sm" className="self-end" onClick={() => handleOrder(selectedStore.id!)}>
+                                           <ShoppingCart className="w-4 h-4 mr-2" /> Order Now
+                                        </Button>
+                                      </div>
+                                  </div>
+                                </Card>
+                             )
+                           })}
                         </div>
+                        </ScrollArea>
                     </>
                 )}
             </DialogContent>
