@@ -31,7 +31,7 @@ import {
 export default function ChatPage() {
     const params = useParams<{ id: string }>();
     const chatId = params.id as string;
-    const { getChatById, currentUser, addMessageToChat, addProductToChat, updateProductInChat, deleteProductFromChat } = dataStore;
+    const { getChatById, currentUser, addMessageToChat, addProductToChat, updateProductInChat, deleteProductFromChat, users } = dataStore;
 
     const [chat, setChat] = useState<Chat | undefined>(undefined);
     const [loading, setLoading] = useState(true);
@@ -404,5 +404,7 @@ function AddProductDialog({ product, onProductSubmit }: AddProductDialogProps) {
     </DialogContent>
   )
 }
+
+    
 
     
