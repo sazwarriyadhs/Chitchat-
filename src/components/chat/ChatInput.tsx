@@ -91,7 +91,7 @@ export function ChatInput({ onSendMessage, chat }: ChatInputProps) {
                 <AttachmentButton icon={ImageIcon} label="Image" onClick={() => handleSendFile('image', 'Sent an image', { fileName: 'image.jpg', fileUrl: 'https://placehold.co/600x400.png' })} />
                 <AttachmentButton icon={FileText} label="Document" onClick={() => handleSendFile('file', 'Sent a document', { fileName: 'document.pdf', fileUrl: '#' })} />
                 <AttachmentButton icon={MapPin} label="Location" onClick={handleShareLocation} />
-                <AttachmentButton icon={PresentationIcon} label="Presentation" onClick={() => { setIsAttachmentOpen(false); setIsPresentationSelectorOpen(true); }} />
+                {currentUser.role === 'business' && <AttachmentButton icon={PresentationIcon} label="Presentation" onClick={() => { setIsAttachmentOpen(false); setIsPresentationSelectorOpen(true); }} />}
             </div>
           </PopoverContent>
         </Popover>

@@ -36,6 +36,10 @@ export default function ProfilePage() {
   const [storyImage, setStoryImage] = useState<string | null>(null);
 
   useEffect(() => {
+    if (currentUser.role !== 'business') {
+        setFetching(false);
+        return;
+    };
     const fetchPresentations = async () => {
         setFetching(true);
         setError(null);
@@ -56,7 +60,7 @@ export default function ProfilePage() {
         }
     };
     fetchPresentations();
-  }, [currentUserId, getPresentationsByUserId, toast]);
+  }, [currentUserId, getPresentationsByUserId, toast, currentUser.role]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -216,9 +220,9 @@ export default function ProfilePage() {
             </div>
 
             <Tabs defaultValue="story" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className={cn("grid w-full", currentUser.role === 'business' ? 'grid-cols-2' : 'grid-cols-1')}>
                     <TabsTrigger value="story">My Story</TabsTrigger>
-                    <TabsTrigger value="presentations">Presentations</TabsTrigger>
+                    {currentUser.role === 'business' && <TabsTrigger value="presentations">Presentations</TabsTrigger>}
                 </TabsList>
                 <TabsContent value="story">
                     <Card>
@@ -242,62 +246,64 @@ export default function ProfilePage() {
                         </CardContent>
                     </Card>
                 </TabsContent>
-                <TabsContent value="presentations">
-                    <Card>
-                        <CardHeader>
-                        <CardTitle>New Presentation</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex flex-col sm:flex-row items-center gap-4">
-                                <Input id="presentation-upload" type="file" accept=".ppt,.pptx,.pdf" onChange={handleFileChange} className="flex-1" ref={fileInputRef}/>
-                                <Button onClick={handleUpload} disabled={loading || !file} className="w-full sm:w-auto">
-                                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileUp className="mr-2 h-4 w-4" />}
-                                    {loading ? 'Uploading...' : 'Upload'}
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="mt-4">
-                        <CardHeader>
-                            <CardTitle>My Uploaded Files</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            {fetching ? (
-                                <div className="text-center text-muted-foreground"><Loader2 className="mx-auto h-6 w-6 animate-spin" /><p>Loading...</p></div>
-                            ) : error ? (
-                                <Alert variant="destructive">
-                                    <XCircle className="h-4 w-4" />
-                                    <AlertTitle>Loading Error</AlertTitle>
-                                    <AlertDescription>
-                                        {error}
-                                    </AlertDescription>
-                                </Alert>
-                            ) : presentations.length === 0 ? (
-                                <div className="text-center text-muted-foreground py-8">
-                                    <PresentationIcon className="mx-auto h-12 w-12 text-gray-400" />
-                                    <p className="mt-4">You have no presentations.</p>
+                {currentUser.role === 'business' && 
+                    <TabsContent value="presentations">
+                        <Card>
+                            <CardHeader>
+                            <CardTitle>New Presentation</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex flex-col sm:flex-row items-center gap-4">
+                                    <Input id="presentation-upload" type="file" accept=".ppt,.pptx,.pdf" onChange={handleFileChange} className="flex-1" ref={fileInputRef}/>
+                                    <Button onClick={handleUpload} disabled={loading || !file} className="w-full sm:w-auto">
+                                        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileUp className="mr-2 h-4 w-4" />}
+                                        {loading ? 'Uploading...' : 'Upload'}
+                                    </Button>
                                 </div>
-                            ) : (
-                                <ul className="space-y-3">
-                                {presentations.map((p) => (
-                                    <li key={p.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                                        <div className="flex items-center gap-3 flex-1 truncate">
-                                            <PresentationIcon className="w-5 h-5 text-muted-foreground" />
-                                            <a href={p.file_url} target="_blank" rel="noopener noreferrer" className="flex-1 truncate hover:underline">
-                                                {p.file_name}
-                                            </a>
-                                        </div>
-                                        <Button size="sm" variant="ghost" onClick={() => handleShareToChat(p)}>
-                                            <Share2 className="mr-2 h-4 w-4" /> Share
-                                        </Button>
-                                    </li>
-                                ))}
-                                </ul>
-                            )}
-                        </CardContent>
-                    </Card>
-                </TabsContent>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="mt-4">
+                            <CardHeader>
+                                <CardTitle>My Uploaded Files</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                {fetching ? (
+                                    <div className="text-center text-muted-foreground"><Loader2 className="mx-auto h-6 w-6 animate-spin" /><p>Loading...</p></div>
+                                ) : error ? (
+                                    <Alert variant="destructive">
+                                        <XCircle className="h-4 w-4" />
+                                        <AlertTitle>Loading Error</AlertTitle>
+                                        <AlertDescription>
+                                            {error}
+                                        </AlertDescription>
+                                    </Alert>
+                                ) : presentations.length === 0 ? (
+                                    <div className="text-center text-muted-foreground py-8">
+                                        <PresentationIcon className="mx-auto h-12 w-12 text-gray-400" />
+                                        <p className="mt-4">You have no presentations.</p>
+                                    </div>
+                                ) : (
+                                    <ul className="space-y-3">
+                                    {presentations.map((p) => (
+                                        <li key={p.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                                            <div className="flex items-center gap-3 flex-1 truncate">
+                                                <PresentationIcon className="w-5 h-5 text-muted-foreground" />
+                                                <a href={p.file_url} target="_blank" rel="noopener noreferrer" className="flex-1 truncate hover:underline">
+                                                    {p.file_name}
+                                                </a>
+                                            </div>
+                                            <Button size="sm" variant="ghost" onClick={() => handleShareToChat(p)}>
+                                                <Share2 className="mr-2 h-4 w-4" /> Share
+                                            </Button>
+                                        </li>
+                                    ))}
+                                    </ul>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                }
             </Tabs>
         </main>
     </AppContainer>
