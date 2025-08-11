@@ -28,7 +28,7 @@ export function ChatHeader({ name, avatarUrl, status, chatId, chatType }: ChatHe
   
   const handleLogout = () => {
     // In a real app, this would clear session/token
-    router.push('/login');
+    router.push('/');
   }
 
   return (
