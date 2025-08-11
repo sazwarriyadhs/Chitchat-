@@ -357,7 +357,7 @@ dataStore.chats = [
           { id: 'msg-s2-1', senderId: mockData.users[4].id, body: 'Selamat datang di Toko B!', timestamp: subHours(new Date(), 3), type: 'text', read: true, delivered: true },
         ],
         products: [
-            { id: 'prod-s2-1', chatId: 'store-2', sellerId: mockData.users[4].id, name: 'Headphone Over-Ear', description: 'Kualitas suara jernih dengan bass mendalam.', price: 350000, imageUrl: 'https://via.placeholder.com/400?text=Headphone+Over-Ear' },
+            { id: 'prod-s2-1', chatId: 'store-2', sellerId: mockData.users[4].id, name: 'Headphone Over-Ear', description: 'Kualitas suara jernih dengan bass mendalam.', price: 350000, imageUrl: '/image/headset.png' },
             { id: 'prod-s2-2', chatId: 'store-2', sellerId: mockData.users[4].id, name: 'Charger USB-C 65W', description: 'Pengisian daya super cepat untuk semua perangkat Anda.', price: 120000, imageUrl: 'https://via.placeholder.com/400?text=Charger+USB-C' },
         ]
       }
