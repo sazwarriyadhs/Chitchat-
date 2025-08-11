@@ -148,7 +148,7 @@ function GroupStore({ products, onAddProduct, users }: { products: Product[], on
                     <CardContent className="flex flex-col items-center justify-center gap-4">
                         <Package className="w-16 h-16 text-muted-foreground" />
                         <p className="text-muted-foreground">No products for sale in this group yet.</p>
-                        <AddProductDialog onAddProduct={onAddProduct}>
+                        <AddProductDialog onAddProduct={onAddProduct} open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
                            <Button variant="outline">List First Item</Button>
                         </AddProductDialog>
                     </CardContent>
@@ -207,12 +207,6 @@ function AddProductDialog({ open, onOpenChange, onAddProduct, children }: AddPro
   const [image, setImage] = useState('https://placehold.co/600x400.png');
   const { toast } = useToast();
 
-  const internalOnOpenChange = (newOpenState: boolean) => {
-    if (onOpenChange) {
-      onOpenChange(newOpenState);
-    }
-  };
-  
   const handleSubmit = () => {
     if (!name || !price) {
         toast({
@@ -236,11 +230,13 @@ function AddProductDialog({ open, onOpenChange, onAddProduct, children }: AddPro
     setName('');
     setPrice('');
     setDescription('');
-    internalOnOpenChange(false);
+    if (onOpenChange) {
+        onOpenChange(false);
+    }
   }
 
   return (
-    <Dialog open={open} onOpenChange={internalOnOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogTrigger asChild>
             {children}
         </DialogTrigger>
