@@ -1,16 +1,17 @@
 
 "use client"
 import Link from 'next/link';
-import { LayoutGrid, Plus, Search, Users } from 'lucide-react';
+import { LayoutGrid, Plus, Search, Users, ShoppingCart, Package } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 import { AppContainer } from '@/components/AppContainer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { dataStore } from '@/lib/data';
-import { Chat, User } from '@/lib/types';
+import { Chat, User, Product } from '@/lib/types';
 import { StoryReel } from '@/components/stories/StoryReel';
 import { StatusUpdater } from '@/components/stories/StatusUpdater';
 import { format } from 'date-fns';
@@ -48,8 +49,12 @@ export default function HomePage() {
                 <TabsTrigger value="channel"><LayoutGrid className="w-4 h-4 mr-2"/>Channel</TabsTrigger>
                 <TabsTrigger value="story"><Users className="w-4 h-4 mr-2"/>Story</TabsTrigger>
             </TabsList>
-            <TabsContent value="channel" className="flex-1 flex flex-col overflow-hidden mt-0">
-                <ChatList />
+            <TabsContent value="channel" className="flex-1 flex flex-col overflow-y-auto mt-0">
+                <StoreUpdates />
+                <div className="p-2">
+                  <h2 className="text-sm font-semibold text-muted-foreground px-2 py-1">Recent Chats</h2>
+                  <ChatList />
+                </div>
             </TabsContent>
             <TabsContent value="story" className="flex-1 overflow-y-auto p-4 mt-0">
                 <StoryReel />
@@ -59,10 +64,56 @@ export default function HomePage() {
   );
 }
 
+function StoreUpdates() {
+  const { getRecentProducts, users, currentUser } = dataStore;
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    setProducts(getRecentProducts());
+  }, [getRecentProducts]);
+
+  if (products.length === 0) {
+    return null;
+  }
+  
+  return (
+    <div className="p-2">
+        <h2 className="text-sm font-semibold text-muted-foreground px-2 py-1">Store Updates</h2>
+        <div className="grid grid-cols-2 gap-2">
+            {products.slice(0, 4).map(product => {
+                const seller = users.find(u => u.id === product.sellerId);
+                return (
+                    <Card key={product.id} className="overflow-hidden">
+                        <Link href={`/chat/${product.chatId}`} passHref>
+                            <CardHeader className="p-0">
+                                <Image src={product.imageUrl} alt={product.name} width={200} height={120} className="w-full h-24 object-cover" data-ai-hint="product image" />
+                            </CardHeader>
+                            <CardContent className="p-2">
+                                <p className="text-sm font-semibold truncate">{product.name}</p>
+                                <p className="text-xs text-primary font-bold">Rp{product.price.toLocaleString('id-ID')}</p>
+                                {seller && (
+                                    <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                                        <Avatar className="w-4 h-4">
+                                            <AvatarImage src={seller.avatar} />
+                                            <AvatarFallback>{seller.name.charAt(0)}</AvatarFallback>
+                                        </Avatar>
+                                        <span>{seller.name.split(' ')[0]}</span>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Link>
+                    </Card>
+                )
+            })}
+        </div>
+    </div>
+  )
+}
+
 function ChatList() {
   const { chats } = dataStore;
   return (
-    <div className="p-2 space-y-2 overflow-y-auto flex-1">
+    <div className="space-y-2">
       {chats.map((chat) => (
         <ChatListItem key={chat.id} chat={chat} />
       ))}

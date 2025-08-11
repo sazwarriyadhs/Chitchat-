@@ -81,6 +81,7 @@ class DataStore {
     this.addProductToChat = this.addProductToChat.bind(this);
     this.updateProductInChat = this.updateProductInChat.bind(this);
     this.deleteProductFromChat = this.deleteProductFromChat.bind(this);
+    this.getRecentProducts = this.getRecentProducts.bind(this);
   }
 
   getChatById(chatId: string): Chat | undefined {
@@ -253,9 +254,17 @@ class DataStore {
     return this.chats[chatIndex].products!.length < initialLength;
   }
 
+  getRecentProducts(): Product[] {
+    const allProducts: Product[] = [];
+    this.chats.forEach(chat => {
+      if (chat.products) {
+        allProducts.push(...chat.products);
+      }
+    });
+    // Sort by id, which is based on timestamp
+    return allProducts.sort((a, b) => b.id.localeCompare(a.id));
+  }
 }
 
 // Singleton instance of the data store
 export const dataStore = new DataStore();
-
-    
