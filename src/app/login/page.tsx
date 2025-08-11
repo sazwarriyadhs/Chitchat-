@@ -15,16 +15,31 @@ import { cn } from "@/lib/utils";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [phone, setPhone] = useState("");
+  const [code, setCode] = useState("");
+  const [codeSent, setCodeSent] = useState(false);
 
   const handleLogin = () => {
     router.push("/home");
   }
 
+  const handleSendCode = () => {
+    if (phone.trim()) {
+      setCodeSent(true);
+    }
+  };
+
+  const handleVerifyCode = () => {
+    if (code.trim()) {
+      handleLogin();
+    }
+  };
+
   return (
     <AppContainer className="bg-transparent shadow-none">
       <div className="flex flex-col items-center justify-center h-full p-8 bg-card md:rounded-2xl">
         <div className="flex flex-col items-center text-center mb-8">
-          <Image src="/image/logomarker.png" alt="ChitChat Logo" width={160} height={80} className="w-auto h-16 mb-4" />
+          <Image src="/image/logomarker.png" alt="ChitChat Logo" width={160} height={80} className="w-auto h-24 mb-4" />
           <p className="text-muted-foreground">Sign in to continue</p>
         </div>
 
@@ -48,13 +63,38 @@ export default function LoginPage() {
                 </div>
             </TabsContent>
             <TabsContent value="phone">
-                <div className="space-y-4 pt-4 text-left">
-                  <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
-                      <Input id="phone" type="tel" placeholder="+1 (555) 000-0000" className="text-gray-900" />
-                  </div>
-                  <Button className="w-full" onClick={handleLogin}>Send Code</Button>
-                </div>
+                {!codeSent ? (
+                    <div className="space-y-4 pt-4 text-left">
+                    <div className="space-y-2">
+                        <Label htmlFor="phone">Phone Number</Label>
+                        <Input 
+                            id="phone" 
+                            type="tel" 
+                            placeholder="+1 (555) 000-0000" 
+                            className="text-gray-900" 
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                        />
+                    </div>
+                    <Button className="w-full" onClick={handleSendCode} disabled={!phone.trim()}>Send Code</Button>
+                    </div>
+                ) : (
+                    <div className="space-y-4 pt-4 text-left animate-in fade-in">
+                        <div className="space-y-2">
+                            <Label htmlFor="code">Verification Code</Label>
+                            <Input 
+                                id="code" 
+                                type="text" 
+                                placeholder="Enter 6-digit code" 
+                                className="text-gray-900" 
+                                value={code}
+                                onChange={(e) => setCode(e.target.value)}
+                            />
+                        </div>
+                        <Button className="w-full" onClick={handleVerifyCode} disabled={!code.trim()}>Verify & Sign In</Button>
+                        <Button variant="link" size="sm" className="w-full" onClick={() => setCodeSent(false)}>Back</Button>
+                    </div>
+                )}
             </TabsContent>
             </Tabs>
         </div>
