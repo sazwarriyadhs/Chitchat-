@@ -111,7 +111,7 @@ export default function LoginPage() {
             </Tabs>
         </div>
         
-        <div className="absolute bottom-8">
+        <div className="mt-6">
             <p className="px-8 text-center text-xs text-muted-foreground">
             By clicking continue, you agree to our{" "}
             <Link
@@ -134,5 +134,3 @@ export default function LoginPage() {
     </AppContainer>
   );
 }
-
-    
