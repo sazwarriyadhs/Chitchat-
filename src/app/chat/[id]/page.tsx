@@ -16,16 +16,22 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, ShoppingCart, MessageSquare, Package, Loader2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { Plus, ShoppingCart, MessageSquare, Package, Loader2, MoreVertical, Edit, Trash2, Camera } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 
 export default function ChatPage() {
     const params = useParams<{ id: string }>();
     const chatId = params.id as string;
-    const { getChatById, currentUser, addMessageToChat, addProductToChat, users } = dataStore;
+    const { getChatById, currentUser, addMessageToChat, addProductToChat, updateProductInChat, deleteProductFromChat } = dataStore;
 
     const [chat, setChat] = useState<Chat | undefined>(undefined);
     const [loading, setLoading] = useState(true);
@@ -86,6 +92,18 @@ export default function ChatPage() {
         if(updatedChat) setChat(updatedChat);
     };
 
+    const handleUpdateProduct = (productId: string, productData: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => {
+        updateProductInChat(chat.id, productId, productData);
+        const updatedChat = getChatById(chat.id);
+        if(updatedChat) setChat(updatedChat);
+    };
+    
+    const handleDeleteProduct = (productId: string) => {
+        deleteProductFromChat(chat.id, productId);
+        const updatedChat = getChatById(chat.id);
+        if(updatedChat) setChat(updatedChat);
+    };
+
     const getChatInfo = (chat: Chat, currentUser: User): { name: string, avatar: string, status?: string } => {
         if (chat.type === 'group') {
             return { name: chat.name!, avatar: chat.avatar!, status: `${chat.participants.length} members` };
@@ -119,7 +137,16 @@ export default function ChatPage() {
                 </TabsContent>
 
                 <TabsContent value="store" className="flex-1 overflow-y-auto p-4 bg-muted/30 mt-0">
-                    <GroupStore products={chat.products || []} onAddProduct={handleAddProduct} users={users} />
+                    <GroupStore 
+                        chatId={chat.id}
+                        products={chat.products || []}
+                        onAddProduct={handleAddProduct}
+                        onUpdateProduct={handleUpdateProduct}
+                        onDeleteProduct={handleDeleteProduct}
+                        onPurchase={handleSendMessage}
+                        users={users} 
+                        currentUser={currentUser}
+                    />
                 </TabsContent>
             </Tabs>
         </AppContainer>
@@ -152,99 +179,177 @@ function ChatMessages({ messages, currentUser }: { messages: Message[], currentU
     )
 }
 
-function GroupStore({ products, onAddProduct, users }: { products: Product[], onAddProduct: (data: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => void, users: User[] }) {
+interface GroupStoreProps {
+    chatId: string;
+    products: Product[];
+    onAddProduct: (data: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => void;
+    onUpdateProduct: (productId: string, data: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => void;
+    onDeleteProduct: (productId: string) => void;
+    onPurchase: (message: Omit<Message, 'id' | 'timestamp' | 'senderId' | 'read' | 'delivered'>) => void;
+    users: User[];
+    currentUser: User;
+}
+
+function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, onPurchase, users, currentUser }: GroupStoreProps) {
     const { toast } = useToast();
     const [isAddProductOpen, setIsAddProductOpen] = useState(false);
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
     const handleBuy = (product: Product) => {
+        const seller = users.find(u => u.id === product.sellerId);
+        onPurchase({
+            type: 'text',
+            body: `I have purchased ${product.name} from ${seller?.name || 'seller'}.`
+        });
         toast({
             title: "Purchase Successful!",
-            description: `You have purchased ${product.name}.`
-        })
+            description: `You have purchased ${product.name}. A message has been sent to the chat.`
+        });
     }
     
     const handleProductAdded = (productData: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => {
         onAddProduct(productData);
-        setIsAddProductOpen(false); // Close the dialog
+        setIsAddProductOpen(false);
+    }
+    
+    const handleProductUpdated = (productData: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => {
+        if (editingProduct) {
+            onUpdateProduct(editingProduct.id, productData);
+        }
+        setEditingProduct(null);
     }
 
     return (
-        <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
-            <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                    <h2 className="text-lg font-bold">Store</h2>
+        <div className="space-y-4">
+            <div className="flex justify-between items-center">
+                <h2 className="text-lg font-bold">Store</h2>
+                <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
                     <DialogTrigger asChild>
                         <Button>
-                            <Plus className="w-4 h-4 mr-2" />
-                            List Item
+                            <Plus className="w-4 h-4 mr-2" /> List Item
                         </Button>
                     </DialogTrigger>
-                </div>
-
-                {products.length === 0 ? (
-                    <Card className="text-center p-8 border-dashed">
-                        <CardContent className="flex flex-col items-center justify-center gap-4">
-                            <Package className="w-16 h-16 text-muted-foreground" />
-                            <p className="text-muted-foreground">No products for sale in this chat yet.</p>
-                            <DialogTrigger asChild>
-                            <Button variant="outline">List First Item</Button>
-                            </DialogTrigger>
-                        </CardContent>
-                    </Card>
-                ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {products.map(product => {
-                            const seller = users.find(u => u.id === product.sellerId);
-                            return (
-                                <Card key={product.id} className="overflow-hidden">
-                                    <CardHeader className="p-0">
-                                        <Image src={product.imageUrl} alt={product.name} width={300} height={200} className="w-full h-32 object-cover" data-ai-hint="product image" />
-                                    </CardHeader>
-                                    <CardContent className="p-4">
-                                        <CardTitle className="text-base mb-1">{product.name}</CardTitle>
-                                        <CardDescription className="text-xs line-clamp-2 mb-2 h-8">{product.description}</CardDescription>
-                                        <div className="flex items-center justify-between">
-                                            <p className="font-bold text-primary">Rp{product.price.toLocaleString('id-ID')}</p>
-                                            {seller && (
-                                                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                                    <Avatar className="w-5 h-5">
-                                                        <AvatarImage src={seller.avatar} />
-                                                        <AvatarFallback>{seller.name.charAt(0)}</AvatarFallback>
-                                                    </Avatar>
-                                                    <span>{seller.name.split(' ')[0]}</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </CardContent>
-                                    <CardFooter className="p-2">
-                                        <Button className="w-full" onClick={() => handleBuy(product)}>
-                                            <ShoppingCart className="w-4 h-4 mr-2" />
-                                            Buy Now
-                                        </Button>
-                                    </CardFooter>
-                                </Card>
-                            )
-                        })}
-                    </div>
-                )}
+                    <AddProductDialog onProductSubmit={handleProductAdded} />
+                </Dialog>
             </div>
-             <AddProductDialog onProductAdded={handleProductAdded} />
-        </Dialog>
+            
+            <Dialog open={!!editingProduct} onOpenChange={(open) => !open && setEditingProduct(null)}>
+                <AddProductDialog product={editingProduct} onProductSubmit={handleProductUpdated} />
+            </Dialog>
+
+
+            {products.length === 0 ? (
+                <Card className="text-center p-8 border-dashed">
+                    <CardContent className="flex flex-col items-center justify-center gap-4">
+                        <Package className="w-16 h-16 text-muted-foreground" />
+                        <p className="text-muted-foreground">No products for sale in this chat yet.</p>
+                        <DialogTrigger asChild>
+                        <Button variant="outline" onClick={() => setIsAddProductOpen(true)}>List First Item</Button>
+                        </DialogTrigger>
+                    </CardContent>
+                </Card>
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {products.map(product => {
+                        const seller = users.find(u => u.id === product.sellerId);
+                        const isSeller = product.sellerId === currentUser.id;
+                        return (
+                            <Card key={product.id} className="overflow-hidden relative group">
+                                {isSeller && (
+                                    <div className="absolute top-1 right-1 z-10">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                 <Button variant="secondary" size="icon" className="h-7 w-7 rounded-full bg-black/40 text-white border-none hover:bg-black/60">
+                                                    <MoreVertical className="w-4 h-4" />
+                                                 </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuItem onClick={() => setEditingProduct(product)}>
+                                                    <Edit className="mr-2 h-4 w-4" />
+                                                    <span>Edit Item</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => onDeleteProduct(product.id)} className="text-destructive focus:text-destructive">
+                                                    <Trash2 className="mr-2 h-4 w-4" />
+                                                    <span>Delete Item</span>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+                                )}
+                                <CardHeader className="p-0">
+                                    <Image src={product.imageUrl} alt={product.name} width={300} height={200} className="w-full h-32 object-cover" data-ai-hint="product image" />
+                                </CardHeader>
+                                <CardContent className="p-4">
+                                    <CardTitle className="text-base mb-1">{product.name}</CardTitle>
+                                    <CardDescription className="text-xs line-clamp-2 mb-2 h-8">{product.description}</CardDescription>
+                                    <div className="flex items-center justify-between">
+                                        <p className="font-bold text-primary">Rp{product.price.toLocaleString('id-ID')}</p>
+                                        {seller && (
+                                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                                <Avatar className="w-5 h-5">
+                                                    <AvatarImage src={seller.avatar} />
+                                                    <AvatarFallback>{seller.name.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                                <span>{seller.name.split(' ')[0]}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </CardContent>
+                                <CardFooter className="p-2">
+                                    <Button className="w-full" onClick={() => handleBuy(product)}>
+                                        <ShoppingCart className="w-4 h-4 mr-2" />
+                                        Buy Now
+                                    </Button>
+                                </CardFooter>
+                            </Card>
+                        )
+                    })}
+                </div>
+            )}
+        </div>
     )
 }
 
 type AddProductDialogProps = {
-  onProductAdded: (data: Omit<Product, 'id'|'sellerId'|'chatId'>) => void;
+  product?: Product | null;
+  onProductSubmit: (data: Omit<Product, 'id'|'sellerId'|'chatId'>) => void;
 }
 
-function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
+function AddProductDialog({ product, onProductSubmit }: AddProductDialogProps) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState('https://placehold.co/600x400.png');
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    if (product) {
+        setName(product.name);
+        setPrice(String(product.price));
+        setDescription(product.description);
+        setImage(product.imageUrl);
+    } else {
+        // Reset form when dialog is for adding new product
+        setName('');
+        setPrice('');
+        setDescription('');
+        setImage('https://placehold.co/600x400.png');
+    }
+  }, [product]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImage(event.target?.result as string);
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (!name || !price) {
         toast({
             variant: "destructive",
@@ -253,30 +358,32 @@ function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
         });
         return;
     }
-    onProductAdded({
+    
+    onProductSubmit({
         name,
         price: parseFloat(price),
         description,
         imageUrl: image
     });
+
     toast({
-        title: "Product Listed!",
-        description: `${name} is now for sale.`
+        title: product ? "Product Updated!" : "Product Listed!",
+        description: `${name} is now ${product ? 'updated' : 'for sale'}.`
     });
-    // Reset form
-    setName('');
-    setPrice('');
-    setDescription('');
   }
 
   return (
     <DialogContent>
         <DialogHeader>
-            <DialogTitle>List a New Item for Sale</DialogTitle>
+            <DialogTitle>{product ? 'Edit Item' : 'List a New Item for Sale'}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
-            <div className="w-full h-40 bg-muted rounded-lg flex items-center justify-center">
-                <Image src={image} alt="Product image" width={300} height={160} className="object-cover rounded-lg" data-ai-hint="product image"/>
+            <input type="file" accept="image/*" ref={imageInputRef} onChange={handleImageChange} className="hidden" />
+            <div className="w-full h-40 bg-muted rounded-lg flex items-center justify-center relative group/image" onClick={() => imageInputRef.current?.click()}>
+                <Image src={image} alt="Product image" width={300} height={160} className="object-cover rounded-lg w-full h-full cursor-pointer" data-ai-hint="product image"/>
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/image:opacity-100 transition-opacity cursor-pointer rounded-lg">
+                    <Camera className="w-8 h-8 text-white" />
+                </div>
             </div>
             <div className="space-y-2">
                 <Label htmlFor="name">Product Name</Label>
@@ -291,7 +398,11 @@ function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                 <Textarea id="description" placeholder="Describe your item" value={description} onChange={e => setDescription(e.target.value)}/>
             </div>
         </div>
-        <Button onClick={handleSubmit}>List Item Now</Button>
+        <DialogClose asChild>
+            <Button onClick={handleSubmit}>{product ? 'Save Changes' : 'List Item Now'}</Button>
+        </DialogClose>
     </DialogContent>
   )
 }
+
+    

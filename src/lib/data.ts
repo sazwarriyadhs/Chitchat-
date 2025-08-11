@@ -79,6 +79,8 @@ class DataStore {
     this.addPresentation = this.addPresentation.bind(this);
     this.getPresentationsByUserId = this.getPresentationsByUserId.bind(this);
     this.addProductToChat = this.addProductToChat.bind(this);
+    this.updateProductInChat = this.updateProductInChat.bind(this);
+    this.deleteProductFromChat = this.deleteProductFromChat.bind(this);
   }
 
   getChatById(chatId: string): Chat | undefined {
@@ -218,7 +220,42 @@ class DataStore {
 
     return newProduct;
   }
+  
+  updateProductInChat(chatId: string, productId: string, productData: Omit<Product, 'id' | 'sellerId' | 'chatId'>): Product | null {
+    const chatIndex = this.chats.findIndex(c => c.id === chatId);
+    if (chatIndex === -1) return null;
+
+    const chat = this.chats[chatIndex];
+    if (!chat.products) return null;
+
+    const productIndex = chat.products.findIndex(p => p.id === productId);
+    if (productIndex === -1) return null;
+
+    const updatedProduct = {
+      ...chat.products[productIndex],
+      ...productData
+    };
+    
+    this.chats[chatIndex].products![productIndex] = updatedProduct;
+    return updatedProduct;
+  }
+
+  deleteProductFromChat(chatId: string, productId: string): boolean {
+    const chatIndex = this.chats.findIndex(c => c.id === chatId);
+    if (chatIndex === -1) return false;
+
+    const chat = this.chats[chatIndex];
+    if (!chat.products) return false;
+    
+    const initialLength = chat.products.length;
+    this.chats[chatIndex].products = chat.products.filter(p => p.id !== productId);
+    
+    return this.chats[chatIndex].products!.length < initialLength;
+  }
+
 }
 
 // Singleton instance of the data store
 export const dataStore = new DataStore();
+
+    
