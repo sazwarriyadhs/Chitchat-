@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Users, Camera, Loader2 } from 'lucide-react';
+import { ArrowLeft, Users, Camera, Loader2, Store } from 'lucide-react';
 import Link from 'next/link';
 import { dataStore } from '@/lib/data';
 import { User } from '@/lib/types';
@@ -32,7 +32,7 @@ export default function NewGroupPage() {
       toast({
         variant: 'destructive',
         title: 'Permission Denied',
-        description: 'Only business members can create new groups.',
+        description: 'Only business members can create new stores.',
       });
       router.push('/home');
     }
@@ -68,11 +68,11 @@ export default function NewGroupPage() {
 
   const handleCreateGroup = () => {
     if (!groupName.trim()) {
-        toast({ variant: 'destructive', title: 'Group name is required.' });
+        toast({ variant: 'destructive', title: 'Store name is required.' });
         return;
     }
     if (selectedUsers.length === 0) {
-        toast({ variant: 'destructive', title: 'Select at least one member.'});
+        toast({ variant: 'destructive', title: 'Select at least one member for your store.'});
         return;
     }
 
@@ -81,8 +81,8 @@ export default function NewGroupPage() {
     createGroupChat(groupName, participantIds, groupAvatar);
 
     toast({
-        title: 'Group Created!',
-        description: `The group "${groupName}" has been created.`,
+        title: 'Store Created!',
+        description: `The store "${groupName}" has been created. You can now add products.`,
     });
     router.push('/home');
   };
@@ -95,15 +95,15 @@ export default function NewGroupPage() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
         </Link>
-        <h1 className="text-xl font-bold font-headline">New Group</h1>
+        <h1 className="text-xl font-bold font-headline">Create New Store</h1>
       </header>
 
       <main className="flex-1 overflow-y-auto p-4 space-y-6">
         <div className="flex flex-col items-center gap-4">
             <div className="relative">
                 <Avatar className="w-24 h-24">
-                    <AvatarImage src={groupAvatar} alt="Group Avatar" />
-                    <AvatarFallback><Users className="w-10 h-10" /></AvatarFallback>
+                    <AvatarImage src={groupAvatar} alt="Store Avatar" />
+                    <AvatarFallback><Store className="w-10 h-10" /></AvatarFallback>
                 </Avatar>
                 <input type="file" accept="image/*" ref={avatarInputRef} onChange={handleAvatarChange} className="hidden" />
                 <Button size="icon" className="absolute bottom-0 right-0 rounded-full" onClick={() => avatarInputRef.current?.click()}>
@@ -111,7 +111,7 @@ export default function NewGroupPage() {
                 </Button>
             </div>
           <Input
-            placeholder="Group Name"
+            placeholder="Store Name"
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
             className="text-center text-lg font-semibold"
@@ -119,7 +119,7 @@ export default function NewGroupPage() {
         </div>
 
         <div className="space-y-2">
-            <h2 className="font-semibold">Select Members</h2>
+            <h2 className="font-semibold">Add Members</h2>
             <div className="space-y-2 rounded-lg border p-2 max-h-60 overflow-y-auto">
             {otherUsers.map(user => (
                 <div key={user.id} className="flex items-center space-x-3 p-2 rounded-md hover:bg-muted/50">
@@ -143,7 +143,7 @@ export default function NewGroupPage() {
 
       <footer className="p-4 border-t">
         <Button className="w-full" onClick={handleCreateGroup}>
-          Create Group ({selectedUsers.length} selected)
+          Create Store ({selectedUsers.length} member(s))
         </Button>
       </footer>
     </AppContainer>

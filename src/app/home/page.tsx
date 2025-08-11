@@ -42,7 +42,7 @@ export default function HomePage() {
             </Button>
             {currentUser.role === 'business' && (
               <Link href="/new-group" passHref>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" title="Create a new store">
                   <Plus className="w-5 h-5" />
                 </Button>
               </Link>

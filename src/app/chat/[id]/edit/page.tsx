@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Users, Camera, Loader2 } from 'lucide-react';
+import { ArrowLeft, Users, Camera, Loader2, Store } from 'lucide-react';
 import Link from 'next/link';
 import { dataStore } from '@/lib/data';
 import { User, Chat } from '@/lib/types';
@@ -31,6 +31,8 @@ export default function EditGroupPage() {
   const avatarInputRef = useRef<HTMLInputElement>(null);
   
   const otherUsers = users.filter(u => u.id !== currentUser.id);
+
+  const isStore = chat?.products?.length !== undefined && chat.products.length > 0;
 
   useEffect(() => {
     if (chatId) {
@@ -70,7 +72,7 @@ export default function EditGroupPage() {
   const handleSaveChanges = () => {
     if (!chatId) return;
     if (!groupName.trim()) {
-        toast({ variant: 'destructive', title: 'Group name is required.' });
+        toast({ variant: 'destructive', title: (isStore ? 'Store' : 'Group') + ' name is required.' });
         return;
     }
     if (selectedUserIds.length === 0) {
@@ -87,7 +89,7 @@ export default function EditGroupPage() {
     });
 
     toast({
-        title: 'Group Updated!',
+        title: (isStore ? 'Store' : 'Group') + ' Updated!',
         description: `The group "${groupName}" has been updated.`,
     });
     router.push(`/chat/${chatId}`);
@@ -107,6 +109,9 @@ export default function EditGroupPage() {
       return notFound();
   }
 
+  const pageTitle = isStore ? 'Edit Store' : 'Edit Group';
+  const avatarFallbackIcon = isStore ? <Store className="w-10 h-10" /> : <Users className="w-10 h-10" />;
+
   return (
     <AppContainer>
       <header className="flex items-center p-2 border-b gap-2 sticky top-0 bg-card z-10">
@@ -115,7 +120,7 @@ export default function EditGroupPage() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
         </Link>
-        <h1 className="text-xl font-bold font-headline">Edit Group</h1>
+        <h1 className="text-xl font-bold font-headline">{pageTitle}</h1>
       </header>
 
       <main className="flex-1 overflow-y-auto p-4 space-y-6">
@@ -123,7 +128,7 @@ export default function EditGroupPage() {
             <div className="relative">
                 <Avatar className="w-24 h-24">
                     <AvatarImage src={groupAvatar} alt="Group Avatar" />
-                    <AvatarFallback><Users className="w-10 h-10" /></AvatarFallback>
+                    <AvatarFallback>{avatarFallbackIcon}</AvatarFallback>
                 </Avatar>
                  <input type="file" accept="image/*" ref={avatarInputRef} onChange={handleAvatarChange} className="hidden" />
                 <Button size="icon" className="absolute bottom-0 right-0 rounded-full" onClick={() => avatarInputRef.current?.click()}>
@@ -131,7 +136,7 @@ export default function EditGroupPage() {
                 </Button>
             </div>
           <Input
-            placeholder="Group Name"
+            placeholder={isStore ? "Store Name" : "Group Name"}
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
             className="text-center text-lg font-semibold"
@@ -169,3 +174,5 @@ export default function EditGroupPage() {
     </AppContainer>
   );
 }
+
+    
