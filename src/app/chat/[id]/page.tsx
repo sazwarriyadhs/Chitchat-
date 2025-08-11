@@ -23,8 +23,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 
 export default function ChatPage() {
-    const params = useParams();
-    const chatId = params.id as string;
+    const params = useParams<{ id: string }>();
+    const chatId = params.id;
     const { getChatById, currentUser, addMessageToChat, addProductToChat, users } = dataStore;
 
     const [chat, setChat] = useState<Chat | undefined>(undefined);
