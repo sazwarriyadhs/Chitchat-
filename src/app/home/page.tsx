@@ -17,6 +17,8 @@ import { StatusUpdater } from '@/components/stories/StatusUpdater';
 import { format } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { useRouter } from 'next/navigation';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '@/components/ui/dialog';
 
 export default function HomePage() {
   const { currentUser } = dataStore;
@@ -97,12 +99,20 @@ export default function HomePage() {
 }
 
 function StoreUpdates() {
-  const { getRecentProducts, users, currentUser } = dataStore;
+  const router = useRouter();
+  const { getRecentProducts, users } = dataStore;
   const [products, setProducts] = useState<Product[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     setProducts(getRecentProducts());
   }, [getRecentProducts]);
+
+  const handleOrder = () => {
+    if (selectedProduct) {
+      router.push(`/chat/${selectedProduct.chatId}`);
+    }
+  };
 
   if (products.length === 0) {
     return null;
@@ -111,33 +121,50 @@ function StoreUpdates() {
   return (
     <div className="p-2">
         <h2 className="text-sm font-semibold text-muted-foreground px-2 py-1">Store Updates</h2>
-        <div className="grid grid-cols-2 gap-2">
-            {products.slice(0, 4).map(product => {
-                const seller = users.find(u => u.id === product.sellerId);
-                return (
-                    <Card key={product.id} className="overflow-hidden">
-                        <Link href={`/chat/${product.chatId}`} passHref>
-                            <CardHeader className="p-0">
-                                <Image src={product.imageUrl} alt={product.name} width={200} height={120} className="w-full h-24 object-cover" data-ai-hint="product image" />
-                            </CardHeader>
-                            <CardContent className="p-2">
-                                <p className="text-sm font-semibold truncate">{product.name}</p>
-                                <p className="text-xs text-primary font-bold">Rp{product.price.toLocaleString('id-ID')}</p>
-                                {seller && (
-                                    <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                                        <Avatar className="w-4 h-4">
-                                            <AvatarImage src={seller.avatar} />
-                                            <AvatarFallback>{seller.name.charAt(0)}</AvatarFallback>
-                                        </Avatar>
-                                        <span>{seller.name.split(' ')[0]}</span>
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Link>
-                    </Card>
-                )
-            })}
-        </div>
+        <Carousel opts={{
+            align: "start",
+            loop: false,
+        }} className="w-full">
+            <CarouselContent className="-ml-2">
+                {products.map(product => {
+                    const seller = users.find(u => u.id === product.sellerId);
+                    return (
+                        <CarouselItem key={product.id} className="basis-1/3 pl-2">
+                            <Card className="overflow-hidden cursor-pointer" onClick={() => setSelectedProduct(product)}>
+                                <CardHeader className="p-0">
+                                    <Image src={product.imageUrl} alt={product.name} width={200} height={120} className="w-full h-24 object-cover" data-ai-hint="product image" />
+                                </CardHeader>
+                                <CardContent className="p-2">
+                                    <p className="text-sm font-semibold truncate">{product.name}</p>
+                                    <p className="text-xs text-primary font-bold">Rp{product.price.toLocaleString('id-ID')}</p>
+                                </CardContent>
+                            </Card>
+                        </CarouselItem>
+                    )
+                })}
+            </CarouselContent>
+        </Carousel>
+        <Dialog open={!!selectedProduct} onOpenChange={(open) => !open && setSelectedProduct(null)}>
+            <DialogContent>
+                {selectedProduct && (
+                    <>
+                        <DialogHeader>
+                            <DialogTitle>{selectedProduct.name}</DialogTitle>
+                            <DialogDescription>{selectedProduct.description}</DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                            <div className="rounded-lg overflow-hidden">
+                                <Image src={selectedProduct.imageUrl} alt={selectedProduct.name} width={400} height={250} className="w-full h-auto object-cover" data-ai-hint="product image" />
+                            </div>
+                            <p className="text-2xl font-bold text-primary">Rp{selectedProduct.price.toLocaleString('id-ID')}</p>
+                            <Button className="w-full" onClick={handleOrder}>
+                               <ShoppingCart className="w-4 h-4 mr-2" /> Order Now
+                            </Button>
+                        </div>
+                    </>
+                )}
+            </DialogContent>
+        </Dialog>
     </div>
   )
 }
