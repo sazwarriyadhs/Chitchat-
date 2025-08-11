@@ -26,6 +26,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { cn } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -198,13 +200,13 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [checkingOutProduct, setCheckingOutProduct] = useState<Product | null>(null);
 
-    const handleConfirmCheckout = () => {
+    const handleConfirmCheckout = (paymentMethod: string) => {
         if (!checkingOutProduct) return;
 
         const seller = users.find(u => u.id === checkingOutProduct.sellerId);
         onPurchase({
             type: 'product',
-            body: `Membeli ${checkingOutProduct.name} dari ${seller?.name || 'penjual'}.`,
+            body: `Membeli ${checkingOutProduct.name} dari ${seller?.name || 'penjual'} via ${paymentMethod}.`,
             meta: {
                 productId: checkingOutProduct.id,
                 productName: checkingOutProduct.name,
@@ -428,8 +430,16 @@ function AddProductDialog({ product, onProductSubmit }: AddProductDialogProps) {
   )
 }
 
-function CheckoutDialog({ product, onConfirm }: { product: Product | null, onConfirm: () => void }) {
+function CheckoutDialog({ product, onConfirm }: { product: Product | null, onConfirm: (paymentMethod: string) => void }) {
     if (!product) return null;
+    const [paymentMethod, setPaymentMethod] = useState("gopay");
+    
+    const paymentMethods = [
+      { id: "gopay", name: "Gopay", icon: "/image/gopay.png"},
+      { id: "ovo", name: "OVO", icon: "/image/ovo.png"},
+      { id: "shopeepay", name: "ShopeePay", icon: "/image/shopeepay.png"},
+      { id: "dana", name: "DANA", icon: "/image/dana.png"},
+    ];
 
     return (
         <DialogContent>
@@ -439,27 +449,45 @@ function CheckoutDialog({ product, onConfirm }: { product: Product | null, onCon
                     Anda akan membeli item berikut. Silakan konfirmasi untuk melanjutkan.
                 </DialogDescription>
             </DialogHeader>
-            <div className="py-4">
+            <div className="py-2">
                 <Card className="overflow-hidden">
-                    <CardContent className="p-4 flex gap-4 items-center">
-                        <Image src={product.imageUrl} alt={product.name} width={80} height={80} className="w-20 h-20 object-cover rounded-md" data-ai-hint="product image" />
+                    <CardContent className="p-4 flex gap-4 items-start">
+                        <Image src={product.imageUrl} alt={product.name} width={80} height={80} className="w-20 h-20 object-cover rounded-md border" data-ai-hint="product image" />
                         <div className="flex-1">
                             <p className="font-semibold">{product.name}</p>
-                            <p className="text-sm text-muted-foreground">{product.description}</p>
-                            <p className="font-bold text-lg text-primary mt-2">Rp{product.price.toLocaleString('id-ID')}</p>
+                            <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
+                            <p className="font-bold text-lg text-primary mt-1">Rp{product.price.toLocaleString('id-ID')}</p>
                         </div>
                     </CardContent>
                 </Card>
             </div>
-            <DialogFooter>
+             <div className="space-y-3">
+                <Label>Metode Pembayaran</Label>
+                <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
+                  <div className="grid grid-cols-2 gap-2">
+                    {paymentMethods.map((method) => (
+                      <Label key={method.id} htmlFor={method.id} className={cn("flex items-center gap-3 rounded-md border p-3 hover:bg-muted/50 cursor-pointer", paymentMethod === method.id && "border-primary ring-2 ring-primary")}>
+                          <RadioGroupItem value={method.id} id={method.id} />
+                          <Image src={method.icon} width={20} height={20} alt={method.name} className="h-5 w-auto object-contain" />
+                          <span>{method.name}</span>
+                      </Label>
+                    ))}
+                  </div>
+                </RadioGroup>
+            </div>
+            <DialogFooter className="mt-4">
                 <DialogClose asChild>
                     <Button variant="outline">Batal</Button>
                 </DialogClose>
-                <Button onClick={onConfirm}>
-                    <CreditCard className="w-4 h-4 mr-2" />
-                    Konfirmasi & Bayar
-                </Button>
+                <DialogClose asChild>
+                  <Button onClick={() => onConfirm(paymentMethod)}>
+                      <CreditCard className="w-4 h-4 mr-2" />
+                      Konfirmasi & Bayar
+                  </Button>
+                </DialogClose>
             </DialogFooter>
         </DialogContent>
     )
 }
+
+    
