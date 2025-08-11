@@ -7,7 +7,7 @@ import { ChatMessage } from '@/components/chat/ChatMessage';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { dataStore } from '@/lib/data';
 import { Chat, Message, User, Product } from '@/lib/types';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from '@/components/ui/button';
@@ -22,8 +22,9 @@ import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 
-export default function ChatPage({ params }: { params: { id: string } }) {
-    const chatId = params.id;
+export default function ChatPage() {
+    const params = useParams();
+    const chatId = params.id as string;
     const { getChatById, currentUser, addMessageToChat, addProductToChat, users } = dataStore;
 
     const [chat, setChat] = useState<Chat | undefined>(undefined);
