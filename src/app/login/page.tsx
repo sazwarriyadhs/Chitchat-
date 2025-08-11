@@ -50,7 +50,7 @@ export default function LoginPage() {
     <AppContainer className="bg-transparent shadow-none">
       <div className="flex flex-col items-center justify-center h-full p-8 bg-card md:rounded-2xl">
         <div className="flex flex-col items-center text-center mb-8">
-          <Image src="https://storage.googleapis.com/stedi-dev-public/logomarker.png" alt="ChitChat Logo" width={160} height={80} className="w-auto h-24 mb-4" />
+          <Image src="/logo.png" alt="ChitChat Logo" width={160} height={80} className="w-auto h-24 mb-4" />
           <p className="text-muted-foreground">Sign in to continue</p>
         </div>
 
@@ -109,25 +109,22 @@ export default function LoginPage() {
                 )}
             </TabsContent>
             </Tabs>
-        </div>
-        
-        <div className="mt-6">
-            <p className="px-8 text-center text-xs text-muted-foreground">
-            By clicking continue, you agree to our{" "}
-            <Link
-                href="#"
-                className="underline underline-offset-4 hover:text-primary"
-            >
-                Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link
-                href="#"
-                className="underline underline-offset-4 hover:text-primary"
-            >
-                Privacy Policy
-            </Link>
-            .
+            <p className="px-8 text-center text-xs text-muted-foreground mt-6">
+              By clicking continue, you agree to our{" "}
+              <Link
+                  href="#"
+                  className="underline underline-offset-4 hover:text-primary"
+              >
+                  Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link
+                  href="#"
+                  className="underline underline-offset-4 hover:text-primary"
+              >
+                  Privacy Policy
+              </Link>
+              .
             </p>
         </div>
       </div>

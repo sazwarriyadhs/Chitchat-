@@ -46,7 +46,7 @@ export default function SplashPage() {
                 delay: 0.2,
               }}
             >
-              <Image src="https://storage.googleapis.com/stedi-dev-public/logomarker.png" alt="ChitChat Logo" width={240} height={120} className="w-auto h-72" />
+              <Image src="/logo.png" alt="ChitChat Logo" width={240} height={120} className="w-auto h-72" />
             </motion.div>
           </motion.div>
         )}
