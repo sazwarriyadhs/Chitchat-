@@ -337,7 +337,8 @@ class DataStore {
   }
 
   getStores(): Chat[] {
-    return this.chats.filter(chat => chat.type === 'group' && chat.products && chat.products.length > 0);
+    // A store is a group chat that has a products array defined.
+    return this.chats.filter(chat => chat.type === 'group' && chat.products);
   }
 
   createUser(userData: Omit<User, 'id' | 'avatar' | 'online' | 'status'> & { password?: string }): User {
