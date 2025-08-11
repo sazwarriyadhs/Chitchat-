@@ -337,7 +337,7 @@ dataStore.chats = [
         id: 'store-1',
         type: 'group',
         name: 'Toko A',
-        avatar: 'https://placehold.co/100x100.png',
+        avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/other/store-fashion.png',
         participants: mockData.users,
         messages: [
           { id: 'msg-s1-1', senderId: mockData.users[3].id, body: 'Selamat datang di Toko A!', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
@@ -351,7 +351,7 @@ dataStore.chats = [
         id: 'store-2',
         type: 'group',
         name: 'Toko B',
-        avatar: 'https://placehold.co/100x100.png',
+        avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/other/store-gadgets.png',
         participants: mockData.users,
         messages: [
           { id: 'msg-s2-1', senderId: mockData.users[4].id, body: 'Selamat datang di Toko B!', timestamp: subHours(new Date(), 3), type: 'text', read: true, delivered: true },
