@@ -20,3 +20,4 @@ ChitChat adalah aplikasi obrolan generasi baru yang secara mulus memadukan inter
 - **Styling:** Tailwind CSS
 - **AI Generatif:** Google Genkit
 - **Backend:** PostgreSQL (disimulasikan dengan data dalam memori)
+# Chitchat-
