@@ -7,7 +7,7 @@ import { ChatMessage } from '@/components/chat/ChatMessage';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { dataStore } from '@/lib/data';
 import { Chat, Message, User, Product } from '@/lib/types';
-import { notFound, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from '@/components/ui/button';
@@ -22,9 +22,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 
-export default function ChatPage() {
-    const params = useParams();
-    const chatId = typeof params.id === 'string' ? params.id : '';
+export default function ChatPage({ params }: { params: { id: string } }) {
+    const chatId = params.id;
     const { getChatById, currentUser, addMessageToChat, addProductToChat, users } = dataStore;
 
     const [chat, setChat] = useState<Chat | undefined>(getChatById(chatId));
@@ -138,7 +137,7 @@ function GroupStore({ products, onAddProduct, users }: { products: Product[], on
     }
 
     return (
-         <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
+        <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
             <div className="space-y-4">
                 <div className="flex justify-between items-center">
                     <h2 className="text-lg font-bold">Group Store</h2>
@@ -197,16 +196,16 @@ function GroupStore({ products, onAddProduct, users }: { products: Product[], on
                     </div>
                 )}
             </div>
-             <AddProductDialog onAddProduct={handleProductAdded} />
+             <AddProductDialog onProductAdded={handleProductAdded} />
         </Dialog>
     )
 }
 
 type AddProductDialogProps = {
-  onAddProduct: (data: Omit<Product, 'id'|'sellerId'|'chatId'>) => void;
+  onProductAdded: (data: Omit<Product, 'id'|'sellerId'|'chatId'>) => void;
 }
 
-function AddProductDialog({ onAddProduct }: AddProductDialogProps) {
+function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
@@ -222,7 +221,7 @@ function AddProductDialog({ onAddProduct }: AddProductDialogProps) {
         });
         return;
     }
-    onAddProduct({
+    onProductAdded({
         name,
         price: parseFloat(price),
         description,
@@ -264,3 +263,5 @@ function AddProductDialog({ onAddProduct }: AddProductDialogProps) {
     </DialogContent>
   )
 }
+
+    
