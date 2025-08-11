@@ -11,11 +11,11 @@ class DataStore {
 
   constructor() {
     this.users = [
-      { id: 'ec4241f4-1cc2-462e-81d7-7725b31a1a1f', name: 'Andi Saputra', avatar: 'https://ik.imagekit.io/demo/avatar1.jpg', status: 'Ngopi dulu...', online: true },
-      { id: '65a40f57-c574-438d-a21b-cd8472d3c769', name: 'Budi Santoso', avatar: 'https://ik.imagekit.io/demo/avatar2.jpg', status: 'Kerja keras, tidur nyenyak', online: false },
-      { id: '969f5a5e-5ff0-406e-9650-821aa22bc886', name: 'Citra Dewi', avatar: 'https://ik.imagekit.io/demo/avatar3.jpg', status: 'Lagi liburan', online: true },
-      { id: 'd90de2e2-ea68-43e2-a0aa-92ab4a7b414b', name: 'Dina Pratiwi', avatar: 'https://ik.imagekit.io/demo/avatar4.jpg', status: 'Belajar coding', online: false },
-      { id: '36190390-d9fc-45ba-862d-155811dbd129', name: 'Eko Prabowo', avatar: 'https://ik.imagekit.io/demo/avatar5.jpg', status: 'Selalu semangat!', online: true },
+      { id: 'ec4241f4-1cc2-462e-81d7-7725b31a1a1f', name: 'Andi Saputra', avatar: 'https://ik.imagekit.io/demo/avatar1.jpg', status: 'Ngopi dulu...', online: true, role: 'business' },
+      { id: '65a40f57-c574-438d-a21b-cd8472d3c769', name: 'Budi Santoso', avatar: 'https://ik.imagekit.io/demo/avatar2.jpg', status: 'Kerja keras, tidur nyenyak', online: false, role: 'regular' },
+      { id: '969f5a5e-5ff0-406e-9650-821aa22bc886', name: 'Citra Dewi', avatar: 'https://ik.imagekit.io/demo/avatar3.jpg', status: 'Lagi liburan', online: true, role: 'regular' },
+      { id: 'd90de2e2-ea68-43e2-a0aa-92ab4a7b414b', name: 'Dina Pratiwi', avatar: 'https://ik.imagekit.io/demo/avatar4.jpg', status: 'Belajar coding', online: false, role: 'regular' },
+      { id: '36190390-d9fc-45ba-862d-155811dbd129', name: 'Eko Prabowo', avatar: 'https://ik.imagekit.io/demo/avatar5.jpg', status: 'Selalu semangat!', online: true, role: 'regular' },
     ];
     this.currentUser = this.users[0];
 

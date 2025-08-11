@@ -223,14 +223,16 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
         <div className="space-y-4">
             <div className="flex justify-between items-center">
                 <h2 className="text-lg font-bold">Store</h2>
-                <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
-                    <DialogTrigger asChild>
-                        <Button>
-                            <Plus className="w-4 h-4 mr-2" /> List Item
-                        </Button>
-                    </DialogTrigger>
-                    <AddProductDialog onProductSubmit={handleProductAdded} />
-                </Dialog>
+                {currentUser.role === 'business' && (
+                  <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
+                      <DialogTrigger asChild>
+                          <Button>
+                              <Plus className="w-4 h-4 mr-2" /> List Item
+                          </Button>
+                      </DialogTrigger>
+                      <AddProductDialog onProductSubmit={handleProductAdded} />
+                  </Dialog>
+                )}
             </div>
             
             <Dialog open={!!editingProduct} onOpenChange={(open) => !open && setEditingProduct(null)}>
@@ -243,9 +245,11 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
                     <CardContent className="flex flex-col items-center justify-center gap-4">
                         <Package className="w-16 h-16 text-muted-foreground" />
                         <p className="text-muted-foreground">No products for sale in this chat yet.</p>
-                        <DialogTrigger asChild>
-                        <Button variant="outline" onClick={() => setIsAddProductOpen(true)}>List First Item</Button>
-                        </DialogTrigger>
+                        {currentUser.role === 'business' && (
+                            <DialogTrigger asChild>
+                                <Button variant="outline" onClick={() => setIsAddProductOpen(true)}>List First Item</Button>
+                            </DialogTrigger>
+                        )}
                     </CardContent>
                 </Card>
             ) : (

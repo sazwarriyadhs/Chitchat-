@@ -4,6 +4,7 @@ export type User = {
   avatar: string;
   status?: string;
   online: boolean;
+  role: 'business' | 'regular';
 };
 
 export type Message = {
