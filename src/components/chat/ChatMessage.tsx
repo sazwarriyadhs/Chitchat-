@@ -3,9 +3,10 @@ import { Message, User } from "@/lib/types";
 import { dataStore } from "@/lib/data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, Presentation, Image as ImageIcon } from "lucide-react";
+import { FileText, Presentation, Image as ImageIcon, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import { LocationMessage } from "./LocationMessage";
+import { Button } from "../ui/button";
 
 type ChatMessageProps = {
   message: Message;
@@ -17,6 +18,15 @@ export function ChatMessage({ message, isCurrentUser }: ChatMessageProps) {
 
   if (!sender) {
     return null;
+  }
+
+  // System message style for product announcements
+  if (message.type === 'product') {
+    return (
+      <div className="text-center text-xs text-muted-foreground my-2">
+        <span className="font-semibold">{isCurrentUser ? 'You' : sender.name}</span> listed a new item: <span className="font-semibold">{message.meta?.productName}</span>
+      </div>
+    )
   }
 
   return (
@@ -68,6 +78,9 @@ const MessageContent = ({ message, isCurrentUser }: { message: Message, isCurren
       return <LocationMessage latitude={latitude} longitude={longitude} description={message.body} isCurrentUser={isCurrentUser}/>;
     case 'presentation':
       return <FileCard icon={Presentation} title={message.meta?.fileName || 'Presentation'} description={message.body} isCurrentUser={isCurrentUser} />
+    // Product message type handled above as system message, but can have a card fallback
+    case 'product':
+        return <ProductCard meta={message.meta} isCurrentUser={isCurrentUser} />;
     default:
       return null;
   }
@@ -87,5 +100,29 @@ const FileCard = ({ icon: Icon, title, description, isCurrentUser }: { icon: Rea
                 <p className={cn("text-xs", mutedColor)}>{description}</p>
             </div>
         </a>
+    )
+}
+
+const ProductCard = ({ meta, isCurrentUser }: { meta: any, isCurrentUser: boolean }) => {
+    const cardBg = isCurrentUser ? 'bg-primary-foreground/10' : 'bg-muted';
+    const textColor = isCurrentUser ? 'text-primary-foreground' : 'text-card-foreground';
+    return (
+        <Card className={cn("bg-transparent border-0 shadow-none", cardBg)}>
+            <CardContent className="p-2">
+                <div className="flex gap-3">
+                    <Image src={meta.productImage} alt={meta.productName} width={64} height={64} className="rounded-md object-cover h-16 w-16" data-ai-hint="product image thumbnail"/>
+                    <div className="flex flex-col justify-between">
+                        <div>
+                            <p className={cn("font-bold", textColor)}>{meta.productName}</p>
+                            <p className={cn("text-sm font-semibold text-green-500", {'text-green-300': isCurrentUser})}>Rp{meta.productPrice.toLocaleString('id-ID')}</p>
+                        </div>
+                        <Button size="sm" variant={isCurrentUser ? 'secondary' : 'default'} className="h-7">
+                            <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
+                            View
+                        </Button>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
     )
 }

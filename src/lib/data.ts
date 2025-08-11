@@ -1,4 +1,4 @@
-import { User, Chat, Story, Message, Presentation } from './types';
+import { User, Chat, Story, Message, Presentation, Product } from './types';
 import { subHours, subMinutes, subDays } from 'date-fns';
 
 class DataStore {
@@ -49,6 +49,10 @@ class DataStore {
           { id: 'msg-3-2', senderId: this.currentUser.id, body: 'Sounds good!', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
           { id: 'msg-3-3', senderId: this.users[1].id, body: 'I\'ll be there.', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
         ],
+        products: [
+            { id: 'prod-1', chatId: 'chat-3', sellerId: this.users[1].id, name: 'Vintage Camera', description: 'A classic film camera from the 70s. Fully functional.', price: 750000, imageUrl: 'https://placehold.co/600x400.png' },
+            { id: 'prod-2', chatId: 'chat-3', sellerId: this.users[3].id, name: 'Handmade Scarf', description: 'Warm and cozy scarf, knitted by hand. Various colors available.', price: 150000, imageUrl: 'https://placehold.co/600x400.png' },
+        ]
       },
     ];
 
@@ -70,6 +74,7 @@ class DataStore {
     this.addStory = this.addStory.bind(this);
     this.addPresentation = this.addPresentation.bind(this);
     this.getPresentationsByUserId = this.getPresentationsByUserId.bind(this);
+    this.addProductToChat = this.addProductToChat.bind(this);
   }
 
   getChatById(chatId: string): Chat | undefined {
@@ -90,6 +95,11 @@ class DataStore {
     };
     
     this.chats[chatIndex].messages.push(message);
+    // Move chat to top
+    const chat = this.chats[chatIndex];
+    this.chats.splice(chatIndex, 1);
+    this.chats.unshift(chat);
+
     return message;
   }
 
@@ -112,6 +122,7 @@ class DataStore {
           delivered: true,
         },
       ],
+      products: [],
     };
 
     this.chats.unshift(newGroup);
@@ -154,6 +165,38 @@ class DataStore {
 
   getPresentationsByUserId(userId: string): Presentation[] {
       return this.presentations.filter(p => p.userId === userId).sort((a,b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime());
+  }
+
+  addProductToChat(chatId: string, productData: Omit<Product, 'id' | 'sellerId' | 'chatId'>): Product | null {
+    const chatIndex = this.chats.findIndex(c => c.id === chatId && c.type === 'group');
+    if (chatIndex === -1) return null;
+
+    const newProduct: Product = {
+        ...productData,
+        id: `prod-${Date.now()}`,
+        chatId: chatId,
+        sellerId: this.currentUser.id
+    };
+
+    if (!this.chats[chatIndex].products) {
+        this.chats[chatIndex].products = [];
+    }
+
+    this.chats[chatIndex].products!.unshift(newProduct);
+    
+    // Also post a message to the chat
+    this.addMessageToChat(chatId, {
+        body: `New item for sale: ${newProduct.name}`,
+        type: 'product',
+        meta: {
+            productId: newProduct.id,
+            productName: newProduct.name,
+            productPrice: newProduct.price,
+            productImage: newProduct.imageUrl
+        }
+    });
+
+    return newProduct;
   }
 }
 

@@ -11,7 +11,7 @@ export type Message = {
   senderId: string;
   body: string;
   timestamp: Date;
-  type: 'text' | 'image' | 'file' | 'location' | 'presentation';
+  type: 'text' | 'image' | 'file' | 'location' | 'presentation' | 'product';
   meta?: { [key: string]: any };
   delivered: boolean;
   read: boolean;
@@ -24,6 +24,7 @@ export type Chat = {
   messages: Message[];
   name?: string;
   avatar?: string;
+  products?: Product[];
 };
 
 export type Story = {
@@ -35,9 +36,19 @@ export type Story = {
 };
 
 export type Presentation = {
-  id: string;
+  id:string;
   userId: string;
   file_name: string;
   file_url: string;
   uploaded_at: string;
+};
+
+export type Product = {
+  id: string;
+  chatId: string;
+  sellerId: string;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
 };
