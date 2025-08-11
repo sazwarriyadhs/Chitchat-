@@ -151,6 +151,7 @@ class DataStore {
     this.updateProductInChat = this.updateProductInChat.bind(this);
     this.deleteProductFromChat = this.deleteProductFromChat.bind(this);
     this.getRecentProducts = this.getRecentProducts.bind(this);
+    this.createUser = this.createUser.bind(this);
   }
 
   getChatById(chatId: string): Chat | undefined {
@@ -332,6 +333,25 @@ class DataStore {
     });
     // Sort by id, which is based on timestamp
     return allProducts.sort((a, b) => b.id.localeCompare(a.id));
+  }
+
+  createUser(userData: Omit<User, 'id' | 'avatar' | 'online' | 'status'> & { password?: string }): User {
+    const existingUser = this.users.find(u => u.name === userData.email);
+    if (existingUser) {
+        throw new Error("User with this email already exists.");
+    }
+    
+    const newUser: User = {
+        id: `user-${Date.now()}`,
+        name: userData.name,
+        avatar: 'https://placehold.co/100x100.png',
+        online: false,
+        status: 'New user!',
+        role: userData.role
+    };
+
+    this.users.push(newUser);
+    return newUser;
   }
 }
 
