@@ -7,12 +7,9 @@ import { AppContainer } from '@/components/AppContainer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { ArrowLeft, Users, Camera, Loader2, Store } from 'lucide-react';
+import { ArrowLeft, Camera, Loader2, Store } from 'lucide-react';
 import Link from 'next/link';
 import { dataStore } from '@/lib/data';
-import { User } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
 
@@ -20,10 +17,8 @@ export default function NewGroupPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [groupName, setGroupName] = useState('');
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [groupAvatar, setGroupAvatar] = useState("https://placehold.co/200x200.png");
-  const { currentUser, users, createGroupChat } = dataStore;
-  const otherUsers = users.filter(u => u.id !== currentUser.id);
+  const { currentUser, createGroupChat, users } = dataStore;
   const avatarInputRef = useRef<HTMLInputElement>(null);
   
   useEffect(() => {
@@ -47,14 +42,6 @@ export default function NewGroupPage() {
       </AppContainer>
     );
   }
-
-  const handleToggleUser = (userId: string) => {
-    setSelectedUsers(prev =>
-      prev.includes(userId)
-        ? prev.filter(id => id !== userId)
-        : [...prev, userId]
-    );
-  };
   
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -71,18 +58,15 @@ export default function NewGroupPage() {
         toast({ variant: 'destructive', title: 'Store name is required.' });
         return;
     }
-    if (selectedUsers.length === 0) {
-        toast({ variant: 'destructive', title: 'Select at least one member for your store.'});
-        return;
-    }
-
-    const participantIds = [currentUser.id, ...selectedUsers];
+    
+    // Automatically add all users to the store
+    const participantIds = users.map(u => u.id);
     
     createGroupChat(groupName, participantIds, groupAvatar);
 
     toast({
         title: 'Store Created!',
-        description: `The store "${groupName}" has been created. You can now add products.`,
+        description: `The store "${groupName}" has been created and is available to all users.`,
     });
     router.push('/home');
   };
@@ -117,33 +101,16 @@ export default function NewGroupPage() {
             className="text-center text-lg font-semibold"
           />
         </div>
-
-        <div className="space-y-2">
-            <h2 className="font-semibold">Add Members</h2>
-            <div className="space-y-2 rounded-lg border p-2 max-h-60 overflow-y-auto">
-            {otherUsers.map(user => (
-                <div key={user.id} className="flex items-center space-x-3 p-2 rounded-md hover:bg-muted/50">
-                    <Checkbox
-                        id={`user-${user.id}`}
-                        checked={selectedUsers.includes(user.id)}
-                        onCheckedChange={() => handleToggleUser(user.id)}
-                    />
-                    <Label htmlFor={`user-${user.id}`} className="flex items-center gap-3 cursor-pointer flex-1">
-                        <Avatar className="w-10 h-10">
-                        <AvatarImage src={user.avatar} alt={user.name} />
-                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <span className="font-medium">{user.name}</span>
-                    </Label>
-                </div>
-            ))}
-            </div>
+        
+        <div className='text-center text-muted-foreground text-sm p-4 bg-muted/50 rounded-lg'>
+            Your new store will be a public channel accessible by all users in the app.
         </div>
+
       </main>
 
       <footer className="p-4 border-t">
         <Button className="w-full" onClick={handleCreateGroup}>
-          Create Store ({selectedUsers.length} member(s))
+          Create Store
         </Button>
       </footer>
     </AppContainer>
