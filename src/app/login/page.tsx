@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { AppContainer } from "@/components/AppContainer";
 import { Button } from "@/components/ui/button";
@@ -11,15 +11,34 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
+import { dataStore } from "@/lib/data";
+import { User } from "@/lib/types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { users, setCurrentUser } = dataStore;
+
+  // Find a default business and regular user to simulate
+  const defaultBusinessUser = users.find(u => u.role === 'business');
+  const defaultRegularUser = users.find(u => u.role === 'regular');
+
+  const [selectedUserId, setSelectedUserId] = useState(defaultBusinessUser?.id || users[0].id);
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
   const [codeSent, setCodeSent] = useState(false);
-  const [email, setEmail] = useState("andi@example.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("password");
+
+  useEffect(() => {
+    const selectedUser = users.find(u => u.id === selectedUserId);
+    if(selectedUser) {
+        // Mock email based on name
+        const mockEmail = `${selectedUser.name.split(' ')[0].toLowerCase()}@example.com`;
+        setEmail(mockEmail);
+    }
+  }, [selectedUserId, users]);
 
   const handleLogin = (method: 'email' | 'phone') => {
     if (method === 'email') {
@@ -28,8 +47,11 @@ export default function LoginPage() {
             return;
         }
     }
-    // In a real app, you would perform authentication here
-    toast({ title: "Login Successful", description: "Welcome back!"});
+    
+    // Set the current user in the data store
+    setCurrentUser(selectedUserId);
+
+    toast({ title: "Login Successful", description: `Welcome back, ${users.find(u => u.id === selectedUserId)?.name}!`});
     router.push("/home");
   }
 
@@ -55,6 +77,22 @@ export default function LoginPage() {
         </div>
 
         <div className="w-full max-w-sm">
+            <div className="space-y-2 mb-4 text-left">
+                <Label htmlFor="user-select">Simulate Login As</Label>
+                <Select value={selectedUserId} onValueChange={setSelectedUserId}>
+                    <SelectTrigger id="user-select" className="text-gray-900">
+                        <SelectValue placeholder="Select a user" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {users.map(user => (
+                            <SelectItem key={user.id} value={user.id}>
+                                {user.name} ({user.role})
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+
             <Tabs defaultValue="email" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="email">Email</TabsTrigger>

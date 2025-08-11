@@ -23,10 +23,10 @@ class DataStore {
       {
         id: 'chat-1',
         type: 'private',
-        participants: [this.currentUser, this.users[1]],
+        participants: [this.users[0], this.users[1]],
         messages: [
           { id: 'msg-1-1', senderId: this.users[1].id, body: 'Hey, how is it going?', timestamp: subMinutes(new Date(), 5), type: 'text', read: true, delivered: true },
-          { id: 'msg-1-2', senderId: this.currentUser.id, body: 'Pretty good! Just working on the new chat app. What do you think?', timestamp: subMinutes(new Date(), 4), type: 'text', read: true, delivered: true },
+          { id: 'msg-1-2', senderId: this.users[0].id, body: 'Pretty good! Just working on the new chat app. What do you think?', timestamp: subMinutes(new Date(), 4), type: 'text', read: true, delivered: true },
           { id: 'msg-1-3', senderId: this.users[1].id, body: 'Looks amazing! The UI is so clean.', timestamp: subMinutes(new Date(), 3), type: 'text', read: false, delivered: true },
         ],
         products: [],
@@ -34,10 +34,10 @@ class DataStore {
       {
         id: 'chat-2',
         type: 'private',
-        participants: [this.currentUser, this.users[2]],
+        participants: [this.users[0], this.users[2]],
         messages: [
           { id: 'msg-2-1', senderId: this.users[2].id, body: 'Can you send me the file?', timestamp: subHours(new Date(), 1), type: 'text', read: true, delivered: true },
-          { id: 'msg-2-2', senderId: this.currentUser.id, body: 'Sure, here it is.', timestamp: subHours(new Date(), 1), type: 'file', meta: { fileName: 'project-brief.pdf', fileUrl: '#' }, read: true, delivered: true },
+          { id: 'msg-2-2', senderId: this.users[0].id, body: 'Sure, here it is.', timestamp: subHours(new Date(), 1), type: 'file', meta: { fileName: 'project-brief.pdf', fileUrl: '#' }, read: true, delivered: true },
         ],
         products: [],
       },
@@ -46,16 +46,16 @@ class DataStore {
         type: 'group',
         name: 'Kopi Kenangan Senja',
         avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/store-logos/store-1_Yd1mAsVl9.png',
-        participants: [this.currentUser, this.users[1], this.users[3]],
+        participants: [this.users[0], this.users[1], this.users[3]],
         messages: [
           { id: 'msg-s1-1', senderId: this.users[3].id, body: 'Selamat datang di Kopi Kenangan Senja!', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
         ],
         products: [
-            { id: 'prod-s1-1', chatId: 'store-1', sellerId: this.currentUser.id, name: 'Es Kopi Susu Gula Aren', description: 'Perpaduan kopi, susu, dan gula aren yang pas.', price: 18000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-1_FayVmG6iG.png' },
-            { id: 'prod-s1-2', chatId: 'store-1', sellerId: this.currentUser.id, name: 'Americano', description: 'Kopi hitam klasik untuk penikmat sejati.', price: 15000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-2_yBqL7mEaD.png' },
-            { id: 'prod-s1-3', chatId: 'store-1', sellerId: this.currentUser.id, name: 'Croissant Cokelat', description: 'Pastry renyah dengan isian cokelat lumer.', price: 22000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-3_XBnJzVvj-.png' },
-            { id: 'prod-s1-4', chatId: 'store-1', sellerId: this.currentUser.id, name: 'Teh Melati', description: 'Teh melati hangat yang menenangkan.', price: 12000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-4_P2K4iXU5U.png' },
-            { id: 'prod-s1-5', chatId: 'store-1', sellerId: this.currentUser.id, name: 'Paket Bundling Kopi + Roti', description: 'Pilih kopi dan roti favoritmu dengan harga lebih hemat.', price: 35000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-5_G3FmI7C0y.png' },
+            { id: 'prod-s1-1', chatId: 'store-1', sellerId: this.users[0].id, name: 'Es Kopi Susu Gula Aren', description: 'Perpaduan kopi, susu, dan gula aren yang pas.', price: 18000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-1_FayVmG6iG.png' },
+            { id: 'prod-s1-2', chatId: 'store-1', sellerId: this.users[0].id, name: 'Americano', description: 'Kopi hitam klasik untuk penikmat sejati.', price: 15000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-2_yBqL7mEaD.png' },
+            { id: 'prod-s1-3', chatId: 'store-1', sellerId: this.users[0].id, name: 'Croissant Cokelat', description: 'Pastry renyah dengan isian cokelat lumer.', price: 22000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-3_XBnJzVvj-.png' },
+            { id: 'prod-s1-4', chatId: 'store-1', sellerId: this.users[0].id, name: 'Teh Melati', description: 'Teh melati hangat yang menenangkan.', price: 12000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-4_P2K4iXU5U.png' },
+            { id: 'prod-s1-5', chatId: 'store-1', sellerId: this.users[0].id, name: 'Paket Bundling Kopi + Roti', description: 'Pilih kopi dan roti favoritmu dengan harga lebih hemat.', price: 35000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-5_G3FmI7C0y.png' },
         ]
       },
       {
@@ -80,16 +80,16 @@ class DataStore {
         type: 'group',
         name: 'Fashionista Preloved',
         avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/store-logos/store-3_Bf-pM-b8T.png',
-        participants: [this.currentUser, this.users[2], this.users[3]],
+        participants: [this.users[0], this.users[2], this.users[3]],
         messages: [
           { id: 'msg-s3-1', senderId: this.users[3].id, body: 'Happy thrifting!', timestamp: subHours(new Date(), 5), type: 'text', read: true, delivered: true },
         ],
         products: [
-            { id: 'prod-s3-1', chatId: 'store-3', sellerId: this.currentUser.id, name: 'Jaket Denim Vintage', description: 'Jaket denim gaya 90-an, kondisi 9/10.', price: 250000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-11_Jz-N9Fw2y.png' },
-            { id: 'prod-s3-2', chatId: 'store-3', sellerId: this.currentUser.id, name: 'Kemeja Flanel Uniqlo', description: 'Kemeja flanel kotak-kotak, ukuran M.', price: 150000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-12_m4rK9w-0D.png' },
-            { id: 'prod-s3-3', chatId: 'store-3', sellerId: this.currentUser.id, name: 'Tas Tangan Kulit Asli', description: 'Tas kulit asli, brand lokal.', price: 400000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-13_cE-9V-v2y.png' },
-            { id: 'prod-s3-4', chatId: 'store-3', sellerId: this.currentUser.id, name: 'Sneakers Converse All Star', description: 'Ukuran 42, jarang dipakai.', price: 350000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-14_Jv-1c-w-2.png' },
-            { id: 'prod-s3-5', chatId: 'store-3', sellerId: this.currentUser.id, name: 'Gaun Musim Panas', description: 'Gaun bunga-bunga, cocok untuk liburan.', price: 180000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-15_V-9c-2-v2.png' },
+            { id: 'prod-s3-1', chatId: 'store-3', sellerId: this.users[0].id, name: 'Jaket Denim Vintage', description: 'Jaket denim gaya 90-an, kondisi 9/10.', price: 250000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-11_Jz-N9Fw2y.png' },
+            { id: 'prod-s3-2', chatId: 'store-3', sellerId: this.users[0].id, name: 'Kemeja Flanel Uniqlo', description: 'Kemeja flanel kotak-kotak, ukuran M.', price: 150000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-12_m4rK9w-0D.png' },
+            { id: 'prod-s3-3', chatId: 'store-3', sellerId: this.users[0].id, name: 'Tas Tangan Kulit Asli', description: 'Tas kulit asli, brand lokal.', price: 400000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-13_cE-9V-v2y.png' },
+            { id: 'prod-s3-4', chatId: 'store-3', sellerId: this.users[0].id, name: 'Sneakers Converse All Star', description: 'Ukuran 42, jarang dipakai.', price: 350000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-14_Jv-1c-w-2.png' },
+            { id: 'prod-s3-5', chatId: 'store-3', sellerId: this.users[0].id, name: 'Gaun Musim Panas', description: 'Gaun bunga-bunga, cocok untuk liburan.', price: 180000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-15_V-9c-2-v2.png' },
         ]
       },
       {
@@ -104,9 +104,9 @@ class DataStore {
         products: [
             { id: 'prod-s4-1', chatId: 'store-4', sellerId: this.users[4].id, name: 'Kaset PS5 "God of War"', description: 'Kondisi mulus, seperti baru.', price: 550000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-16_V-9c-2-v2.png' },
             { id: 'prod-s4-2', chatId: 'store-4', sellerId: this.users[4].id, name: 'Keyboard Mechanical Rexus', description: 'Blue switch, RGB. Lengkap dengan box.', price: 450000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-17_Jv-1c-w-2.png' },
-            { id: 'prod-s4-3', chatId: 'store-4', sellerId: this.currentUser.id, name: 'Mouse Gaming Logitech G102', description: 'Mouse gaming sejuta umat, masih oke.', price: 150000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-18_cE-9V-v2y.png' },
+            { id: 'prod-s4-3', chatId: 'store-4', sellerId: this.users[0].id, name: 'Mouse Gaming Logitech G102', description: 'Mouse gaming sejuta umat, masih oke.', price: 150000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-18_cE-9V-v2y.png' },
             { id: 'prod-s4-4', chatId: 'store-4', sellerId: this.users[4].id, name: 'Headset Gaming Steelseries', description: 'Suara jernih, mic berfungsi normal.', price: 600000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-19_m4rK9w-0D.png' },
-            { id: 'prod-s4-5', chatId: 'store-4', sellerId: this.currentUser.id, name: 'Voucher Steam Wallet', description: 'Voucher Steam 100.000 IDR.', price: 98000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-20_Jz-N9Fw2y.png' },
+            { id: 'prod-s4-5', chatId: 'store-4', sellerId: this.users[0].id, name: 'Voucher Steam Wallet', description: 'Voucher Steam 100.000 IDR.', price: 98000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-20_Jz-N9Fw2y.png' },
         ]
       },
       {
@@ -114,16 +114,16 @@ class DataStore {
         type: 'group',
         name: 'Dapur Bunda Homemade',
         avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/store-logos/store-5_V-9c-2-v2.png',
-        participants: [this.currentUser, this.users[3], this.users[2]],
+        participants: [this.users[0], this.users[3], this.users[2]],
         messages: [
            { id: 'msg-s5-1', senderId: this.users[3].id, body: 'Open PO untuk kue lebaran!', timestamp: subHours(new Date(), 10), type: 'text', read: true, delivered: true },
         ],
         products: [
-            { id: 'prod-s5-1', chatId: 'store-5', sellerId: this.currentUser.id, name: 'Nastar Premium', description: 'Nastar dengan isian nanas asli dan mentega Wijsman.', price: 150000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-21_lGv3qX57k.png' },
-            { id: 'prod-s5-2', chatId: 'store-5', sellerId: this.currentUser.id, name: 'Kastengel Keju Edam', description: 'Kue keju renyah dengan keju Edam asli.', price: 160000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-22_nJqK5vU-g.png' },
-            { id: 'prod-s5-3', chatId: 'store-5', sellerId: this.currentUser.id, name: 'Putri Salju', description: 'Kue manis dengan taburan gula halus.', price: 130000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-23_BwH2zX80G.png' },
-            { id: 'prod-s5-4', chatId: 'store-5', sellerId: this.currentUser.id, name: 'Sambal Bawang Botolan', description: 'Sambal bawang pedas, dijamin nagih!', price: 35000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-24_vJ3c9yD2E.png' },
-            { id: 'prod-s5-5', chatId: 'store-5', sellerId: this.currentUser.id, name: 'Rendang Daging Sapi', description: 'Rendang siap saji (250gr).', price: 85000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-25_y6k4fzvDB.png' },
+            { id: 'prod-s5-1', chatId: 'store-5', sellerId: this.users[0].id, name: 'Nastar Premium', description: 'Nastar dengan isian nanas asli dan mentega Wijsman.', price: 150000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-21_lGv3qX57k.png' },
+            { id: 'prod-s5-2', chatId: 'store-5', sellerId: this.users[0].id, name: 'Kastengel Keju Edam', description: 'Kue keju renyah dengan keju Edam asli.', price: 160000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-22_nJqK5vU-g.png' },
+            { id: 'prod-s5-3', chatId: 'store-5', sellerId: this.users[0].id, name: 'Putri Salju', description: 'Kue manis dengan taburan gula halus.', price: 130000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-23_BwH2zX80G.png' },
+            { id: 'prod-s5-4', chatId: 'store-5', sellerId: this.users[0].id, name: 'Sambal Bawang Botolan', description: 'Sambal bawang pedas, dijamin nagih!', price: 35000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-24_vJ3c9yD2E.png' },
+            { id: 'prod-s5-5', chatId: 'store-5', sellerId: this.users[0].id, name: 'Rendang Daging Sapi', description: 'Rendang siap saji (250gr).', price: 85000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-25_y6k4fzvDB.png' },
         ]
       },
     ];
@@ -135,7 +135,7 @@ class DataStore {
     ];
     
     this.presentations = [
-        { id: 'pres-1', userId: this.currentUser.id, file_name: 'Q3-roadmap.pptx', file_url: '#', uploaded_at: subDays(new Date(), 1).toISOString() }
+        { id: 'pres-1', userId: this.users[0].id, file_name: 'Q3-roadmap.pptx', file_url: '#', uploaded_at: subDays(new Date(), 1).toISOString() }
     ];
 
     // Bind methods
@@ -153,6 +153,14 @@ class DataStore {
     this.getRecentProducts = this.getRecentProducts.bind(this);
     this.createUser = this.createUser.bind(this);
     this.getStores = this.getStores.bind(this);
+    this.setCurrentUser = this.setCurrentUser.bind(this);
+  }
+
+  setCurrentUser(userId: string) {
+    const user = this.users.find(u => u.id === userId);
+    if (user) {
+        this.currentUser = user;
+    }
   }
 
   getChatById(chatId: string): Chat | undefined {
