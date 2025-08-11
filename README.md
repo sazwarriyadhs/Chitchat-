@@ -1,22 +1,22 @@
-# ChitChat - Modern Social Commerce
+# ChitChat - Social Commerce Modern
 
-ChitChat is a next-generation chat application that seamlessly blends real-time social interaction with a vibrant e-commerce marketplace. Built with a modern tech stack, it provides a feature-rich platform for users to connect, share, and shop all in one place.
+ChitChat adalah aplikasi obrolan generasi baru yang secara mulus memadukan interaksi sosial real-time dengan pasar e-commerce yang dinamis. Dibangun dengan tumpukan teknologi modern, aplikasi ini menyediakan platform kaya fitur bagi pengguna untuk terhubung, berbagi, dan berbelanja di satu tempat.
 
-## Key Features
+## Fitur Utama
 
-- **Real-Time Chat:** Engage in private one-on-one conversations or create public group chats (Stores) for your community or business.
-- **Social Commerce / Stores:** Business users can create dedicated "Store" channels to list products, interact with customers, and facilitate sales directly within the chat interface.
-- **User Profiles & Statuses:** Express yourself with customizable user profiles, avatars, and status messages.
-- **Ephemeral Stories:** Share temporary photo updates with your contacts, similar to popular social media platforms.
-- **Business Tools:** Business accounts can upload and share presentations, manage store members, and list items for sale.
-- **Rich Media Sharing:** Share images, documents, and your location with others.
-- **Modern, Responsive UI:** A clean, intuitive interface built with ShadCN UI and Tailwind CSS, featuring both light and dark modes.
+- **Obrolan Real-Time:** Terlibat dalam percakapan pribadi satu lawan satu atau buat obrolan grup publik (Toko) untuk komunitas atau bisnis Anda.
+- **Social Commerce / Toko:** Pengguna bisnis dapat membuat saluran "Toko" khusus untuk mendaftarkan produk, berinteraksi dengan pelanggan, dan memfasilitasi penjualan langsung di dalam antarmuka obrolan.
+- **Profil & Status Pengguna:** Ekspresikan diri Anda dengan profil pengguna, avatar, dan pesan status yang dapat disesuaikan.
+- **Cerita Sementara (Stories):** Bagikan pembaruan foto sementara dengan kontak Anda, mirip dengan platform media sosial populer.
+- **Alat Bisnis:** Akun bisnis dapat mengunggah dan berbagi presentasi, mengelola anggota toko, dan mendaftarkan item untuk dijual.
+- **Berbagi Media Kaya:** Bagikan gambar, dokumen, dan lokasi Anda dengan orang lain.
+- **UI Modern & Responsif:** Antarmuka yang bersih dan intuitif yang dibangun dengan ShadCN UI dan Tailwind CSS, menampilkan mode terang dan gelap.
 
-## Tech Stack
+## Tumpukan Teknologi
 
-- **Framework:** Next.js with App Router
-- **Language:** TypeScript
+- **Framework:** Next.js dengan App Router
+- **Bahasa:** TypeScript
 - **UI:** React, ShadCN UI
 - **Styling:** Tailwind CSS
-- **Generative AI:** Google Genkit
-- **Backend:** PostgreSQL (simulated with in-memory data)
+- **AI Generatif:** Google Genkit
+- **Backend:** PostgreSQL (disimulasikan dengan data dalam memori)

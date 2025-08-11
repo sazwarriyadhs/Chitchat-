@@ -1,66 +1,66 @@
-# ChitChat: The Future of Social Commerce
+# ChitChat: Masa Depan Social Commerce
 
 ---
 
-### 1. The Problem
+### 1. Masalah
 
-Traditional e-commerce is impersonal and disconnected from the way we communicate. Users have to switch between social media for discovery, chat apps for inquiries, and e-commerce websites for purchases. This fragmented experience leads to lost sales and customer frustration. For small businesses, managing multiple platforms for marketing, sales, and customer support is inefficient and costly.
-
----
-
-### 2. The Solution
-
-**ChitChat** is a mobile-first application that integrates a seamless e-commerce experience directly into a familiar and intuitive chat interface.
-
-We bridge the gap between conversation and conversion.
+E-commerce tradisional terasa impersonal dan terputus dari cara kita berkomunikasi. Pengguna harus beralih antara media sosial untuk penemuan produk, aplikasi obrolan untuk bertanya, dan situs web e-commerce untuk melakukan pembelian. Pengalaman yang terfragmentasi ini menyebabkan hilangnya penjualan dan frustrasi pelanggan. Bagi usaha kecil, mengelola beberapa platform untuk pemasaran, penjualan, dan dukungan pelanggan sangat tidak efisien dan mahal.
 
 ---
 
-### 3. How It Works
+### 2. Solusi
 
-- **For Users:** A beautiful, real-time chat app to connect with friends and discover businesses. They can browse products, ask questions, and make purchases all within a single conversation.
-- **For Businesses:** A powerful "social commerce" channel. Business users can create a **Store** (a public group chat), list products, and engage directly with their customers. Every conversation is a sales opportunity.
+**ChitChat** adalah aplikasi mobile-first yang mengintegrasikan pengalaman e-commerce yang mulus langsung ke dalam antarmuka obrolan yang akrab dan intuitif.
 
----
-
-### 4. Target Market
-
-- **Primary:** Small to medium-sized businesses (SMBs) and independent creators in Indonesia who rely on social media (like Instagram and WhatsApp) for sales.
-- **Secondary:** Socially-driven consumers who prefer to interact with brands and purchase products through trusted, conversational platforms.
+Kami menjembatani kesenjangan antara percakapan dan konversi.
 
 ---
 
-### 5. Key Features & Competitive Advantage
+### 3. Cara Kerja
 
-- **Unified Platform:** Chat, community, and commerce in one app. No more switching contexts.
-- **Conversational Sales:** Businesses can provide instant support, offer personalized recommendations, and close sales directly in chat.
-- **Low Barrier to Entry:** Any business user can set up a store in minutes, for free.
-- **Community Building:** Stores are also group chats, allowing businesses to build a loyal community around their brand.
+- **Untuk Pengguna:** Aplikasi obrolan real-time yang indah untuk terhubung dengan teman dan menemukan bisnis. Mereka dapat menelusuri produk, mengajukan pertanyaan, dan melakukan pembelian semua dalam satu percakapan.
+- **Untuk Bisnis:** Saluran "social commerce" yang kuat. Pengguna bisnis dapat membuat **Toko** (obrolan grup publik), mendaftarkan produk, dan berinteraksi langsung dengan pelanggan mereka. Setiap percakapan adalah peluang penjualan.
 
 ---
 
-### 6. Business Model
+### 4. Target Pasar
 
-Our revenue is generated through a freemium subscription model designed for our business users.
-
-- **Basic Account (Free):**
-  - All standard chat features.
-  - Join and purchase from stores.
-
-- **Business Account (Paid Tier):**
-  - **Create and manage Stores.**
-  - **List products for sale.**
-  - **Share presentations and other business documents.**
-  - Access to future premium features like sales analytics, promotional tools, and priority search placement.
+- **Primer:** Usaha kecil hingga menengah (UKM) dan kreator independen di Indonesia yang mengandalkan media sosial (seperti Instagram dan WhatsApp) untuk penjualan.
+- **Sekunder:** Konsumen yang berorientasi sosial yang lebih suka berinteraksi dengan merek dan membeli produk melalui platform percakapan yang tepercaya.
 
 ---
 
-### 7. The Ask
+### 5. Fitur Utama & Keunggulan Kompetitif
 
-We are seeking to validate this prototype and gather user feedback to secure a seed round for further development. Funds will be used for:
+- **Platform Terpadu:** Obrolan, komunitas, dan perdagangan dalam satu aplikasi. Tidak perlu lagi beralih konteks.
+- **Penjualan Percakapan:** Bisnis dapat memberikan dukungan instan, menawarkan rekomendasi yang dipersonalisasi, dan menutup penjualan langsung di obrolan.
+- **Hambatan Masuk Rendah:** Setiap pengguna bisnis dapat mendirikan toko dalam hitungan menit, secara gratis.
+- **Pembangunan Komunitas:** Toko juga merupakan obrolan grup, memungkinkan bisnis membangun komunitas setia di sekitar merek mereka.
 
-- Building a robust backend and database infrastructure.
-- Expanding the feature set (payments, analytics).
-- Marketing and user acquisition campaigns.
+---
 
-**Let's build the future of commerce, one conversation at a time.**
+### 6. Model Bisnis
+
+Pendapatan kami dihasilkan melalui model langganan freemium yang dirancang untuk pengguna bisnis kami.
+
+- **Akun Dasar (Gratis):**
+  - Semua fitur obrolan standar.
+  - Bergabung dan membeli dari toko.
+
+- **Akun Bisnis (Berbayar):**
+  - **Membuat dan mengelola Toko.**
+  - **Mendaftarkan produk untuk dijual.**
+  - **Berbagi presentasi dan dokumen bisnis lainnya.**
+  - Akses ke fitur premium di masa depan seperti analitik penjualan, alat promosi, dan penempatan pencarian prioritas.
+
+---
+
+### 7. Permintaan
+
+Kami sedang mencari validasi untuk prototipe ini dan mengumpulkan umpan balik pengguna untuk mendapatkan pendanaan awal untuk pengembangan lebih lanjut. Dana akan digunakan untuk:
+
+- Membangun infrastruktur backend dan database yang kuat.
+- Memperluas set fitur (pembayaran, analitik).
+- Kampanye pemasaran dan akuisisi pengguna.
+
+**Mari kita bangun masa depan perdagangan, satu percakapan pada satu waktu.**
