@@ -27,6 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+export const dynamic = 'force-dynamic';
 
 export default function ChatPage() {
     const params = useParams<{ id: string }>();
@@ -246,9 +247,12 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
                         <Package className="w-16 h-16 text-muted-foreground" />
                         <p className="text-muted-foreground">No products for sale in this chat yet.</p>
                         {currentUser.role === 'business' && (
-                            <DialogTrigger asChild>
-                                <Button variant="outline" onClick={() => setIsAddProductOpen(true)}>List First Item</Button>
-                            </DialogTrigger>
+                           <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline" onClick={() => setIsAddProductOpen(true)}>List First Item</Button>
+                                </DialogTrigger>
+                                <AddProductDialog onProductSubmit={handleProductAdded} />
+                            </Dialog>
                         )}
                     </CardContent>
                 </Card>
@@ -408,7 +412,3 @@ function AddProductDialog({ product, onProductSubmit }: AddProductDialogProps) {
     </DialogContent>
   )
 }
-
-    
-
-    
