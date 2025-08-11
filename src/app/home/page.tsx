@@ -40,11 +40,13 @@ export default function HomePage() {
             <Button variant="ghost" size="icon">
                 <Search className="w-5 h-5" />
             </Button>
-            <Link href="/new-group" passHref>
-              <Button variant="ghost" size="icon">
-                <Plus className="w-5 h-5" />
-              </Button>
-            </Link>
+            {currentUser.role === 'business' && (
+              <Link href="/new-group" passHref>
+                <Button variant="ghost" size="icon">
+                  <Plus className="w-5 h-5" />
+                </Button>
+              </Link>
+            )}
             <Link href="/profile" passHref>
               <Button variant="ghost" size="icon">
                 <UserIcon className="w-5 h-5" />
@@ -209,3 +211,5 @@ function ChatListItem({ chat }: { chat: Chat }) {
     </Link>
   );
 }
+
+    

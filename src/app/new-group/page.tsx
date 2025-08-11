@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppContainer } from '@/components/AppContainer';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Users, Camera } from 'lucide-react';
+import { ArrowLeft, Users, Camera, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { dataStore } from '@/lib/data';
 import { User } from '@/lib/types';
@@ -25,6 +25,28 @@ export default function NewGroupPage() {
   const { currentUser, users, createGroupChat } = dataStore;
   const otherUsers = users.filter(u => u.id !== currentUser.id);
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  
+  useEffect(() => {
+    // Redirect if not a business member
+    if (currentUser.role !== 'business') {
+      toast({
+        variant: 'destructive',
+        title: 'Permission Denied',
+        description: 'Only business members can create new groups.',
+      });
+      router.push('/home');
+    }
+  }, [currentUser, router, toast]);
+
+  if (currentUser.role !== 'business') {
+    return (
+        <AppContainer>
+          <div className="flex items-center justify-center h-full">
+              <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+          </div>
+      </AppContainer>
+    );
+  }
 
   const handleToggleUser = (userId: string) => {
     setSelectedUsers(prev =>
@@ -127,3 +149,5 @@ export default function NewGroupPage() {
     </AppContainer>
   );
 }
+
+    
