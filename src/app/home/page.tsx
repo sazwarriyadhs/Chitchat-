@@ -1,7 +1,7 @@
 
 "use client"
 import Link from 'next/link';
-import { Plus, Search, ShoppingCart, User as UserIcon } from 'lucide-react';
+import { Plus, Search, User as UserIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
@@ -18,6 +18,7 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ShoppingCart } from 'lucide-react';
 
 export default function HomePage() {
   const { currentUser } = dataStore;
@@ -33,7 +34,7 @@ export default function HomePage() {
               <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
             </Avatar>
           </StatusUpdater>
-          <h1 className="text-xl font-bold font-headline">ChattyLite</h1>
+          <h1 className="text-xl font-bold font-headline">{currentUser.name}</h1>
         </div>
         <div className='flex items-center gap-2'>
             <Button variant="ghost" size="icon">
