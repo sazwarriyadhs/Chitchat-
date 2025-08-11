@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ArrowLeft, Camera, Edit, FileUp, Loader2, LogOut, Plus, Presentation as PresentationIcon, Share2, User, XCircle } from 'lucide-react';
+import { ArrowLeft, Camera, Edit, FileUp, Loader2, LogOut, Plus, Presentation as PresentationIcon, Share2, User, XCircle, Moon, Sun } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { dataStore } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -17,6 +17,8 @@ import Image from 'next/image';
 import { Presentation } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 export default function ProfilePage() {
   const { currentUser, updateUser, addStory, addPresentation, getPresentationsByUserId } = dataStore;
@@ -37,6 +39,12 @@ export default function ProfilePage() {
   const profileImageInputRef = useRef<HTMLInputElement>(null);
   const storyImageInputRef = useRef<HTMLInputElement>(null);
   const [storyImage, setStoryImage] = useState<string | null>(null);
+
+  const [theme, setTheme] = useState('dark');
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
 
   useEffect(() => {
     if (currentUser.role !== 'business') {
@@ -215,17 +223,37 @@ export default function ProfilePage() {
                 </div>
                 <div className="text-center">
                     {isEditing ? (
-                        <Input className="text-2xl font-bold text-center" value={name} onChange={(e) => setName(e.target.value)} />
+                        <Input className="text-2xl font-bold text-center bg-input text-foreground" value={name} onChange={(e) => setName(e.target.value)} />
                     ) : (
                         <h2 className="text-2xl font-bold">{name}</h2>
                     )}
                     {isEditing ? (
-                         <Input className="text-sm text-muted-foreground mt-1 text-center" placeholder="Your status" value={status} onChange={(e) => setStatus(e.target.value)} />
+                         <Input className="text-sm text-muted-foreground mt-1 text-center bg-input text-foreground" placeholder="Your status" value={status} onChange={(e) => setStatus(e.target.value)} />
                     ) : (
                         <p className="text-sm text-muted-foreground mt-1">{status || 'No status'}</p>
                     )}
                 </div>
             </div>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Settings</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center justify-between">
+                        <Label htmlFor="theme-switch" className="flex items-center gap-2">
+                            {theme === 'dark' ? <Moon/> : <Sun/>}
+                            <span>{theme === 'dark' ? 'Dark' : 'Light'} Mode</span>
+                        </Label>
+                        <Switch
+                            id="theme-switch"
+                            checked={theme === 'dark'}
+                            onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                        />
+                    </div>
+                </CardContent>
+            </Card>
+
 
             <Tabs defaultValue="story" className="w-full">
                 <TabsList className={cn("grid w-full", currentUser.role === 'business' ? 'grid-cols-2' : 'grid-cols-1')}>

@@ -8,7 +8,7 @@ body {
 
 @layer base {
   :root {
-    --background: 220 40% 98%;
+    --background: 0 0% 100%;
     --foreground: 220 30% 15%;
     --card: 0 0% 100%;
     --card-foreground: 220 30% 15%;
@@ -25,7 +25,7 @@ body {
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 220 10% 89%;
-    --input: 220 10% 89%;
+    --input: 220 10% 80%;
     --ring: 150 80% 40%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -36,24 +36,24 @@ body {
   }
 
   .dark {
-    --background: 220 15% 12%; /* Darker background */
+    --background: 220 15% 12%;
     --foreground: 220 15% 90%;
-    --card: 220 15% 18%; /* Slightly lighter card */
+    --card: 220 15% 18%;
     --card-foreground: 220 15% 90%;
     --popover: 220 30% 10%;
     --popover-foreground: 220 15% 90%;
-    --primary: 145 63% 49%; /* Bright green */
+    --primary: 145 63% 49%;
     --primary-foreground: 145 15% 10%;
     --secondary: 220 25% 20%;
     --secondary-foreground: 220 15% 90%;
-    --muted: 220 15% 25%; /* Muted for tabs */
+    --muted: 220 15% 25%;
     --muted-foreground: 220 10% 65%;
     --accent: 45 85% 60%;
     --accent-foreground: 45 25% 10%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
     --border: 220 15% 30%;
-    --input: 220 10% 98%; /* White input background */
+    --input: 220 15% 30%;
     --ring: 145 63% 49%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
