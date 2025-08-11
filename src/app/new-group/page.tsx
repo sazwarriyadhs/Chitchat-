@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppContainer } from '@/components/AppContainer';
 import { Button } from '@/components/ui/button';
@@ -20,8 +21,10 @@ export default function NewGroupPage() {
   const { toast } = useToast();
   const [groupName, setGroupName] = useState('');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [groupAvatar, setGroupAvatar] = useState("https://placehold.co/200x200.png");
   const { currentUser, users, createGroupChat } = dataStore;
   const otherUsers = users.filter(u => u.id !== currentUser.id);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   const handleToggleUser = (userId: string) => {
     setSelectedUsers(prev =>
@@ -29,6 +32,16 @@ export default function NewGroupPage() {
         ? prev.filter(id => id !== userId)
         : [...prev, userId]
     );
+  };
+  
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setGroupAvatar(event.target?.result as string);
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    }
   };
 
   const handleCreateGroup = () => {
@@ -43,7 +56,7 @@ export default function NewGroupPage() {
 
     const participantIds = [currentUser.id, ...selectedUsers];
     
-    createGroupChat(groupName, participantIds);
+    createGroupChat(groupName, participantIds, groupAvatar);
 
     toast({
         title: 'Group Created!',
@@ -67,10 +80,11 @@ export default function NewGroupPage() {
         <div className="flex flex-col items-center gap-4">
             <div className="relative">
                 <Avatar className="w-24 h-24">
-                    <AvatarImage src="https://placehold.co/200x200.png" alt="Group Avatar" />
+                    <AvatarImage src={groupAvatar} alt="Group Avatar" />
                     <AvatarFallback><Users className="w-10 h-10" /></AvatarFallback>
                 </Avatar>
-                <Button size="icon" className="absolute bottom-0 right-0 rounded-full" >
+                <input type="file" accept="image/*" ref={avatarInputRef} onChange={handleAvatarChange} className="hidden" />
+                <Button size="icon" className="absolute bottom-0 right-0 rounded-full" onClick={() => avatarInputRef.current?.click()}>
                     <Camera className="w-4 h-4" />
                 </Button>
             </div>

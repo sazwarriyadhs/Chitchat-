@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams, notFound } from 'next/navigation';
 import { AppContainer } from '@/components/AppContainer';
 import { Button } from '@/components/ui/button';
@@ -28,6 +28,7 @@ export default function EditGroupPage() {
   const [groupName, setGroupName] = useState('');
   const [groupAvatar, setGroupAvatar] = useState('');
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
   
   const otherUsers = users.filter(u => u.id !== currentUser.id);
 
@@ -47,6 +48,16 @@ export default function EditGroupPage() {
         setLoading(false);
     }
   }, [chatId, getChatById, currentUser.id]);
+  
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setGroupAvatar(event.target?.result as string);
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
 
   const handleToggleUser = (userId: string) => {
     setSelectedUserIds(prev =>
@@ -114,7 +125,8 @@ export default function EditGroupPage() {
                     <AvatarImage src={groupAvatar} alt="Group Avatar" />
                     <AvatarFallback><Users className="w-10 h-10" /></AvatarFallback>
                 </Avatar>
-                <Button size="icon" className="absolute bottom-0 right-0 rounded-full" >
+                 <input type="file" accept="image/*" ref={avatarInputRef} onChange={handleAvatarChange} className="hidden" />
+                <Button size="icon" className="absolute bottom-0 right-0 rounded-full" onClick={() => avatarInputRef.current?.click()}>
                     <Camera className="w-4 h-4" />
                 </Button>
             </div>

@@ -107,13 +107,13 @@ class DataStore {
     return message;
   }
 
-  createGroupChat(groupName: string, participantIds: string[]) {
+  createGroupChat(groupName: string, participantIds: string[], avatar: string) {
     const participants = this.users.filter(u => participantIds.includes(u.id));
     const newGroup: Chat = {
       id: `chat-${Date.now()}`,
       type: 'group',
       name: groupName,
-      avatar: 'https://placehold.co/100x100.png',
+      avatar: avatar,
       participants: participants,
       messages: [
         {
