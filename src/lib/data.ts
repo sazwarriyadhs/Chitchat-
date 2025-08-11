@@ -252,7 +252,7 @@ class DataStore {
 
   getStores(): Chat[] {
     // This would be: SELECT * FROM chats WHERE type = 'group' AND has_products = true;
-    return this.chats.filter(chat => chat.type === 'group' && chat.products).sort((a, b) => a.id.localeCompare(b.id));
+    return this.chats.filter(chat => chat.type === 'group' && chat.products && chat.products.length > 0).sort((a, b) => a.id.localeCompare(b.id));
   }
 
   createUser(userData: Omit<User, 'id' | 'avatar' | 'online' | 'status'> & { password?: string }): User {
@@ -336,17 +336,31 @@ dataStore.chats = [
        {
         id: 'store-1',
         type: 'group',
-        name: 'Kopi Kenangan Senja',
-        avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/store-logos/store-1_Yd1mAsVl9.png',
+        name: 'Toko A',
+        avatar: 'https://placehold.co/100x100.png',
         participants: mockData.users,
         messages: [
-          { id: 'msg-s1-1', senderId: mockData.users[3].id, body: 'Selamat datang di Kopi Kenangan Senja!', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
+          { id: 'msg-s1-1', senderId: mockData.users[3].id, body: 'Selamat datang di Toko A!', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
         ],
         products: [
-            { id: 'prod-s1-1', chatId: 'store-1', sellerId: mockData.users[0].id, name: 'Es Kopi Susu Gula Aren', description: 'Perpaduan kopi, susu, dan gula aren yang pas.', price: 18000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-1_FayVmG6iG.png' },
-            { id: 'prod-s1-2', chatId: 'store-1', sellerId: mockData.users[0].id, name: 'Americano', description: 'Kopi hitam klasik untuk penikmat sejati.', price: 15000, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/products/prod-2_yBqL7mEaD.png' },
+            { id: 'prod-s1-1', chatId: 'store-1', sellerId: mockData.users[0].id, name: 'Kaos Polos Putih', description: 'Kaos katun berkualitas tinggi, nyaman dipakai sehari-hari.', price: 75000, imageUrl: 'https://via.placeholder.com/400?text=Kaos+Polos+Putih' },
+            { id: 'prod-s1-2', chatId: 'store-1', sellerId: mockData.users[0].id, name: 'Jaket Bomber Hitam', description: 'Jaket bomber stylish untuk segala cuaca.', price: 250000, imageUrl: 'https://via.placeholder.com/400?text=Jaket+Bomber+Hitam' },
         ]
       },
+      {
+        id: 'store-2',
+        type: 'group',
+        name: 'Toko B',
+        avatar: 'https://placehold.co/100x100.png',
+        participants: mockData.users,
+        messages: [
+          { id: 'msg-s2-1', senderId: mockData.users[4].id, body: 'Selamat datang di Toko B!', timestamp: subHours(new Date(), 3), type: 'text', read: true, delivered: true },
+        ],
+        products: [
+            { id: 'prod-s2-1', chatId: 'store-2', sellerId: mockData.users[4].id, name: 'Headphone Over-Ear', description: 'Kualitas suara jernih dengan bass mendalam.', price: 350000, imageUrl: 'https://via.placeholder.com/400?text=Headphone+Over-Ear' },
+            { id: 'prod-s2-2', chatId: 'store-2', sellerId: mockData.users[4].id, name: 'Charger USB-C 65W', description: 'Pengisian daya super cepat untuk semua perangkat Anda.', price: 120000, imageUrl: 'https://via.placeholder.com/400?text=Charger+USB-C' },
+        ]
+      }
 ];
 dataStore.stories = [
     { id: 'story-1', userId: mockData.users[1].id, imageUrl: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/stories/story-1_H3O0gQ-sE.png', timestamp: subHours(new Date(), 2), viewed: false },
@@ -359,3 +373,5 @@ dataStore.presentations = [
 
 // Set initial current user for components that rely on it.
 dataStore.currentUser = mockData.users[0];
+
+    
