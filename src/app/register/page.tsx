@@ -13,6 +13,7 @@ import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import { dataStore } from "@/lib/data";
 import { User } from "@/lib/types";
+import { MembershipTable } from "@/components/MembershipTable";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -85,6 +86,7 @@ export default function RegisterPage() {
               </Link>
             </div>
         </div>
+        <MembershipTable />
       </div>
     </AppContainer>
   );
