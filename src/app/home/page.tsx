@@ -46,6 +46,17 @@ export default function HomePage() {
     carouselApi?.scrollTo(slide);
   }
 
+  const channelContent = (
+    <div className="overflow-y-auto h-[calc(100vh_-_110px)] pb-4">
+        <StoryReel />
+        <StoreUpdates />
+        <div className="p-2">
+            <h2 className="text-sm font-semibold text-muted-foreground px-2 py-1">Recent Chats</h2>
+            <ChatList />
+        </div>
+    </div>
+  );
+
   return (
     <AppContainer>
       <header className="flex items-center justify-between p-2 border-b">
@@ -78,18 +89,10 @@ export default function HomePage() {
         <Carousel setApi={setCarouselApi} className="flex-1 w-full">
             <CarouselContent>
                 <CarouselItem>
-                    <div className="overflow-y-auto h-[calc(100vh_-_110px)] pb-4">
-                        <StoreUpdates />
-                        <div className="p-2">
-                            <h2 className="text-sm font-semibold text-muted-foreground px-2 py-1">Recent Chats</h2>
-                            <ChatList />
-                        </div>
-                    </div>
+                    {channelContent}
                 </CarouselItem>
                  <CarouselItem>
-                    <div className="overflow-y-auto h-[calc(100vh_-_110px)] p-4">
-                        <StoryReel />
-                    </div>
+                    {channelContent}
                 </CarouselItem>
             </CarouselContent>
         </Carousel>
