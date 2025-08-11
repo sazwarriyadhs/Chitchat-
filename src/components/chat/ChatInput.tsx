@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react";
@@ -44,7 +45,7 @@ export function ChatInput({ onSendMessage, chat }: ChatInputProps) {
   };
 
   const handleSendPresentation = (presentation: Presentation) => {
-    handleSendFile('presentation', `Shared a presentation: ${presentation.file_name}`, {
+    handleSendFile('presentation', `Membagikan presentasi: ${presentation.file_name}`, {
       fileName: presentation.file_name,
       fileUrl: presentation.file_url,
     });
@@ -56,12 +57,12 @@ export function ChatInput({ onSendMessage, chat }: ChatInputProps) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          handleSendFile('location', 'Shared my location', { latitude, longitude });
+          handleSendFile('location', 'Bagikan lokasi saya', { latitude, longitude });
         },
         (error) => {
           toast({
             variant: 'destructive',
-            title: 'Could not get location',
+            title: 'Tidak dapat memperoleh lokasi',
             description: error.message,
           });
         }
@@ -69,8 +70,8 @@ export function ChatInput({ onSendMessage, chat }: ChatInputProps) {
     } else {
        toast({
             variant: 'destructive',
-            title: 'Geolocation not supported',
-            description: 'Your browser does not support geolocation.',
+            title: 'Geolocation tidak didukung',
+            description: 'Browser Anda tidak mendukung geolokasi.',
        });
     }
     setIsAttachmentOpen(false);
@@ -88,10 +89,10 @@ export function ChatInput({ onSendMessage, chat }: ChatInputProps) {
           </PopoverTrigger>
           <PopoverContent className="w-auto p-2">
             <div className="grid grid-cols-2 gap-2">
-                <AttachmentButton icon={ImageIcon} label="Image" onClick={() => handleSendFile('image', 'Sent an image', { fileName: 'image.jpg', fileUrl: 'https://placehold.co/600x400.png' })} />
-                <AttachmentButton icon={FileText} label="Document" onClick={() => handleSendFile('file', 'Sent a document', { fileName: 'document.pdf', fileUrl: '#' })} />
-                <AttachmentButton icon={MapPin} label="Location" onClick={handleShareLocation} />
-                {currentUser.role === 'business' && <AttachmentButton icon={PresentationIcon} label="Presentation" onClick={() => { setIsAttachmentOpen(false); setIsPresentationSelectorOpen(true); }} />}
+                <AttachmentButton icon={ImageIcon} label="Gambar" onClick={() => handleSendFile('image', 'Mengirim gambar', { fileName: 'image.jpg', fileUrl: 'https://placehold.co/600x400.png' })} />
+                <AttachmentButton icon={FileText} label="Dokumen" onClick={() => handleSendFile('file', 'Mengirim dokumen', { fileName: 'document.pdf', fileUrl: '#' })} />
+                <AttachmentButton icon={MapPin} label="Lokasi" onClick={handleShareLocation} />
+                {currentUser.role === 'business' && <AttachmentButton icon={PresentationIcon} label="Presentasi" onClick={() => { setIsAttachmentOpen(false); setIsPresentationSelectorOpen(true); }} />}
             </div>
           </PopoverContent>
         </Popover>
@@ -99,9 +100,9 @@ export function ChatInput({ onSendMessage, chat }: ChatInputProps) {
         <Dialog open={isPresentationSelectorOpen} onOpenChange={setIsPresentationSelectorOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Share a Presentation</DialogTitle>
+              <DialogTitle>Bagikan Presentasi</DialogTitle>
               <DialogDescription>
-                Select one of your uploaded presentations to share in this chat.
+                Pilih salah satu presentasi yang telah Anda unggah untuk dibagikan dalam obrolan ini.
               </DialogDescription>
             </DialogHeader>
             <ScrollArea className="max-h-60 mt-4">
@@ -113,10 +114,10 @@ export function ChatInput({ onSendMessage, chat }: ChatInputProps) {
                       <span className="flex-1 truncate">{p.file_name}</span>
                   </div>
                   <Button size="sm" onClick={() => handleSendPresentation(p)}>
-                      Share
+                      Bagikan
                   </Button>
               </div>
-              )) : <p className="text-sm text-center text-muted-foreground py-4">You have no presentations to share. Upload one from your profile.</p>}
+              )) : <p className="text-sm text-center text-muted-foreground py-4">Anda tidak punya presentasi untuk dibagikan. Unggah satu dari profil Anda.</p>}
               </div>
             </ScrollArea>
           </DialogContent>
@@ -124,7 +125,7 @@ export function ChatInput({ onSendMessage, chat }: ChatInputProps) {
 
         <Input
           type="text"
-          placeholder="Type a message..."
+          placeholder="Ketik pesan..."
           className="flex-1 rounded-full bg-muted focus-visible:ring-1 focus-visible:ring-ring"
           value={message}
           onChange={(e) => setMessage(e.target.value)}

@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { Message, User } from "@/lib/types";
 import { dataStore } from "@/lib/data";
@@ -24,7 +25,7 @@ export function ChatMessage({ message, isCurrentUser }: ChatMessageProps) {
   if (message.type === 'product') {
     return (
       <div className="text-center text-xs text-muted-foreground my-2">
-        <span className="font-semibold">{isCurrentUser ? 'You' : sender.name}</span> listed a new item: <span className="font-semibold">{message.meta?.productName}</span>
+        <span className="font-semibold">{isCurrentUser ? 'Anda' : sender.name}</span> mendaftarkan item baru: <span className="font-semibold">{message.meta?.productName}</span>
       </div>
     )
   }
@@ -118,7 +119,7 @@ const ProductCard = ({ meta, isCurrentUser }: { meta: any, isCurrentUser: boolea
                         </div>
                         <Button size="sm" variant={isCurrentUser ? 'secondary' : 'default'} className="h-7">
                             <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
-                            View
+                            Lihat
                         </Button>
                     </div>
                 </div>

@@ -72,11 +72,11 @@ export default function EditGroupPage() {
   const handleSaveChanges = () => {
     if (!chatId) return;
     if (!groupName.trim()) {
-        toast({ variant: 'destructive', title: (isStore ? 'Store' : 'Group') + ' name is required.' });
+        toast({ variant: 'destructive', title: 'Nama ' + (isStore ? 'Toko' : 'Grup') + ' harus diisi.' });
         return;
     }
     if (selectedUserIds.length === 0) {
-        toast({ variant: 'destructive', title: 'A group must have at least one other member.'});
+        toast({ variant: 'destructive', title: 'Grup harus memiliki minimal satu anggota lain.'});
         return;
     }
 
@@ -89,8 +89,8 @@ export default function EditGroupPage() {
     });
 
     toast({
-        title: (isStore ? 'Store' : 'Group') + ' Updated!',
-        description: `The group "${groupName}" has been updated.`,
+        title: (isStore ? 'Toko' : 'Grup') + ' Diperbarui!',
+        description: `Grup "${groupName}" telah diperbarui.`,
     });
     router.push(`/chat/${chatId}`);
   };
@@ -109,7 +109,7 @@ export default function EditGroupPage() {
       return notFound();
   }
 
-  const pageTitle = isStore ? 'Edit Store' : 'Edit Group';
+  const pageTitle = isStore ? 'Ubah Toko' : 'Ubah Grup';
   const avatarFallbackIcon = isStore ? <Store className="w-10 h-10" /> : <Users className="w-10 h-10" />;
 
   return (
@@ -136,7 +136,7 @@ export default function EditGroupPage() {
                 </Button>
             </div>
           <Input
-            placeholder={isStore ? "Store Name" : "Group Name"}
+            placeholder={isStore ? "Nama Toko" : "Nama Grup"}
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
             className="text-center text-lg font-semibold"
@@ -144,7 +144,7 @@ export default function EditGroupPage() {
         </div>
 
         <div className="space-y-2">
-            <h2 className="font-semibold">Manage Members</h2>
+            <h2 className="font-semibold">Kelola Anggota</h2>
             <div className="space-y-2 rounded-lg border p-2 max-h-60 overflow-y-auto">
             {otherUsers.map(user => (
                 <div key={user.id} className="flex items-center space-x-3 p-2 rounded-md hover:bg-muted/50">
@@ -168,7 +168,7 @@ export default function EditGroupPage() {
 
       <footer className="p-4 border-t">
         <Button className="w-full" onClick={handleSaveChanges}>
-          Save Changes
+          Simpan Perubahan
         </Button>
       </footer>
     </AppContainer>

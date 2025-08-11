@@ -1,3 +1,4 @@
+
 "use client"
 
 import {
@@ -23,8 +24,8 @@ export function StatusUpdater({ user, children }: { user: User, children: React.
   const handleUpdate = () => {
     // In a real app, you'd save this to a backend.
     toast({
-      title: "Status Updated",
-      description: `Your new status is: "${status}"`,
+      title: "Status Diperbarui",
+      description: `Status baru Anda adalah: "${status}"`,
     });
   }
 
@@ -35,9 +36,9 @@ export function StatusUpdater({ user, children }: { user: User, children: React.
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Update your status</DialogTitle>
+          <DialogTitle>Perbarui status Anda</DialogTitle>
           <DialogDescription>
-            Let everyone know what you're up to.
+            Beri tahu semua orang apa yang sedang Anda lakukan.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -46,7 +47,7 @@ export function StatusUpdater({ user, children }: { user: User, children: React.
               id="status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              placeholder="What's on your mind?"
+              placeholder="Apa yang ada di pikiranmu?"
               className="pr-10"
             />
             <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
@@ -55,7 +56,7 @@ export function StatusUpdater({ user, children }: { user: User, children: React.
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={handleUpdate}>Save changes</Button>
+          <Button type="submit" onClick={handleUpdate}>Simpan perubahan</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

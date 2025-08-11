@@ -42,7 +42,7 @@ export default function CallPage() {
         const response = await fetch(`/api/token?identity=${currentUser.name}&room=${roomName}`);
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to get token');
+          throw new Error(errorData.error || 'Gagal mendapatkan token');
         }
         const { token } = await response.json();
         
@@ -98,7 +98,7 @@ export default function CallPage() {
         console.error('Connection error:', error);
         toast({
           variant: 'destructive',
-          title: 'Connection Failed',
+          title: 'Koneksi Gagal',
           description: error.message,
         });
         setConnecting(false);
@@ -163,7 +163,7 @@ export default function CallPage() {
                 {connecting ? (
                    <>
                        <Loader2 className="w-12 h-12 text-slate-500 animate-spin" />
-                       <p className="mt-4 text-slate-400">Connecting...</p>
+                       <p className="mt-4 text-slate-400">Menghubungkan...</p>
                    </>
                 ) : !remoteParticipant ? (
                     <>
@@ -171,7 +171,7 @@ export default function CallPage() {
                            <AvatarImage src={otherUser.avatar} />
                            <AvatarFallback><User className="w-16 h-16" /></AvatarFallback>
                        </Avatar>
-                       <p className="mt-4 text-slate-400">Waiting for {otherUser.name}...</p>
+                       <p className="mt-4 text-slate-400">Menunggu {otherUser.name}...</p>
                     </>
                 ) : (
                    <>
@@ -179,7 +179,7 @@ export default function CallPage() {
                            <AvatarImage src={otherUser.avatar} />
                            <AvatarFallback><User className="w-16 h-16" /></AvatarFallback>
                        </Avatar>
-                       <p className="mt-4 text-slate-400">{otherUser.name}'s camera is off</p>
+                       <p className="mt-4 text-slate-400">Kamera {otherUser.name} mati</p>
                    </>
                 )}
               </div>
@@ -198,7 +198,7 @@ export default function CallPage() {
 
         {/* Call Info */}
         <div className="mt-8 text-center z-10 bg-black/30 px-4 py-2 rounded-lg">
-            <h2 className="text-2xl font-bold">{remoteParticipant ? otherUser.name : 'Connecting...'}</h2>
+            <h2 className="text-2xl font-bold">{remoteParticipant ? otherUser.name : 'Menghubungkan...'}</h2>
             <p className="text-sm text-slate-300">{formatDuration(callDuration)}</p>
         </div>
 

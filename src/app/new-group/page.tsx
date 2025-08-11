@@ -26,8 +26,8 @@ export default function NewGroupPage() {
     if (currentUser.role !== 'business') {
       toast({
         variant: 'destructive',
-        title: 'Permission Denied',
-        description: 'Only business members can create new stores.',
+        title: 'Akses Ditolak',
+        description: 'Hanya anggota bisnis yang dapat membuat toko baru.',
       });
       router.push('/home');
     }
@@ -55,7 +55,7 @@ export default function NewGroupPage() {
 
   const handleCreateGroup = () => {
     if (!groupName.trim()) {
-        toast({ variant: 'destructive', title: 'Store name is required.' });
+        toast({ variant: 'destructive', title: 'Nama toko harus diisi.' });
         return;
     }
     
@@ -65,8 +65,8 @@ export default function NewGroupPage() {
     createGroupChat(groupName, participantIds, groupAvatar);
 
     toast({
-        title: 'Store Created!',
-        description: `The store "${groupName}" has been created and is available to all users.`,
+        title: 'Toko Dibuat!',
+        description: `Toko "${groupName}" telah dibuat dan tersedia untuk semua pengguna.`,
     });
     router.push('/home');
   };
@@ -79,7 +79,7 @@ export default function NewGroupPage() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
         </Link>
-        <h1 className="text-xl font-bold font-headline">Create New Store</h1>
+        <h1 className="text-xl font-bold font-headline">Buat Toko Baru</h1>
       </header>
 
       <main className="flex-1 overflow-y-auto p-4 space-y-6">
@@ -95,7 +95,7 @@ export default function NewGroupPage() {
                 </Button>
             </div>
           <Input
-            placeholder="Store Name"
+            placeholder="Nama Toko"
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
             className="text-center text-lg font-semibold"
@@ -103,14 +103,14 @@ export default function NewGroupPage() {
         </div>
         
         <div className='text-center text-muted-foreground text-sm p-4 bg-muted/50 rounded-lg'>
-            Your new store will be a public channel accessible by all users in the app.
+            Toko baru Anda akan menjadi saluran publik yang dapat diakses oleh semua pengguna di aplikasi.
         </div>
 
       </main>
 
       <footer className="p-4 border-t">
         <Button className="w-full" onClick={handleCreateGroup}>
-          Create Store
+          Buat Toko
         </Button>
       </footer>
     </AppContainer>

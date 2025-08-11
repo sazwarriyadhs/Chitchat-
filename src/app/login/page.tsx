@@ -43,7 +43,7 @@ export default function LoginPage() {
   const handleLogin = (method: 'email' | 'phone') => {
     if (method === 'email') {
         if (!email || !password) {
-            toast({ variant: 'destructive', title: "Error", description: "Please enter email and password."});
+            toast({ variant: 'destructive', title: "Error", description: "Silakan masukkan email dan kata sandi."});
             return;
         }
     }
@@ -51,14 +51,14 @@ export default function LoginPage() {
     // Set the current user in the data store
     setCurrentUser(selectedUserId);
 
-    toast({ title: "Login Successful", description: `Welcome back, ${users.find(u => u.id === selectedUserId)?.name}!`});
+    toast({ title: "Login Berhasil", description: `Selamat datang kembali, ${users.find(u => u.id === selectedUserId)?.name}!`});
     router.push("/home");
   }
 
   const handleSendCode = () => {
     if (phone.trim()) {
       setCodeSent(true);
-      toast({ title: "Code Sent", description: "A verification code has been sent to your phone."});
+      toast({ title: "Kode Terkirim", description: "Kode verifikasi telah dikirim ke ponsel Anda."});
     }
   };
 
@@ -72,16 +72,16 @@ export default function LoginPage() {
     <AppContainer className="bg-transparent shadow-none">
       <div className="flex flex-col items-center justify-center h-full p-8 bg-card md:rounded-2xl">
         <div className="flex flex-col items-center text-center mb-8">
-          <Image src="/image/logomarker.png" alt="ChitChat Logo" width={160} height={80} className="w-auto h-12 mb-4" />
-          <p className="text-muted-foreground">Sign in to continue</p>
+          <Image src="/image/logomarker.png" alt="ChitChat Logo" width={240} height={120} className="w-auto h-12 mb-4" />
+          <p className="text-muted-foreground">Masuk untuk melanjutkan</p>
         </div>
 
         <div className="w-full max-w-sm">
             <div className="space-y-2 mb-4 text-left">
-                <Label htmlFor="user-select">Simulate Login As</Label>
+                <Label htmlFor="user-select">Simulasikan Login Sebagai</Label>
                 <Select value={selectedUserId} onValueChange={setSelectedUserId}>
                     <SelectTrigger id="user-select" className="text-gray-900">
-                        <SelectValue placeholder="Select a user" />
+                        <SelectValue placeholder="Pilih pengguna" />
                     </SelectTrigger>
                     <SelectContent>
                         {users.map(user => (
@@ -96,7 +96,7 @@ export default function LoginPage() {
             <Tabs defaultValue="email" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="email">Email</TabsTrigger>
-                <TabsTrigger value="phone">Phone</TabsTrigger>
+                <TabsTrigger value="phone">Telepon</TabsTrigger>
             </TabsList>
             <TabsContent value="email">
                 <div className="space-y-4 pt-4 text-left">
@@ -105,17 +105,17 @@ export default function LoginPage() {
                       <Input id="email" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="text-gray-900" />
                   </div>
                   <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
+                      <Label htmlFor="password">Kata Sandi</Label>
                       <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="text-gray-900"/>
                   </div>
-                  <Button className="w-full" onClick={() => handleLogin('email')}>Sign In with Email</Button>
+                  <Button className="w-full" onClick={() => handleLogin('email')}>Masuk dengan Email</Button>
                 </div>
             </TabsContent>
             <TabsContent value="phone">
                 {!codeSent ? (
                     <div className="space-y-4 pt-4 text-left">
                     <div className="space-y-2">
-                        <Label htmlFor="phone">Phone Number</Label>
+                        <Label htmlFor="phone">Nomor Telepon</Label>
                         <Input 
                             id="phone" 
                             type="tel" 
@@ -125,50 +125,50 @@ export default function LoginPage() {
                             onChange={(e) => setPhone(e.target.value)}
                         />
                     </div>
-                    <Button className="w-full" onClick={handleSendCode} disabled={!phone.trim()}>Send Code</Button>
+                    <Button className="w-full" onClick={handleSendCode} disabled={!phone.trim()}>Kirim Kode</Button>
                     </div>
                 ) : (
                     <div className="space-y-4 pt-4 text-left animate-in fade-in">
                         <div className="space-y-2">
-                            <Label htmlFor="code">Verification Code</Label>
+                            <Label htmlFor="code">Kode Verifikasi</Label>
                             <Input 
                                 id="code" 
                                 type="text" 
-                                placeholder="Enter 6-digit code" 
+                                placeholder="Masukkan kode 6 digit" 
                                 className="text-gray-900" 
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && handleVerifyCode()}
                             />
                         </div>
-                        <Button className="w-full" onClick={handleVerifyCode} disabled={!code.trim()}>Verify & Sign In</Button>
-                        <Button variant="link" size="sm" className="w-full" onClick={() => setCodeSent(false)}>Back</Button>
+                        <Button className="w-full" onClick={handleVerifyCode} disabled={!code.trim()}>Verifikasi & Masuk</Button>
+                        <Button variant="link" size="sm" className="w-full" onClick={() => setCodeSent(false)}>Kembali</Button>
                     </div>
                 )}
             </TabsContent>
             </Tabs>
              <div className="mt-4 text-center text-sm">
-              Don't have an account?{" "}
+              Belum punya akun?{" "}
               <Link href="/register" className="underline">
-                Sign up
+                Daftar
               </Link>
             </div>
             <p className="px-8 text-center text-xs text-muted-foreground mt-6">
-              By clicking continue, you agree to our{" "}
+              Dengan mengklik lanjutkan, Anda menyetujui{" "}
               <Link
                   href="#"
                   className="underline underline-offset-4 hover:text-primary"
               >
-                  Terms of Service
+                  Ketentuan Layanan
               </Link>{" "}
-              and{" "}
+              dan{" "}
               <Link
                   href="#"
                   className="underline underline-offset-4 hover:text-primary"
               >
-                  Privacy Policy
+                  Kebijakan Privasi
               </Link>
-              .
+              kami.
             </p>
         </div>
       </div>

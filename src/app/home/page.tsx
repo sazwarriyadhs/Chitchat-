@@ -42,7 +42,7 @@ export default function HomePage() {
             </Button>
             {currentUser.role === 'business' && (
               <Link href="/new-group" passHref>
-                <Button variant="ghost" size="icon" title="Create a new store">
+                <Button variant="ghost" size="icon" title="Buat toko baru">
                   <Plus className="w-5 h-5" />
                 </Button>
               </Link>
@@ -61,7 +61,7 @@ export default function HomePage() {
         </div>
         <StoreUpdates />
         <div className="p-2">
-            <h2 className="text-sm font-semibold text-muted-foreground px-2 py-1">Recent Chats</h2>
+            <h2 className="text-sm font-semibold text-muted-foreground px-2 py-1">Obrolan Terkini</h2>
             <ChatList />
         </div>
       </main>
@@ -90,7 +90,7 @@ function StoreUpdates() {
   
   return (
     <div className="p-2">
-        <h2 className="text-sm font-semibold text-muted-foreground px-2 py-1">Store Updates</h2>
+        <h2 className="text-sm font-semibold text-muted-foreground px-2 py-1">Pembaruan Toko</h2>
         <Carousel opts={{
             align: "start",
             loop: false,
@@ -108,7 +108,7 @@ function StoreUpdates() {
                                 </CardHeader>
                                 <CardContent className="p-2">
                                     <p className="text-sm font-semibold truncate">{store.name}</p>
-                                    <p className="text-xs text-muted-foreground truncate">{store.participants.length} members</p>
+                                    <p className="text-xs text-muted-foreground truncate">{store.participants.length} anggota</p>
                                 </CardContent>
                             </Card>
                         </CarouselItem>
@@ -122,8 +122,8 @@ function StoreUpdates() {
                 {selectedStore && (
                     <>
                         <DialogHeader>
-                            <DialogTitle>Products from {selectedStore.name}</DialogTitle>
-                            <DialogDescription>Browse items available in this store.</DialogDescription>
+                            <DialogTitle>Produk dari {selectedStore.name}</DialogTitle>
+                            <DialogDescription>Lihat item yang tersedia di toko ini.</DialogDescription>
                         </DialogHeader>
                         <ScrollArea className="pr-4 -mr-4">
                         <div className="space-y-4 py-2">
@@ -137,10 +137,10 @@ function StoreUpdates() {
                                         <div>
                                           <p className="font-semibold">{product.name}</p>
                                           <p className="text-sm font-bold text-primary">Rp{product.price.toLocaleString('id-ID')}</p>
-                                          {seller && <p className="text-xs text-muted-foreground">Sold by {seller.name}</p>}
+                                          {seller && <p className="text-xs text-muted-foreground">Dijual oleh {seller.name}</p>}
                                         </div>
                                          <Button size="sm" className="self-end" onClick={() => handleOrder(selectedStore.id!)}>
-                                           <ShoppingCart className="w-4 h-4 mr-2" /> Order Now
+                                           <ShoppingCart className="w-4 h-4 mr-2" /> Pesan Sekarang
                                         </Button>
                                       </div>
                                   </div>

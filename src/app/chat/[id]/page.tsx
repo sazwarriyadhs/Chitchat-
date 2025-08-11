@@ -107,7 +107,7 @@ export default function ChatPage() {
 
     const getChatInfo = (chat: Chat, currentUser: User): { name: string, avatar: string, status?: string } => {
         if (chat.type === 'group') {
-            return { name: chat.name!, avatar: chat.avatar!, status: `${chat.participants.length} members` };
+            return { name: chat.name!, avatar: chat.avatar!, status: `${chat.participants.length} anggota` };
         }
         const otherUser = chat.participants.find(p => p.id !== currentUser.id)!;
         return { name: otherUser.name, avatar: otherUser.avatar, status: otherUser.online ? 'Online' : 'Offline' };
@@ -128,7 +128,7 @@ export default function ChatPage() {
             />
             <Tabs defaultValue={defaultTab} className="flex-1 flex flex-col overflow-hidden">
                 <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="store"><ShoppingCart className="w-4 h-4 mr-2"/>Store</TabsTrigger>
+                    <TabsTrigger value="store"><ShoppingCart className="w-4 h-4 mr-2"/>Toko</TabsTrigger>
                     <TabsTrigger value="chat"><MessageSquare className="w-4 h-4 mr-2"/>Chat</TabsTrigger>
                 </TabsList>
                
@@ -200,11 +200,11 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
         const seller = users.find(u => u.id === product.sellerId);
         onPurchase({
             type: 'text',
-            body: `I have purchased ${product.name} from ${seller?.name || 'seller'}.`
+            body: `Saya telah membeli ${product.name} dari ${seller?.name || 'penjual'}.`
         });
         toast({
-            title: "Purchase Successful!",
-            description: `You have purchased ${product.name}. A message has been sent to the chat.`
+            title: "Pembelian Berhasil!",
+            description: `Anda telah membeli ${product.name}. Sebuah pesan telah dikirim ke obrolan.`
         });
     }
     
@@ -223,12 +223,12 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">
-                <h2 className="text-lg font-bold">Store</h2>
+                <h2 className="text-lg font-bold">Toko</h2>
                 {currentUser.role === 'business' && (
                   <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
                       <DialogTrigger asChild>
                           <Button>
-                              <Plus className="w-4 h-4 mr-2" /> List Item
+                              <Plus className="w-4 h-4 mr-2" /> Jual Item
                           </Button>
                       </DialogTrigger>
                       <AddProductDialog onProductSubmit={handleProductAdded} />
@@ -245,11 +245,11 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
                 <Card className="text-center p-8 border-dashed">
                     <CardContent className="flex flex-col items-center justify-center gap-4">
                         <Package className="w-16 h-16 text-muted-foreground" />
-                        <p className="text-muted-foreground">No products for sale in this chat yet.</p>
+                        <p className="text-muted-foreground">Belum ada produk yang dijual di obrolan ini.</p>
                         {currentUser.role === 'business' && (
                            <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
                                 <DialogTrigger asChild>
-                                    <Button variant="outline" onClick={() => setIsAddProductOpen(true)}>List First Item</Button>
+                                    <Button variant="outline" onClick={() => setIsAddProductOpen(true)}>Jual Item Pertama</Button>
                                 </DialogTrigger>
                                 <AddProductDialog onProductSubmit={handleProductAdded} />
                             </Dialog>
@@ -274,11 +274,11 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem onClick={() => setEditingProduct(product)}>
                                                     <Edit className="mr-2 h-4 w-4" />
-                                                    <span>Edit Item</span>
+                                                    <span>Ubah Item</span>
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => onDeleteProduct(product.id)} className="text-destructive focus:text-destructive">
                                                     <Trash2 className="mr-2 h-4 w-4" />
-                                                    <span>Delete Item</span>
+                                                    <span>Hapus Item</span>
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -306,7 +306,7 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
                                 <CardFooter className="p-2">
                                     <Button className="w-full" onClick={() => handleBuy(product)}>
                                         <ShoppingCart className="w-4 h-4 mr-2" />
-                                        Buy Now
+                                        Beli Sekarang
                                     </Button>
                                 </CardFooter>
                             </Card>
@@ -361,8 +361,8 @@ function AddProductDialog({ product, onProductSubmit }: AddProductDialogProps) {
     if (!name || !price) {
         toast({
             variant: "destructive",
-            title: "Missing Information",
-            description: "Please fill out the product name and price.",
+            title: "Informasi Kurang",
+            description: "Silakan isi nama produk dan harga.",
         });
         return;
     }
@@ -375,15 +375,15 @@ function AddProductDialog({ product, onProductSubmit }: AddProductDialogProps) {
     });
 
     toast({
-        title: product ? "Product Updated!" : "Product Listed!",
-        description: `${name} is now ${product ? 'updated' : 'for sale'}.`
+        title: product ? "Produk Diperbarui!" : "Produk Terdaftar!",
+        description: `${name} sekarang ${product ? 'diperbarui' : 'dijual'}.`
     });
   }
 
   return (
     <DialogContent>
         <DialogHeader>
-            <DialogTitle>{product ? 'Edit Item' : 'List a New Item for Sale'}</DialogTitle>
+            <DialogTitle>{product ? 'Ubah Item' : 'Jual Item Baru'}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
             <input type="file" accept="image/*" ref={imageInputRef} onChange={handleImageChange} className="hidden" />
@@ -394,20 +394,20 @@ function AddProductDialog({ product, onProductSubmit }: AddProductDialogProps) {
                 </div>
             </div>
             <div className="space-y-2">
-                <Label htmlFor="name">Product Name</Label>
-                <Input id="name" placeholder="e.g. Handmade Mug" value={name} onChange={e => setName(e.target.value)} />
+                <Label htmlFor="name">Nama Produk</Label>
+                <Input id="name" placeholder="cth. Gelas Buatan Tangan" value={name} onChange={e => setName(e.target.value)} />
             </div>
             <div className="space-y-2">
-                <Label htmlFor="price">Price (IDR)</Label>
-                <Input id="price" type="number" placeholder="e.g. 50000" value={price} onChange={e => setPrice(e.target.value)}/>
+                <Label htmlFor="price">Harga (IDR)</Label>
+                <Input id="price" type="number" placeholder="cth. 50000" value={price} onChange={e => setPrice(e.target.value)}/>
             </div>
              <div className="space-y-2">
-                <Label htmlFor="description">Description (optional)</Label>
-                <Textarea id="description" placeholder="Describe your item" value={description} onChange={e => setDescription(e.target.value)}/>
+                <Label htmlFor="description">Deskripsi (opsional)</Label>
+                <Textarea id="description" placeholder="Deskripsikan item Anda" value={description} onChange={e => setDescription(e.target.value)}/>
             </div>
         </div>
         <DialogClose asChild>
-            <Button onClick={handleSubmit}>{product ? 'Save Changes' : 'List Item Now'}</Button>
+            <Button onClick={handleSubmit}>{product ? 'Simpan Perubahan' : 'Jual Sekarang'}</Button>
         </DialogClose>
     </DialogContent>
   )

@@ -65,18 +65,18 @@ export function ChatHeader({ name, avatarUrl, status, chatId, chatType }: ChatHe
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={() => router.push('/profile')}>
             <UserIcon className="mr-2 h-4 w-4" />
-            <span>Profile</span>
+            <span>Profil</span>
           </DropdownMenuItem>
            {chatType === 'group' && (
             <DropdownMenuItem onClick={() => router.push(`/chat/${chatId}/edit`)}>
               <Edit className="mr-2 h-4 w-4" />
-              <span>Edit Group</span>
+              <span>Ubah Grup</span>
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
            <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive focus:bg-destructive/10">
             <LogOut className="mr-2 h-4 w-4" />
-            <span>Log Out</span>
+            <span>Keluar</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

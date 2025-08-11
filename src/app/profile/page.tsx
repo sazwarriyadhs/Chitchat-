@@ -60,11 +60,11 @@ export default function ProfilePage() {
             setPresentations(data);
         } catch (error: any) {
             console.error("Could not load presentations:", error);
-            setError("Could not load your presentations. Please try again later.");
+            setError("Tidak dapat memuat presentasi Anda. Silakan coba lagi nanti.");
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: "Could not load your presentations.",
+                description: "Tidak dapat memuat presentasi Anda.",
             });
         } finally {
             setFetching(false);
@@ -105,7 +105,7 @@ export default function ProfilePage() {
         status,
         avatar: profileImage
     });
-    toast({ title: "Profile Saved", description: "Your changes have been saved."});
+    toast({ title: "Profil Disimpan", description: "Perubahan Anda telah disimpan."});
     setIsEditing(false);
   };
   
@@ -113,8 +113,8 @@ export default function ProfilePage() {
     if (!storyImage) {
       toast({
         variant: 'destructive',
-        title: 'No image selected',
-        description: 'Please choose a photo for your story.',
+        title: 'Tidak ada gambar yang dipilih',
+        description: 'Silakan pilih foto untuk cerita Anda.',
       });
       return;
     }
@@ -122,8 +122,8 @@ export default function ProfilePage() {
     addStory(currentUser.id, storyImage);
 
     toast({
-      title: 'Story Added!',
-      description: 'Your new story is now visible to your friends.',
+      title: 'Cerita Ditambahkan!',
+      description: 'Cerita baru Anda sekarang dapat dilihat oleh teman-teman Anda.',
     });
     
     setStoryImage(null);
@@ -135,8 +135,8 @@ export default function ProfilePage() {
   const handleUpload = async () => {
     if (!file) return toast({
         variant: 'destructive',
-        title: 'No file selected',
-        description: 'Please choose a presentation file to upload.',
+        title: 'Tidak ada file yang dipilih',
+        description: 'Silakan pilih file presentasi untuk diunggah.',
     });
 
     setLoading(true);
@@ -153,15 +153,15 @@ export default function ProfilePage() {
         }
 
         toast({
-            title: 'Upload Successful',
-            description: `"${newPresentation.file_name}" has been added.`,
+            title: 'Unggah Berhasil',
+            description: `"${newPresentation.file_name}" telah ditambahkan.`,
         });
 
     } catch(error: any) {
         toast({
             variant: 'destructive',
-            title: 'Upload Failed',
-            description: error.message || 'An unknown error occurred.',
+            title: 'Unggah Gagal',
+            description: error.message || 'Terjadi kesalahan yang tidak diketahui.',
         });
     } finally {
         setLoading(false);
@@ -173,14 +173,14 @@ export default function ProfilePage() {
     // or passing state through router, which is complex for this demo.
     // For now, we just show a toast.
     toast({
-        title: "Share feature not fully implemented",
-        description: `This would open a chat to share "${presentation.file_name}".`
+        title: "Fitur berbagi belum sepenuhnya diimplementasikan",
+        description: `Ini akan membuka obrolan untuk berbagi "${presentation.file_name}".`
     });
   };
 
   const handleLogout = () => {
     router.push('/');
-    toast({ title: "Logged Out", description: "You have been successfully logged out." });
+    toast({ title: "Keluar", description: "Anda telah berhasil keluar." });
   };
 
   return (
@@ -191,12 +191,12 @@ export default function ProfilePage() {
                     <ArrowLeft className="w-5 h-5" />
                 </Button>
             </Link>
-            <h1 className="text-xl font-bold font-headline">My Profile</h1>
+            <h1 className="text-xl font-bold font-headline">Profil Saya</h1>
             <div className="flex-grow" />
             {isEditing ? (
                 <>
-                    <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
-                    <Button onClick={handleSave}>Save</Button>
+                    <Button variant="outline" onClick={() => setIsEditing(false)}>Batal</Button>
+                    <Button onClick={handleSave}>Simpan</Button>
                 </>
             ) : (
                 <Button variant="outline" size="icon" onClick={() => setIsEditing(true)}>
@@ -228,22 +228,22 @@ export default function ProfilePage() {
                         <h2 className="text-2xl font-bold">{name}</h2>
                     )}
                     {isEditing ? (
-                         <Input className="text-sm text-muted-foreground mt-1 text-center bg-input text-foreground" placeholder="Your status" value={status} onChange={(e) => setStatus(e.target.value)} />
+                         <Input className="text-sm text-muted-foreground mt-1 text-center bg-input text-foreground" placeholder="Status Anda" value={status} onChange={(e) => setStatus(e.target.value)} />
                     ) : (
-                        <p className="text-sm text-muted-foreground mt-1">{status || 'No status'}</p>
+                        <p className="text-sm text-muted-foreground mt-1">{status || 'Tidak ada status'}</p>
                     )}
                 </div>
             </div>
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Settings</CardTitle>
+                    <CardTitle>Pengaturan</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="flex items-center justify-between">
                         <Label htmlFor="theme-switch" className="flex items-center gap-2">
                             {theme === 'dark' ? <Moon/> : <Sun/>}
-                            <span>{theme === 'dark' ? 'Dark' : 'Light'} Mode</span>
+                            <span>Mode {theme === 'dark' ? 'Gelap' : 'Terang'}</span>
                         </Label>
                         <Switch
                             id="theme-switch"
@@ -257,28 +257,28 @@ export default function ProfilePage() {
 
             <Tabs defaultValue="story" className="w-full">
                 <TabsList className={cn("grid w-full", currentUser.role === 'business' ? 'grid-cols-2' : 'grid-cols-1')}>
-                    <TabsTrigger value="story">My Story</TabsTrigger>
-                    {currentUser.role === 'business' && <TabsTrigger value="presentations">Presentations</TabsTrigger>}
+                    <TabsTrigger value="story">Cerita Saya</TabsTrigger>
+                    {currentUser.role === 'business' && <TabsTrigger value="presentations">Presentasi</TabsTrigger>}
                 </TabsList>
                 <TabsContent value="story">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Update Your Story</CardTitle>
-                             <CardDescription>Share a photo with your friends.</CardDescription>
+                            <CardTitle>Perbarui Cerita Anda</CardTitle>
+                             <CardDescription>Bagikan foto dengan teman-teman Anda.</CardDescription>
                         </CardHeader>
                         <CardContent className="text-center">
                             <input type="file" accept="image/*" ref={storyImageInputRef} onChange={handleStoryImageChange} className="hidden" />
                             <div className="w-full aspect-video bg-muted rounded-lg flex flex-col items-center justify-center cursor-pointer border-2 border-dashed" onClick={() => storyImageInputRef.current?.click()}>
                                 {storyImage ? (
-                                    <Image src={storyImage} width={300} height={169} alt="Story preview" className="rounded-md object-cover w-full h-full" data-ai-hint="story preview"/>
+                                    <Image src={storyImage} width={300} height={169} alt="Pratinjau cerita" className="rounded-md object-cover w-full h-full" data-ai-hint="story preview"/>
                                 ) : (
                                     <div className="flex flex-col items-center justify-center text-muted-foreground">
                                         <Camera className="w-12 h-12" />
-                                        <p>Click to upload a photo</p>
+                                        <p>Klik untuk mengunggah foto</p>
                                     </div>
                                 )}
                             </div>
-                            <Button variant="outline" className="mt-4" onClick={handleAddToStory} disabled={!storyImage}><Plus className="w-4 h-4 mr-2" />Add to Story</Button>
+                            <Button variant="outline" className="mt-4" onClick={handleAddToStory} disabled={!storyImage}><Plus className="w-4 h-4 mr-2" />Tambah ke Cerita</Button>
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -286,14 +286,14 @@ export default function ProfilePage() {
                     <TabsContent value="presentations">
                         <Card>
                             <CardHeader>
-                            <CardTitle>New Presentation</CardTitle>
+                            <CardTitle>Presentasi Baru</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex flex-col sm:flex-row items-center gap-4">
                                     <Input id="presentation-upload" type="file" accept=".ppt,.pptx,.pdf" onChange={handleFileChange} className="flex-1" ref={fileInputRef}/>
                                     <Button onClick={handleUpload} disabled={loading || !file} className="w-full sm:w-auto">
                                         {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileUp className="mr-2 h-4 w-4" />}
-                                        {loading ? 'Uploading...' : 'Upload'}
+                                        {loading ? 'Mengunggah...' : 'Unggah'}
                                     </Button>
                                 </div>
                             </CardContent>
@@ -301,15 +301,15 @@ export default function ProfilePage() {
 
                         <Card className="mt-4">
                             <CardHeader>
-                                <CardTitle>My Uploaded Files</CardTitle>
+                                <CardTitle>File yang Saya Unggah</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 {fetching ? (
-                                    <div className="text-center text-muted-foreground"><Loader2 className="mx-auto h-6 w-6 animate-spin" /><p>Loading...</p></div>
+                                    <div className="text-center text-muted-foreground"><Loader2 className="mx-auto h-6 w-6 animate-spin" /><p>Memuat...</p></div>
                                 ) : error ? (
                                     <Alert variant="destructive">
                                         <XCircle className="h-4 w-4" />
-                                        <AlertTitle>Loading Error</AlertTitle>
+                                        <AlertTitle>Gagal Memuat</AlertTitle>
                                         <AlertDescription>
                                             {error}
                                         </AlertDescription>
@@ -317,7 +317,7 @@ export default function ProfilePage() {
                                 ) : presentations.length === 0 ? (
                                     <div className="text-center text-muted-foreground py-8">
                                         <PresentationIcon className="mx-auto h-12 w-12 text-gray-400" />
-                                        <p className="mt-4">You have no presentations.</p>
+                                        <p className="mt-4">Anda tidak memiliki presentasi.</p>
                                     </div>
                                 ) : (
                                     <ul className="space-y-3">
@@ -330,7 +330,7 @@ export default function ProfilePage() {
                                                 </a>
                                             </div>
                                             <Button size="sm" variant="ghost" onClick={() => handleShareToChat(p)}>
-                                                <Share2 className="mr-2 h-4 w-4" /> Share
+                                                <Share2 className="mr-2 h-4 w-4" /> Bagikan
                                             </Button>
                                         </li>
                                     ))}
@@ -345,7 +345,7 @@ export default function ProfilePage() {
         <footer className="p-4 border-t bg-card">
             <Button variant="destructive" className="w-full" onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
-                Log Out
+                Keluar
             </Button>
         </footer>
     </AppContainer>

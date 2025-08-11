@@ -34,7 +34,7 @@ export function StoryReel() {
           <button className="w-16 h-16 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors" onClick={handleAddStoryClick}>
             <Plus className="w-6 h-6 text-muted-foreground" />
           </button>
-          <span className="text-xs w-16 truncate text-center">Your Story</span>
+          <span className="text-xs w-16 truncate text-center">Cerita Anda</span>
         </div>
         {stories.map((story) => {
           const user = users.find(u => u.id === story.userId);
@@ -77,7 +77,7 @@ export function StoryReel() {
                 </DialogHeader>
                 <Image 
                     src={viewingStory.imageUrl} 
-                    alt={`Story by ${user.name}`} 
+                    alt={`Cerita oleh ${user.name}`} 
                     fill
                     objectFit="cover"
                     className="rounded-none md:rounded-2xl"
