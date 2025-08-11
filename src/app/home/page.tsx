@@ -1,7 +1,7 @@
 
 "use client"
 import Link from 'next/link';
-import { Plus, Search, ShoppingCart } from 'lucide-react';
+import { Plus, Search, ShoppingCart, User as UserIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
@@ -42,6 +42,11 @@ export default function HomePage() {
             <Link href="/new-group" passHref>
               <Button variant="ghost" size="icon">
                 <Plus className="w-5 h-5" />
+              </Button>
+            </Link>
+            <Link href="/profile" passHref>
+              <Button variant="ghost" size="icon">
+                <UserIcon className="w-5 h-5" />
               </Button>
             </Link>
         </div>
