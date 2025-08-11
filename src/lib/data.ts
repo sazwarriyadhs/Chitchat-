@@ -337,7 +337,7 @@ dataStore.chats = [
         id: 'store-1',
         type: 'group',
         name: 'Toko A',
-        avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/other/store-fashion.png',
+        avatar: '/image/tokoA.jpeg',
         participants: mockData.users,
         messages: [
           { id: 'msg-s1-1', senderId: mockData.users[3].id, body: 'Selamat datang di Toko A!', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
