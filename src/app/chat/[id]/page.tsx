@@ -26,27 +26,51 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     const chatId = params.id;
     const { getChatById, currentUser, addMessageToChat, addProductToChat, users } = dataStore;
 
-    const [chat, setChat] = useState<Chat | undefined>(getChatById(chatId));
+    const [chat, setChat] = useState<Chat | undefined>(undefined);
     
     useEffect(() => {
+        // Initial fetch
+        const currentChat = getChatById(chatId);
+        if (currentChat) {
+            setChat(currentChat);
+        }
+
+        // Set up interval to poll for updates
         const interval = setInterval(() => {
-            setChat(getChatById(chatId));
+            const updatedChat = getChatById(chatId);
+            if(updatedChat) {
+                // A simple check to see if messages have changed to avoid unnecessary re-renders
+                setChat(prevChat => {
+                    if (prevChat && prevChat.messages.length === updatedChat.messages.length) {
+                        return prevChat;
+                    }
+                    return updatedChat;
+                });
+            }
         }, 1000); // Refresh data every second for real-time feel
+        
         return () => clearInterval(interval);
     }, [chatId, getChatById]);
     
     if (!chat) {
-        notFound();
+        // You can return a loading state here if you want
+        // For now, it might briefly show a blank screen before finding the chat or 404ing
+        const initialChat = getChatById(chatId);
+        if (!initialChat) {
+            return notFound();
+        }
+        // if chat is found, we set it and continue rendering
+        setChat(initialChat);
     }
     
     const handleSendMessage = (newMessage: Omit<Message, 'id' | 'timestamp' | 'senderId' | 'read' | 'delivered'>) => {
         addMessageToChat(chatId, newMessage);
-        setChat(getChatById(chatId)); // Force re-render
+        setChat(getChatById(chatId)); // Force re-render immediately
     };
 
     const handleAddProduct = (productData: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => {
         addProductToChat(chatId, productData);
-        setChat(getChatById(chatId));
+        setChat(getChatById(chatId)); // Force re-render immediately
     };
 
     const getChatInfo = (chat: Chat, currentUser: User): { name: string, avatar: string, status?: string } => {
@@ -263,5 +287,3 @@ function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
     </DialogContent>
   )
 }
-
-    
