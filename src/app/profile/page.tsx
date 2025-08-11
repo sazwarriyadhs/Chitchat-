@@ -171,7 +171,7 @@ export default function ProfilePage() {
   };
 
   const handleLogout = () => {
-    router.push('/login');
+    router.push('/');
     toast({ title: "Logged Out", description: "You have been successfully logged out." });
   };
 
