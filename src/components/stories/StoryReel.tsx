@@ -1,3 +1,4 @@
+
 "use client";
 
 import { dataStore } from "@/lib/data";
@@ -27,7 +28,7 @@ export function StoryReel() {
   }
 
   return (
-    <div className="p-4 border-b">
+    <div>
       <div className="flex items-center space-x-4 overflow-x-auto pb-2 -mb-2">
         <div className="flex flex-col items-center space-y-1 flex-shrink-0">
           <button className="w-16 h-16 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors" onClick={handleAddStoryClick}>

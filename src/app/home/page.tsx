@@ -1,7 +1,7 @@
 
 "use client"
 import Link from 'next/link';
-import { Plus, Search } from 'lucide-react';
+import { LayoutGrid, Plus, Search, Users } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { AppContainer } from '@/components/AppContainer';
@@ -14,40 +14,47 @@ import { Chat, User } from '@/lib/types';
 import { StoryReel } from '@/components/stories/StoryReel';
 import { StatusUpdater } from '@/components/stories/StatusUpdater';
 import { format } from 'date-fns';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function HomePage() {
   const { currentUser } = dataStore;
 
   return (
     <AppContainer>
-      <header className="flex items-center justify-between p-4 border-b">
+      <header className="flex items-center justify-between p-2 border-b">
         <div className="flex items-center gap-2">
           <StatusUpdater user={currentUser}>
-            <Avatar className="cursor-pointer">
+            <Avatar className="cursor-pointer w-10 h-10">
               <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
               <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
             </Avatar>
           </StatusUpdater>
           <h1 className="text-xl font-bold font-headline">ChattyLite</h1>
         </div>
-        <Button variant="ghost" size="icon">
-          <Search className="w-5 h-5" />
-        </Button>
+        <div className='flex items-center gap-2'>
+            <Button variant="ghost" size="icon">
+                <Search className="w-5 h-5" />
+            </Button>
+            <Link href="/new-group" passHref>
+              <Button variant="ghost" size="icon">
+                <Plus className="w-5 h-5" />
+              </Button>
+            </Link>
+        </div>
       </header>
       
-      <main className="flex-1 overflow-y-auto">
-        <StoryReel />
-        <ChatList />
-      </main>
-
-      <footer className="p-4">
-        <Link href="/new-group" passHref>
-          <Button className="w-full">
-            <Plus className="w-5 h-5 mr-2" />
-            New Chat
-          </Button>
-        </Link>
-      </footer>
+        <Tabs defaultValue="channel" className="flex-1 flex flex-col overflow-hidden">
+            <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="channel"><LayoutGrid className="w-4 h-4 mr-2"/>Channel</TabsTrigger>
+                <TabsTrigger value="story"><Users className="w-4 h-4 mr-2"/>Story</TabsTrigger>
+            </TabsList>
+            <TabsContent value="channel" className="flex-1 flex flex-col overflow-hidden mt-0">
+                <ChatList />
+            </TabsContent>
+            <TabsContent value="story" className="flex-1 overflow-y-auto p-4 mt-0">
+                <StoryReel />
+            </TabsContent>
+        </Tabs>
     </AppContainer>
   );
 }
@@ -55,7 +62,7 @@ export default function HomePage() {
 function ChatList() {
   const { chats } = dataStore;
   return (
-    <div className="p-2 space-y-2">
+    <div className="p-2 space-y-2 overflow-y-auto flex-1">
       {chats.map((chat) => (
         <ChatListItem key={chat.id} chat={chat} />
       ))}
