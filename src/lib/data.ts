@@ -28,6 +28,7 @@ class DataStore {
           { id: 'msg-1-2', senderId: this.currentUser.id, body: 'Pretty good! Just working on the new chat app. What do you think?', timestamp: subMinutes(new Date(), 4), type: 'text', read: true, delivered: true },
           { id: 'msg-1-3', senderId: this.users[1].id, body: 'Looks amazing! The UI is so clean.', timestamp: subMinutes(new Date(), 3), type: 'text', read: false, delivered: true },
         ],
+        products: [],
       },
       {
         id: 'chat-2',
@@ -37,6 +38,7 @@ class DataStore {
           { id: 'msg-2-1', senderId: this.users[2].id, body: 'Can you send me the file?', timestamp: subHours(new Date(), 1), type: 'text', read: true, delivered: true },
           { id: 'msg-2-2', senderId: this.currentUser.id, body: 'Sure, here it is.', timestamp: subHours(new Date(), 1), type: 'file', meta: { fileName: 'project-brief.pdf', fileUrl: '#' }, read: true, delivered: true },
         ],
+        products: [],
       },
       {
         id: 'chat-3',
@@ -168,7 +170,7 @@ class DataStore {
   }
 
   addProductToChat(chatId: string, productData: Omit<Product, 'id' | 'sellerId' | 'chatId'>): Product | null {
-    const chatIndex = this.chats.findIndex(c => c.id === chatId && c.type === 'group');
+    const chatIndex = this.chats.findIndex(c => c.id === chatId);
     if (chatIndex === -1) return null;
 
     const newProduct: Product = {

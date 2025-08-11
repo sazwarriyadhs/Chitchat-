@@ -96,7 +96,7 @@ export default function ChatPage() {
 
     const { name, avatar, status } = getChatInfo(chat, currentUser);
 
-    const defaultTab = chat.type === 'group' ? "store" : "chat";
+    const defaultTab = "chat";
 
     return (
         <AppContainer>
@@ -108,24 +108,19 @@ export default function ChatPage() {
                 chatType={chat.type}
             />
             <Tabs defaultValue={defaultTab} className="flex-1 flex flex-col overflow-hidden">
-                {chat.type === 'group' && (
-                     <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="store"><ShoppingCart className="w-4 h-4 mr-2"/>Store</TabsTrigger>
-                        <TabsTrigger value="chat"><MessageSquare className="w-4 h-4 mr-2"/>Chat</TabsTrigger>
-                    </TabsList>
-                )}
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="store"><ShoppingCart className="w-4 h-4 mr-2"/>Store</TabsTrigger>
+                    <TabsTrigger value="chat"><MessageSquare className="w-4 h-4 mr-2"/>Chat</TabsTrigger>
+                </TabsList>
                
                 <TabsContent value="chat" className="flex-1 flex flex-col overflow-hidden mt-0">
                     <ChatMessages messages={chat.messages} currentUser={currentUser} />
                     <ChatInput onSendMessage={handleSendMessage} chat={chat} />
                 </TabsContent>
 
-                {chat.type === 'group' && (
-                    <TabsContent value="store" className="flex-1 overflow-y-auto p-4 bg-muted/30 mt-0">
-                        <GroupStore products={chat.products || []} onAddProduct={handleAddProduct} users={users} />
-                    </TabsContent>
-                )}
-
+                <TabsContent value="store" className="flex-1 overflow-y-auto p-4 bg-muted/30 mt-0">
+                    <GroupStore products={chat.products || []} onAddProduct={handleAddProduct} users={users} />
+                </TabsContent>
             </Tabs>
         </AppContainer>
     );
@@ -177,7 +172,7 @@ function GroupStore({ products, onAddProduct, users }: { products: Product[], on
         <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
             <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                    <h2 className="text-lg font-bold">Group Store</h2>
+                    <h2 className="text-lg font-bold">Store</h2>
                     <DialogTrigger asChild>
                         <Button>
                             <Plus className="w-4 h-4 mr-2" />
@@ -190,7 +185,7 @@ function GroupStore({ products, onAddProduct, users }: { products: Product[], on
                     <Card className="text-center p-8 border-dashed">
                         <CardContent className="flex flex-col items-center justify-center gap-4">
                             <Package className="w-16 h-16 text-muted-foreground" />
-                            <p className="text-muted-foreground">No products for sale in this group yet.</p>
+                            <p className="text-muted-foreground">No products for sale in this chat yet.</p>
                             <DialogTrigger asChild>
                             <Button variant="outline">List First Item</Button>
                             </DialogTrigger>
@@ -300,5 +295,3 @@ function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
     </DialogContent>
   )
 }
-
-    
