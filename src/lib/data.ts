@@ -343,7 +343,7 @@ dataStore.chats = [
           { id: 'msg-s1-1', senderId: mockData.users[3].id, body: 'Selamat datang di Toko A!', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
         ],
         products: [
-            { id: 'prod-s1-1', chatId: 'store-1', sellerId: mockData.users[0].id, name: 'Kaos Polos Putih', description: 'Kaos katun berkualitas tinggi, nyaman dipakai sehari-hari.', price: 75000, imageUrl: 'https://via.placeholder.com/400?text=Kaos+Polos+Putih' },
+            { id: 'prod-s1-1', chatId: 'store-1', sellerId: mockData.users[0].id, name: 'Kaos Polos Putih', description: 'Kaos katun berkualitas tinggi, nyaman dipakai sehari-hari.', price: 75000, imageUrl: '/image/kaosputih.jpeg' },
             { id: 'prod-s1-2', chatId: 'store-1', sellerId: mockData.users[0].id, name: 'Jaket Bomber Hitam', description: 'Jaket bomber stylish untuk segala cuaca.', price: 250000, imageUrl: 'https://via.placeholder.com/400?text=Jaket+Bomber+Hitam' },
         ]
       },
