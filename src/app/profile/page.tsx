@@ -321,5 +321,5 @@ export default function ProfilePage() {
             </Button>
         </footer>
     </AppContainer>
-
-    
+  );
+}
