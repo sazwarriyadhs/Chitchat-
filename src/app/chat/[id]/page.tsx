@@ -1,3 +1,4 @@
+
 "use client"
 import { AppContainer } from '@/components/AppContainer';
 import { ChatHeader } from '@/components/chat/ChatHeader';
@@ -135,7 +136,7 @@ function GroupStore({ products, onAddProduct, users }: { products: Product[], on
         <div className="space-y-4">
             <div className="flex justify-between items-center">
                 <h2 className="text-lg font-bold">Group Store</h2>
-                <AddProductDialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen} onAddProduct={onAddProduct}>
+                <AddProductDialog onAddProduct={onAddProduct}>
                     <Button>
                         <Plus className="w-4 h-4 mr-2" />
                         List Item
@@ -148,7 +149,7 @@ function GroupStore({ products, onAddProduct, users }: { products: Product[], on
                     <CardContent className="flex flex-col items-center justify-center gap-4">
                         <Package className="w-16 h-16 text-muted-foreground" />
                         <p className="text-muted-foreground">No products for sale in this group yet.</p>
-                        <AddProductDialog onAddProduct={onAddProduct} open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
+                         <AddProductDialog onAddProduct={onAddProduct}>
                            <Button variant="outline">List First Item</Button>
                         </AddProductDialog>
                     </CardContent>
@@ -194,13 +195,12 @@ function GroupStore({ products, onAddProduct, users }: { products: Product[], on
 }
 
 type AddProductDialogProps = {
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
   onAddProduct: (data: Omit<Product, 'id'|'sellerId'|'chatId'>) => void;
   children: React.ReactNode;
 }
 
-function AddProductDialog({ open, onOpenChange, onAddProduct, children }: AddProductDialogProps) {
+function AddProductDialog({ onAddProduct, children }: AddProductDialogProps) {
+  const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
@@ -230,13 +230,11 @@ function AddProductDialog({ open, onOpenChange, onAddProduct, children }: AddPro
     setName('');
     setPrice('');
     setDescription('');
-    if (onOpenChange) {
-        onOpenChange(false);
-    }
+    setOpen(false);
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
             {children}
         </DialogTrigger>
