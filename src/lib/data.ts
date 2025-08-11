@@ -1,3 +1,4 @@
+
 import { User, Chat, Story, Message, Presentation, Product } from './types';
 import { subHours, subMinutes, subDays } from 'date-fns';
 
@@ -72,6 +73,7 @@ class DataStore {
     this.getChatById = this.getChatById.bind(this);
     this.addMessageToChat = this.addMessageToChat.bind(this);
     this.createGroupChat = this.createGroupChat.bind(this);
+    this.updateGroupChat = this.updateGroupChat.bind(this);
     this.updateUser = this.updateUser.bind(this);
     this.addStory = this.addStory.bind(this);
     this.addPresentation = this.addPresentation.bind(this);
@@ -129,6 +131,22 @@ class DataStore {
 
     this.chats.unshift(newGroup);
     return newGroup;
+  }
+
+  updateGroupChat(chatId: string, updates: { name: string, avatar: string, participantIds: string[] }) {
+    const chatIndex = this.chats.findIndex(c => c.id === chatId && c.type === 'group');
+    if (chatIndex === -1) return null;
+    
+    const participants = this.users.filter(u => updates.participantIds.includes(u.id));
+    
+    this.chats[chatIndex] = {
+      ...this.chats[chatIndex],
+      name: updates.name,
+      avatar: updates.avatar,
+      participants: participants
+    };
+
+    return this.chats[chatIndex];
   }
   
   updateUser(userId: string, updates: Partial<User>) {

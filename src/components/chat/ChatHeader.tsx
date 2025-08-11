@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, MoreVertical, Phone, Video, User as UserIcon, LogOut } from "lucide-react";
+import { ArrowLeft, MoreVertical, Phone, Video, User as UserIcon, LogOut, Edit } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -67,6 +67,12 @@ export function ChatHeader({ name, avatarUrl, status, chatId, chatType }: ChatHe
             <UserIcon className="mr-2 h-4 w-4" />
             <span>Profile</span>
           </DropdownMenuItem>
+           {chatType === 'group' && (
+            <DropdownMenuItem onClick={() => router.push(`/chat/${chatId}/edit`)}>
+              <Edit className="mr-2 h-4 w-4" />
+              <span>Edit Group</span>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
            <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive focus:bg-destructive/10">
             <LogOut className="mr-2 h-4 w-4" />
