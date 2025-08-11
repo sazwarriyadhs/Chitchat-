@@ -27,7 +27,7 @@ export default function EditGroupPage() {
   const [loading, setLoading] = useState(true);
   const [groupName, setGroupName] = useState('');
   const [groupAvatar, setGroupAvatar] = useState('');
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   
   const otherUsers = users.filter(u => u.id !== currentUser.id);
 
@@ -38,8 +38,10 @@ export default function EditGroupPage() {
             setChat(existingChat);
             setGroupName(existingChat.name || '');
             setGroupAvatar(existingChat.avatar || '');
-            setSelectedUsers(existingChat.participants.map(p => p.id).filter(id => id !== currentUser.id));
+            // Initialize selected users with current participants, excluding the current user
+            setSelectedUserIds(existingChat.participants.map(p => p.id).filter(id => id !== currentUser.id));
         } else {
+            // If chat is not a group or not found, redirect
             notFound();
         }
         setLoading(false);
@@ -47,24 +49,25 @@ export default function EditGroupPage() {
   }, [chatId, getChatById, currentUser.id]);
 
   const handleToggleUser = (userId: string) => {
-    setSelectedUsers(prev =>
+    setSelectedUserIds(prev =>
       prev.includes(userId)
-        ? prev.filter(id => id !== userId)
-        : [...prev, userId]
+        ? prev.filter(id => id !== userId) // Remove user
+        : [...prev, userId] // Add user
     );
   };
 
   const handleSaveChanges = () => {
+    if (!chatId) return;
     if (!groupName.trim()) {
         toast({ variant: 'destructive', title: 'Group name is required.' });
         return;
     }
-    if (selectedUsers.length === 0) {
+    if (selectedUserIds.length === 0) {
         toast({ variant: 'destructive', title: 'A group must have at least one other member.'});
         return;
     }
 
-    const participantIds = [currentUser.id, ...selectedUsers];
+    const participantIds = [currentUser.id, ...selectedUserIds];
     
     updateGroupChat(chatId, {
         name: groupName,
@@ -130,7 +133,7 @@ export default function EditGroupPage() {
                 <div key={user.id} className="flex items-center space-x-3 p-2 rounded-md hover:bg-muted/50">
                     <Checkbox
                         id={`user-${user.id}`}
-                        checked={selectedUsers.includes(user.id)}
+                        checked={selectedUserIds.includes(user.id)}
                         onCheckedChange={() => handleToggleUser(user.id)}
                     />
                     <Label htmlFor={`user-${user.id}`} className="flex items-center gap-3 cursor-pointer flex-1">
