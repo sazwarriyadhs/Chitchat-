@@ -193,6 +193,13 @@ export default function ChatPage() {
             type: 'text',
             body: `Saya telah memesan ${checkingOutProduct.name}. Menunggu konfirmasi dari ${seller?.name || 'penjual'}.`,
         });
+        
+        if (socketRef.current) {
+            socketRef.current.emit('new-order-notification', {
+                sellerId: newOrder.sellerId,
+                order: newOrder
+            });
+        }
 
         toast({
             title: "Pesanan Dibuat!",

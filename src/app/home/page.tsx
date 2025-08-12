@@ -2,8 +2,8 @@
 
 "use client"
 import Link from 'next/link';
-import { Plus, Search, User as UserIcon } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Plus, Search, User as UserIcon, PackageCheck } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 import { AppContainer } from '@/components/AppContainer';
@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { dataStore } from '@/lib/data';
-import { Chat, User, Product } from '@/lib/types';
+import { Chat, User, Product, Order } from '@/lib/types';
 import { StoryReel } from '@/components/stories/StoryReel';
 import { StatusUpdater } from '@/components/stories/StatusUpdater';
 import { format } from 'date-fns';
@@ -21,11 +21,48 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ShoppingCart } from 'lucide-react';
 import { UpgradeDialog } from '@/components/UpgradeDialog';
+import { io, Socket } from 'socket.io-client';
+import { useToast } from '@/hooks/use-toast';
 
 export default function HomePage() {
   const { currentUser } = dataStore;
   const router = useRouter();
   const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
+  const socketRef = useRef<Socket | null>(null);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Socket.io connection for notifications
+    const socket = io({ path: "/api/socket" });
+    socketRef.current = socket;
+
+    socket.on('connect', () => {
+        console.log('Socket connected for notifications:', socket.id);
+        // Join a room for this user to receive personal notifications
+        socket.emit('join-user-room', currentUser.id);
+    });
+
+    socket.on('new-order', (order: Order) => {
+        if (order.sellerId === currentUser.id) {
+            toast({
+                title: "Pesanan Baru Diterima!",
+                description: `Anda telah menerima pesanan untuk ${order.productSnapshot.name}.`,
+                action: (
+                    <Button variant="outline" size="sm" onClick={() => router.push('/orders')}>
+                       <PackageCheck className="mr-2 h-4 w-4" /> Lihat Pesanan
+                    </Button>
+                )
+            });
+        }
+    });
+
+    return () => {
+        if (socket) {
+            socket.disconnect();
+        }
+    };
+  }, [currentUser.id, toast, router]);
+
 
   const handleCreateStoreClick = (e: React.MouseEvent) => {
     if (currentUser.role !== 'business') {

@@ -2,7 +2,7 @@
 import { Server as NetServer } from "http";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Server as ServerIO, Socket } from "socket.io";
-import { Message } from "@/lib/types";
+import { Message, Order } from "@/lib/types";
 
 // This is a type assertion for the NextApiResponse
 type NextApiResponseServerIO = NextApiResponse & {
@@ -35,6 +35,11 @@ const socketHandler = (req: NextApiRequest, res: NextApiResponseServerIO) => {
     io.on("connection", (socket: Socket) => {
       console.log(`User connected: ${socket.id}`);
       
+      socket.on('join-user-room', (userId: string) => {
+        socket.join(userId);
+        console.log(`User ${socket.id} joined personal room: ${userId}`);
+      });
+      
       socket.on("join-chat", (chatId: string) => {
         socket.join(chatId);
         console.log(`User ${socket.id} joined chat: ${chatId}`);
@@ -48,6 +53,10 @@ const socketHandler = (req: NextApiRequest, res: NextApiResponseServerIO) => {
       socket.on("chat-message", ({ chatId, message }: { chatId: string; message: Message }) => {
         // Broadcast the message to all clients in the chat room except the sender
         socket.to(chatId).emit("new-message", message);
+      });
+      
+      socket.on("new-order-notification", ({ sellerId, order }: { sellerId: string; order: Order}) => {
+          socket.to(sellerId).emit("new-order", order);
       });
 
       socket.on("disconnect", () => {
