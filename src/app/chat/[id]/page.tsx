@@ -38,6 +38,7 @@ export default function ChatPage() {
     const params = useParams<{ id: string }>();
     const chatId = params.id as string;
     const { getChatById, currentUser, addMessageToChat, addProductToChat, updateProductInChat, deleteProductFromChat, users, updateChatBackgroundAndTheme } = dataStore;
+    const { toast } = useToast();
 
     const [chat, setChat] = useState<Chat | undefined>(undefined);
     const [loading, setLoading] = useState(true);
