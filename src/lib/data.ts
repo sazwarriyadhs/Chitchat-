@@ -25,7 +25,7 @@ class DataStore {
     this.orders = [];
     
     // Set a default mock user. The login flow will overwrite this.
-    this.currentUser = { id: '11111111-1111-1111-1111-111111111111', name: 'User 1', avatar: '/profileuser/04_tania_kusuma.jpg', status: 'Hello there!', online: true, role: 'business' };
+    this.currentUser = { id: '11111111-1111-1111-1111-111111111111', name: 'Tania Kusuma', avatar: '/profileuser/04_tania_kusuma.jpg', status: 'Hello there!', online: true, role: 'business' };
 
     // Bind methods
     this.getChatById = this.getChatById.bind(this);
@@ -62,7 +62,7 @@ class DataStore {
         this.currentUser = user;
     } else {
         // Fallback to a default user if not found, to prevent crashes
-        this.currentUser = { id: '11111111-1111-1111-1111-111111111111', name: 'User 1', avatar: '/profileuser/04_tania_kusuma.jpg', status: 'Hello there!', online: true, role: 'business' };
+        this.currentUser = { id: '11111111-1111-1111-1111-111111111111', name: 'Tania Kusuma', avatar: '/profileuser/04_tania_kusuma.jpg', status: 'Hello there!', online: true, role: 'business' };
     }
   }
 
@@ -270,7 +270,7 @@ class DataStore {
 
   getStores(): Chat[] {
     // This would be: SELECT * FROM chats WHERE type = 'group' AND has_products = true;
-    return this.chats.filter(chat => chat.type === 'group' && chat.products && chat.products.length > 0).sort((a, b) => a.id.localeCompare(b.id));
+    return this.chats.filter(chat => chat.type === 'group' && (chat.name?.toLowerCase().includes('toko') || (chat.products && chat.products.length > 0))).sort((a, b) => a.id.localeCompare(b.id));
   }
 
   createUser(userData: Omit<User, 'id' | 'avatar' | 'online' | 'status'> & { password?: string }): User {
@@ -355,16 +355,16 @@ class DataStore {
 const mockData = {
   users: [
     { id: '11111111-1111-1111-1111-111111111111', name: 'Tania Kusuma', avatar: '/profileuser/04_tania_kusuma.jpg', status: 'Hello there!', online: true, role: 'business' },
-    { id: '22222222-2222-2222-2222-222222222222', name: 'Melati Anggraeni', avatar: '/profileuser/05_melati_anggraeni.jpg', status: 'Available', online: false, role: 'regular' },
-    { id: '33333333-3333-3333-3333-333333333333', name: 'Citra Kirana', avatar: '/profileuser/closeup-young-female-professional-making-eye-contact-against-colored-background.jpg', status: 'Feeling good', online: true, role: 'regular' },
+    { id: '22222222-2222-2222-2222-222222222222', name: 'Melati Anggraeni', avatar: '/profileuser/05_melati_anggraeni.jpg', status: 'Available', online: false, role: 'business' },
+    { id: '33333333-3333-3333-3333-333333333333', name: 'Citra Kirana', avatar: '/profileuser/closeup-young-female-professional-making-eye-contact-against-colored-background.jpg', status: 'Feeling good', online: true, role: 'business' },
     { id: '44444444-4444-4444-4444-444444444444', name: 'Dion Mahendra', avatar: '/profileuser/front-view-smiley-man-seaside.jpg', status: 'Busy', online: false, role: 'business' },
     { id: '55555555-5555-5555-5555-555555555555', name: 'Eliza Sari', avatar: '/profileuser/horizontal-portrait-smiling-happy-young-pleasant-looking-female-wears-denim-shirt-stylish-glasses-with-straight-blonde-hair-expresses-positiveness-poses.jpg', status: 'Happy', online: true, role: 'regular' },
     { id: '66666666-6666-6666-6666-666666666666', name: 'Fitria Lestari', avatar: '/profileuser/portrait-expressive-young-woman.jpg', status: 'Available', online: true, role: 'regular' },
-    { id: '77777777-7777-7777-7777-777777777777', name: 'Gilang Ramadhan', avatar: '/profileuser/portrait-man-laughing.jpg', status: 'Helping others', online: false, role: 'regular' },
-    { id: '88888888-8888-8888-8888-888888888888', name: 'Hana Yulita', avatar: '/profileuser/portrait-smiling-blonde-woman.jpg', status: 'Chilling', online: true, role: 'business' },
+    { id: '77777777-7777-7777-7777-777777777777', name: 'Gilang Ramadhan', avatar: '/profileuser/portrait-man-laughing.jpg', status: 'Helping others', false, role: 'regular' },
+    { id: '88888888-8888-8888-8888-888888888888', name: 'Hana Yulita', avatar: '/profileuser/portrait-smiling-blonde-woman.jpg', status: 'Chilling', online: true, role: 'regular' },
     { id: '99999999-9999-9999-9999-999999999999', name: 'Indra Gunawan', avatar: '/profileuser/portrait-volunteer-who-organized-donations-charity.jpg', status: 'At the office', online: false, role: 'regular' },
     { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'Joko Widodo', avatar: '/profileuser/portrait-white-man-isolated.jpg', status: 'Ready to go', online: true, role: 'regular' },
-    { id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'Kevin Sanjaya', avatar: '/profileuser/young-bearded-man-with-striped-shirt (1).jpg', status: 'On vacation', online: false, role: 'business' },
+    { id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'Kevin Sanjaya', avatar: '/profileuser/young-bearded-man-with-striped-shirt (1).jpg', status: 'On vacation', online: false, role: 'regular' },
   ],
     memberships: [
         { id: 1, name: 'Basic' /* ...other fields */ },
@@ -416,32 +416,50 @@ dataStore.chats = [
        {
         id: 'store-1',
         type: 'group',
-        name: 'Toko A',
-        avatar: '/image/tokoA.jpeg',
+        name: 'Toko Satu',
+        avatar: '/image/stores/download (1).jpeg',
         participants: mockData.users,
         messages: [
-          { id: 'msg-s1-1', senderId: mockData.users[3].id, body: 'Selamat datang di Toko A!', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
+          { id: 'msg-s1-1', senderId: mockData.users[0].id, body: 'Selamat datang di Toko Satu!', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
         ],
-        products: [
-            { id: 'prod-s1-1', chatId: 'store-1', sellerId: mockData.users[0].id, name: 'Kaos Polos Putih', description: 'Kaos katun berkualitas tinggi, nyaman dipakai sehari-hari.', price: 75000, imageUrl: '/image/kaosputih.jpeg' },
-            { id: 'prod-s1-2', chatId: 'store-1', sellerId: mockData.users[0].id, name: 'Jaket Bomber Hitam', description: 'Jaket bomber stylish untuk segala cuaca.', price: 250000, imageUrl: 'https://via.placeholder.com/400?text=Jaket+Bomber+Hitam' },
-        ],
+        products: [],
         backgroundUrl: '/image/background/theme3.jpeg'
       },
       {
         id: 'store-2',
         type: 'group',
-        name: 'Toko B',
-        avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/other/store-gadgets.png',
+        name: 'Toko Dua',
+        avatar: '/image/stores/download (2).jpeg',
         participants: mockData.users,
         messages: [
-          { id: 'msg-s2-1', senderId: mockData.users[4].id, body: 'Selamat datang di Toko B!', timestamp: subHours(new Date(), 3), type: 'text', read: true, delivered: true },
+          { id: 'msg-s2-1', senderId: mockData.users[1].id, body: 'Selamat datang di Toko Dua!', timestamp: subHours(new Date(), 3), type: 'text', read: true, delivered: true },
         ],
-        products: [
-            { id: 'prod-s2-1', chatId: 'store-2', sellerId: mockData.users[4].id, name: 'Headphone Over-Ear', description: 'Kualitas suara jernih dengan bass mendalam.', price: 350000, imageUrl: '/image/headset.png' },
-            { id: 'prod-s2-2', chatId: 'store-2', sellerId: mockData.users[4].id, name: 'Charger USB-C 65W', description: 'Pengisian daya super cepat untuk semua perangkat Anda.', price: 120000, imageUrl: 'https://via.placeholder.com/400?text=Charger+USB-C' },
-        ],
+        products: [],
         backgroundUrl: '/image/background/theme4.jpeg'
+      },
+      {
+        id: 'store-3',
+        type: 'group',
+        name: 'Toko Tiga',
+        avatar: '/image/stores/download (3).jpeg',
+        participants: mockData.users,
+        messages: [
+          { id: 'msg-s3-1', senderId: mockData.users[2].id, body: 'Selamat datang di Toko Tiga!', timestamp: subHours(new Date(), 4), type: 'text', read: true, delivered: true },
+        ],
+        products: [],
+        backgroundUrl: '/image/background/bg_1.png'
+      },
+      {
+        id: 'store-4',
+        type: 'group',
+        name: 'Toko Empat',
+        avatar: '/image/stores/images (1).jpeg',
+        participants: mockData.users,
+        messages: [
+          { id: 'msg-s4-1', senderId: mockData.users[3].id, body: 'Selamat datang di Toko Empat!', timestamp: subHours(new Date(), 5), type: 'text', read: true, delivered: true },
+        ],
+        products: [],
+        backgroundUrl: '/image/background/bg_2.png'
       }
 ];
 dataStore.stories = [
