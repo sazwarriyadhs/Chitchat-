@@ -1,66 +1,59 @@
-# ChitChat: Masa Depan Social Commerce
+# ChitChat: Merevolusi Perdagangan Melalui Percakapan
 
 ---
 
 ### 1. Masalah
 
-E-commerce tradisional terasa impersonal dan terputus dari cara kita berkomunikasi. Pengguna harus beralih antara media sosial untuk penemuan produk, aplikasi obrolan untuk bertanya, dan situs web e-commerce untuk melakukan pembelian. Pengalaman yang terfragmentasi ini menyebabkan hilangnya penjualan dan frustrasi pelanggan. Bagi usaha kecil, mengelola beberapa platform untuk pemasaran, penjualan, dan dukungan pelanggan sangat tidak efisien dan mahal.
+E-commerce modern terasa impersonal dan terputus. Platform memaksa pengguna untuk beralih antara beberapa aplikasi: media sosial untuk penemuan, aplikasi obrolan untuk pertanyaan, dan situs web e-commerce yang kaku untuk pembelian. Pengalaman yang terfragmentasi ini menyebabkan frustrasi pelanggan dan hilangnya penjualan. Untuk usaha kecil, mengelola kehadiran di beberapa platform untuk pemasaran, penjualan, dan dukungan sangat tidak efisien dan menghabiskan sumber daya yang berharga.
 
 ---
 
 ### 2. Solusi
 
-**ChitChat** adalah aplikasi mobile-first yang mengintegrasikan pengalaman e-commerce yang mulus langsung ke dalam antarmuka obrolan yang akrab dan intuitif.
-
-Kami menjembatani kesenjangan antara percakapan dan konversi.
+**ChitChat** adalah aplikasi prototipe mobile-first yang secara mulus mengintegrasikan pengalaman e-commerce yang dinamis dan lengkap langsung ke dalam antarmuka obrolan yang akrab dan intuitif. Kami bukan hanya aplikasi obrolan; kami adalah platform **social commerce** di mana setiap percakapan adalah peluang untuk terhubung dan bertransaksi.
 
 ---
 
 ### 3. Cara Kerja
 
-- **Untuk Pengguna:** Aplikasi obrolan real-time yang indah untuk terhubung dengan teman dan menemukan bisnis. Mereka dapat menelusuri produk, mengajukan pertanyaan, dan melakukan pembelian semua dalam satu percakapan.
-- **Untuk Bisnis:** Saluran "social commerce" yang kuat. Pengguna bisnis dapat membuat **Toko** (obrolan grup publik), mendaftarkan produk, dan berinteraksi langsung dengan pelanggan mereka. Setiap percakapan adalah peluang penjualan.
+- **Untuk Pengguna:** Pengguna bergabung dengan aplikasi obrolan yang dinamis di mana mereka dapat terhubung dengan teman, menemukan bisnis lokal, menelusuri produk, mengajukan pertanyaan, dan melakukan pembelian—semua dalam satu percakapan tanpa gangguan.
+- **Untuk Bisnis:** Bisnis membuka saluran penjualan langsung yang kuat. Dengan akun Bisnis, mereka dapat membuat **Toko** (obrolan grup publik), mendaftarkan produk, dan mengelola alur pesanan lengkap—mulai dari konfirmasi pesanan hingga verifikasi pembayaran—langsung di dalam obrolan.
 
 ---
 
 ### 4. Target Pasar
 
-- **Primer:** Usaha kecil hingga menengah (UKM) dan kreator independen di Indonesia yang mengandalkan media sosial (seperti Instagram dan WhatsApp) untuk penjualan.
-- **Sekunder:** Konsumen yang berorientasi sosial yang lebih suka berinteraksi dengan merek dan membeli produk melalui platform percakapan yang tepercaya.
+- **Primer:** Usaha kecil hingga menengah (UKM) dan kreator independen yang saat ini menggunakan platform seperti Instagram atau WhatsApp untuk penjualan dan mencari alur kerja yang lebih efisien dan terintegrasi.
+- **Sekunder:** Konsumen yang paham teknologi dan lebih suka berinteraksi dengan merek secara otentik dan membeli produk dalam lingkungan percakapan yang tepercaya.
 
 ---
 
 ### 5. Fitur Utama & Keunggulan Kompetitif
 
-- **Platform Terpadu:** Obrolan, komunitas, dan perdagangan dalam satu aplikasi. Tidak perlu lagi beralih konteks.
-- **Penjualan Percakapan:** Bisnis dapat memberikan dukungan instan, menawarkan rekomendasi yang dipersonalisasi, dan menutup penjualan langsung di obrolan.
-- **Hambatan Masuk Rendah:** Setiap pengguna bisnis dapat mendirikan toko dalam hitungan menit, secara gratis.
-- **Pembangunan Komunitas:** Toko juga merupakan obrolan grup, memungkinkan bisnis membangun komunitas setia di sekitar merek mereka.
+- **Platform Terpadu:** Menggabungkan obrolan, komunitas, dan perdagangan ke dalam satu pengalaman yang mulus.
+- **Alur Kerja Penjualan Percakapan:** Mengelola seluruh siklus hidup penjualan—mulai dari pertanyaan awal hingga konfirmasi pembayaran dan pemilihan kurir—dalam satu utas obrolan.
+- **Hambatan Masuk Rendah:** Pengguna bisnis dapat mendirikan toko fungsional dalam hitungan menit, tanpa biaya di muka.
+- **Pembangunan Komunitas:** Karena Toko pada dasarnya adalah obrolan grup, bisnis dapat membina komunitas yang loyal dan terlibat di sekitar merek mereka.
+- **Notifikasi Real-Time:** Menjaga penjual tetap terinformasi secara instan tentang pesanan baru, memungkinkan layanan pelanggan yang cepat.
 
 ---
 
 ### 6. Model Bisnis
 
-Pendapatan kami dihasilkan melalui model langganan freemium yang dirancang untuk pengguna bisnis kami.
+Prototipe ini menggunakan model freemium untuk menunjukkan potensi pendapatan.
 
 - **Akun Dasar (Gratis):**
   - Semua fitur obrolan standar.
-  - Bergabung dan membeli dari toko.
+  - Bergabung dan membeli dari Toko.
 
 - **Akun Bisnis (Berbayar):**
   - **Membuat dan mengelola Toko.**
-  - **Mendaftarkan produk untuk dijual.**
-  - **Berbagi presentasi dan dokumen bisnis lainnya.**
+  - **Mendaftarkan, mengedit, dan menghapus produk.**
+  - **Berbagi materi bisnis seperti presentasi.**
   - Akses ke fitur premium di masa depan seperti analitik penjualan, alat promosi, dan penempatan pencarian prioritas.
 
 ---
 
 ### 7. Permintaan
 
-Kami sedang mencari validasi untuk prototipe ini dan mengumpulkan umpan balik pengguna untuk mendapatkan pendanaan awal untuk pengembangan lebih lanjut. Dana akan digunakan untuk:
-
-- Membangun infrastruktur backend dan database yang kuat.
-- Memperluas set fitur (pembayaran, analitik).
-- Kampanye pemasaran dan akuisisi pengguna.
-
-**Mari kita bangun masa depan perdagangan, satu percakapan pada satu waktu.**
+Kami sedang mencari validasi untuk prototipe ini dan mengumpulkan umpan balik pengguna untuk iterasi dan pengembangan di masa depan. Tujuan utamanya adalah untuk menunjukkan kelayakan dan potensi model social commerce yang sangat terintegrasi ini untuk mengamankan pendanaan awal.
