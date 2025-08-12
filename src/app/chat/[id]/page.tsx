@@ -30,6 +30,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 import { io, Socket } from "socket.io-client";
+import { UpgradeDialog } from '@/components/UpgradeDialog';
 
 export const dynamic = 'force-dynamic';
 
@@ -251,6 +252,7 @@ interface GroupStoreProps {
 function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, onPurchase, users, currentUser }: GroupStoreProps) {
     const { toast } = useToast();
     const [isAddProductOpen, setIsAddProductOpen] = useState(false);
+    const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [checkingOutProduct, setCheckingOutProduct] = useState<Product | null>(null);
 
@@ -287,22 +289,27 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
         setEditingProduct(null);
     }
 
+    const handleSellClick = () => {
+        if (currentUser.role === 'business') {
+            setIsAddProductOpen(true);
+        } else {
+            setIsUpgradeOpen(true);
+        }
+    }
+
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">
                 <h2 className="text-lg font-bold">Toko</h2>
-                {currentUser.role === 'business' && (
-                  <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
-                      <DialogTrigger asChild>
-                          <Button>
-                              <Plus className="w-4 h-4 mr-2" /> Jual Item
-                          </Button>
-                      </DialogTrigger>
-                      <AddProductDialog onProductSubmit={handleProductAdded} />
-                  </Dialog>
-                )}
+                 <Button onClick={handleSellClick}>
+                    <Plus className="w-4 h-4 mr-2" /> Jual Item
+                 </Button>
             </div>
             
+            <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
+                <AddProductDialog onProductSubmit={handleProductAdded} />
+            </Dialog>
+
             <Dialog open={!!editingProduct} onOpenChange={(open) => !open && setEditingProduct(null)}>
                 <AddProductDialog product={editingProduct} onProductSubmit={handleProductUpdated} />
             </Dialog>
@@ -311,20 +318,14 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
                 <CheckoutDialog product={checkingOutProduct} onConfirm={handleConfirmCheckout} />
             </Dialog>
 
+            <UpgradeDialog isOpen={isUpgradeOpen} onOpenChange={setIsUpgradeOpen} featureName="menjual produk" />
 
             {products.length === 0 ? (
                 <Card className="text-center p-8 border-dashed">
                     <CardContent className="flex flex-col items-center justify-center gap-4">
                         <Package className="w-16 h-16 text-muted-foreground" />
                         <p className="text-muted-foreground">Belum ada produk yang dijual di obrolan ini.</p>
-                        {currentUser.role === 'business' && (
-                           <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
-                                <DialogTrigger asChild>
-                                    <Button variant="outline" onClick={() => setIsAddProductOpen(true)}>Jual Item Pertama</Button>
-                                </DialogTrigger>
-                                <AddProductDialog onProductSubmit={handleProductAdded} />
-                            </Dialog>
-                        )}
+                        <Button variant="outline" onClick={handleSellClick}>Jual Item Pertama</Button>
                     </CardContent>
                 </Card>
             ) : (
@@ -662,10 +663,3 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
   );
 }
     
-
-
-
-
-
-
-

@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -19,6 +20,7 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { UpgradeDialog } from '@/components/UpgradeDialog';
 
 export default function ProfilePage() {
   const { currentUser, updateUser, addStory, addPresentation, getPresentationsByUserId } = dataStore;
@@ -41,6 +43,7 @@ export default function ProfilePage() {
   const [storyImage, setStoryImage] = useState<string | null>(null);
 
   const [theme, setTheme] = useState('dark');
+  const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -74,6 +77,10 @@ export default function ProfilePage() {
   }, [currentUserId, getPresentationsByUserId, toast, currentUser.role]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (currentUser.role !== 'business') {
+        setIsUpgradeOpen(true);
+        return;
+    }
     if (e.target.files) {
       setFile(e.target.files[0]);
     }
@@ -133,6 +140,10 @@ export default function ProfilePage() {
   };
 
   const handleUpload = async () => {
+    if (currentUser.role !== 'business') {
+        setIsUpgradeOpen(true);
+        return;
+    }
     if (!file) return toast({
         variant: 'destructive',
         title: 'Tidak ada file yang dipilih',
@@ -182,6 +193,14 @@ export default function ProfilePage() {
     router.push('/');
     toast({ title: "Keluar", description: "Anda telah berhasil keluar." });
   };
+  
+  const handleUploadClick = () => {
+    if (currentUser.role !== 'business') {
+        setIsUpgradeOpen(true);
+    } else if (fileInputRef.current) {
+        fileInputRef.current.click();
+    }
+  }
 
   return (
     <AppContainer>
@@ -282,7 +301,7 @@ export default function ProfilePage() {
                         </CardContent>
                     </Card>
                 </TabsContent>
-                {currentUser.role === 'business' && 
+                {currentUser.role === 'business' ? (
                     <TabsContent value="presentations">
                         <Card>
                             <CardHeader>
@@ -339,7 +358,21 @@ export default function ProfilePage() {
                             </CardContent>
                         </Card>
                     </TabsContent>
-                }
+                    ) : (
+                    <TabsContent value="presentations">
+                         <Card>
+                            <CardHeader>
+                                <CardTitle>Presentasi (Fitur Bisnis)</CardTitle>
+                                <CardDescription>Upgrade akun Anda untuk mengunggah dan berbagi presentasi.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Button onClick={() => setIsUpgradeOpen(true)}>
+                                    Upgrade ke Akun Bisnis
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                    )}
             </Tabs>
         </main>
         <footer className="p-4 border-t bg-card">
@@ -348,6 +381,7 @@ export default function ProfilePage() {
                 Keluar
             </Button>
         </footer>
+        <UpgradeDialog isOpen={isUpgradeOpen} onOpenChange={setIsUpgradeOpen} featureName="mengunggah presentasi" />
     </AppContainer>
   );
 }

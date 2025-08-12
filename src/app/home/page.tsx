@@ -1,4 +1,5 @@
 
+
 "use client"
 import Link from 'next/link';
 import { Plus, Search, User as UserIcon } from 'lucide-react';
@@ -19,10 +20,19 @@ import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ShoppingCart } from 'lucide-react';
+import { UpgradeDialog } from '@/components/UpgradeDialog';
 
 export default function HomePage() {
   const { currentUser } = dataStore;
   const router = useRouter();
+  const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
+
+  const handleCreateStoreClick = (e: React.MouseEvent) => {
+    if (currentUser.role !== 'business') {
+      e.preventDefault();
+      setIsUpgradeOpen(true);
+    }
+  }
 
   return (
     <AppContainer>
@@ -40,13 +50,11 @@ export default function HomePage() {
             <Button variant="ghost" size="icon">
                 <Search className="w-5 h-5" />
             </Button>
-            {currentUser.role === 'business' && (
-              <Link href="/new-group" passHref>
-                <Button variant="ghost" size="icon" title="Buat toko baru">
-                  <Plus className="w-5 h-5" />
-                </Button>
-              </Link>
-            )}
+            <Link href="/new-group" passHref onClick={handleCreateStoreClick}>
+              <Button variant="ghost" size="icon" title="Buat toko baru">
+                <Plus className="w-5 h-5" />
+              </Button>
+            </Link>
             <Link href="/profile" passHref>
               <Button variant="ghost" size="icon">
                 <UserIcon className="w-5 h-5" />
@@ -65,6 +73,7 @@ export default function HomePage() {
             <ChatList />
         </div>
       </main>
+      <UpgradeDialog isOpen={isUpgradeOpen} onOpenChange={setIsUpgradeOpen} featureName="membuat toko" />
     </AppContainer>
   );
 }
