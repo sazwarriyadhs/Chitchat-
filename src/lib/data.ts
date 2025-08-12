@@ -360,7 +360,7 @@ const mockData = {
     { id: '44444444-4444-4444-4444-444444444444', name: 'Dion Mahendra', avatar: '/profileuser/front-view-smiley-man-seaside.jpg', status: 'Busy', online: false, role: 'business' },
     { id: '55555555-5555-5555-5555-555555555555', name: 'Eliza Sari', avatar: '/profileuser/horizontal-portrait-smiling-happy-young-pleasant-looking-female-wears-denim-shirt-stylish-glasses-with-straight-blonde-hair-expresses-positiveness-poses.jpg', status: 'Happy', online: true, role: 'regular' },
     { id: '66666666-6666-6666-6666-666666666666', name: 'Fitria Lestari', avatar: '/profileuser/portrait-expressive-young-woman.jpg', status: 'Available', online: true, role: 'regular' },
-    { id: '77777777-7777-7777-7777-777777777777', name: 'Gilang Ramadhan', avatar: '/profileuser/portrait-man-laughing.jpg', status: 'Helping others', false, role: 'regular' },
+    { id: '77777777-7777-7777-7777-777777777777', name: 'Gilang Ramadhan', avatar: '/profileuser/portrait-man-laughing.jpg', status: 'Helping others', online: false, role: 'regular' },
     { id: '88888888-8888-8888-8888-888888888888', name: 'Hana Yulita', avatar: '/profileuser/portrait-smiling-blonde-woman.jpg', status: 'Chilling', online: true, role: 'regular' },
     { id: '99999999-9999-9999-9999-999999999999', name: 'Indra Gunawan', avatar: '/profileuser/portrait-volunteer-who-organized-donations-charity.jpg', status: 'At the office', online: false, role: 'regular' },
     { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'Joko Widodo', avatar: '/profileuser/portrait-white-man-isolated.jpg', status: 'Ready to go', online: true, role: 'regular' },
