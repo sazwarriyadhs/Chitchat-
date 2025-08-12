@@ -14,6 +14,8 @@ import { useToast } from "@/hooks/use-toast";
 import { dataStore } from "@/lib/data";
 import { User } from "@/lib/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Users } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,7 +24,6 @@ export default function LoginPage() {
 
   // Find a default business and regular user to simulate
   const defaultBusinessUser = users.find(u => u.role === 'business');
-  const defaultRegularUser = users.find(u => u.role === 'regular');
 
   const [selectedUserId, setSelectedUserId] = useState(defaultBusinessUser?.id || users[0].id);
   const [phone, setPhone] = useState("");
@@ -77,21 +78,26 @@ export default function LoginPage() {
         </div>
 
         <div className="w-full max-w-sm">
-            <div className="space-y-2 mb-4 text-left">
-                <Label htmlFor="user-select">Simulasikan Login Sebagai</Label>
-                <Select value={selectedUserId} onValueChange={setSelectedUserId}>
-                    <SelectTrigger id="user-select" className="text-gray-900">
-                        <SelectValue placeholder="Pilih pengguna" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {users.map(user => (
-                            <SelectItem key={user.id} value={user.id}>
-                                {user.name} ({user.role})
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
+            <Card className="bg-muted/50 mb-4">
+                <CardHeader className="p-3">
+                    <CardDescription className="flex items-center gap-2 text-xs"><Users /><span>Mode Simulasi</span></CardDescription>
+                </CardHeader>
+                <CardContent className="p-3 pt-0">
+                    <Label htmlFor="user-select" className="text-xs">Login sebagai:</Label>
+                    <Select value={selectedUserId} onValueChange={setSelectedUserId}>
+                        <SelectTrigger id="user-select" className="text-foreground mt-1 h-9">
+                            <SelectValue placeholder="Pilih pengguna" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {users.map(user => (
+                                <SelectItem key={user.id} value={user.id}>
+                                    {user.name} ({user.role})
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </CardContent>
+            </Card>
 
             <Tabs defaultValue="email" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
@@ -102,11 +108,11 @@ export default function LoginPage() {
                 <div className="space-y-4 pt-4 text-left">
                   <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="text-gray-900" />
+                      <Input id="email" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="text-foreground" />
                   </div>
                   <div className="space-y-2">
                       <Label htmlFor="password">Kata Sandi</Label>
-                      <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="text-gray-900"/>
+                      <Input id="password" type="password" value={password} readOnly className="text-foreground italic"/>
                   </div>
                   <Button className="w-full" onClick={() => handleLogin('email')}>Masuk dengan Email</Button>
                 </div>
@@ -120,7 +126,7 @@ export default function LoginPage() {
                             id="phone" 
                             type="tel" 
                             placeholder="+62 812 3456 7890" 
-                            className="text-gray-900" 
+                            className="text-foreground" 
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                         />
@@ -135,7 +141,7 @@ export default function LoginPage() {
                                 id="code" 
                                 type="text" 
                                 placeholder="Masukkan kode 6 digit" 
-                                className="text-gray-900" 
+                                className="text-foreground" 
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && handleVerifyCode()}

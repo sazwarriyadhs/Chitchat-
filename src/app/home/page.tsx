@@ -2,7 +2,7 @@
 
 "use client"
 import Link from 'next/link';
-import { Plus, Search, User as UserIcon, PackageCheck } from 'lucide-react';
+import { Plus, Search, User as UserIcon, PackageCheck, Store } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
@@ -89,7 +89,7 @@ export default function HomePage() {
             </Button>
             <Link href="/new-group" passHref onClick={handleCreateStoreClick}>
               <Button variant="ghost" size="icon" title="Buat toko baru">
-                <Plus className="w-5 h-5" />
+                <Store className="w-5 h-5" />
               </Button>
             </Link>
             <Link href="/profile" passHref>
@@ -257,5 +257,3 @@ function ChatListItem({ chat }: { chat: Chat }) {
     </Link>
   );
 }
-
-    

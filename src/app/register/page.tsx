@@ -43,8 +43,8 @@ export default function RegisterPage() {
 
   return (
     <AppContainer className="bg-transparent shadow-none">
-      <div className="flex flex-col items-center justify-center h-full p-8 bg-card md:rounded-2xl">
-        <div className="flex flex-col items-center text-center mb-8">
+      <div className="flex flex-col items-center justify-center h-full p-8 bg-card md:rounded-2xl overflow-y-auto">
+        <div className="flex flex-col items-center text-center my-8">
           <Image src="/image/logomarker.png" alt="ChitChat Logo" width={240} height={120} className="w-auto h-12 mb-4" />
           <h1 className="text-2xl font-bold">Buat Akun</h1>
           <p className="text-muted-foreground">Bergabunglah dalam percakapan</p>
@@ -54,27 +54,27 @@ export default function RegisterPage() {
             <div className="space-y-4">
                 <div className="space-y-2">
                     <Label htmlFor="name">Nama Lengkap</Label>
-                    <Input id="name" type="text" placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} className="text-gray-900" />
+                    <Input id="name" type="text" placeholder="Budi Santoso" value={name} onChange={(e) => setName(e.target.value)} className="text-foreground" />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="john@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="text-gray-900" />
+                    <Input id="email" type="email" placeholder="budi.santoso@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="text-foreground" />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="password">Kata Sandi</Label>
-                    <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="text-gray-900"/>
+                    <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="text-foreground"/>
                 </div>
                 <div className="space-y-3">
                     <Label>Tipe Akun</Label>
-                    <RadioGroup defaultValue={role} onValueChange={(value: User['role']) => setRole(value)} className="flex gap-4">
-                        <div className="flex items-center space-x-2">
+                    <RadioGroup defaultValue={role} onValueChange={(value: User['role']) => setRole(value)} className="grid grid-cols-2 gap-2">
+                        <Label htmlFor="r1" className="flex items-center gap-3 rounded-md border p-3 hover:bg-muted/50 cursor-pointer has-[:checked]:border-primary has-[:checked]:ring-2 has-[:checked]:ring-primary">
                             <RadioGroupItem value="regular" id="r1" />
-                            <Label htmlFor="r1">Akun Dasar</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
+                            <span>Akun Dasar</span>
+                        </Label>
+                         <Label htmlFor="r2" className="flex items-center gap-3 rounded-md border p-3 hover:bg-muted/50 cursor-pointer has-[:checked]:border-primary has-[:checked]:ring-2 has-[:checked]:ring-primary">
                             <RadioGroupItem value="business" id="r2" />
-                            <Label htmlFor="r2">Akun Bisnis</Label>
-                        </div>
+                            <span>Akun Bisnis</span>
+                        </Label>
                     </RadioGroup>
                 </div>
                 <Button className="w-full" onClick={handleRegister}>Buat Akun</Button>
