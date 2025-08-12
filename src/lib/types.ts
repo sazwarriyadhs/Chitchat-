@@ -70,6 +70,7 @@ export type Order = {
     productSnapshot: Product; // Store a copy of the product data at time of purchase
     qty: number;
     totalPrice: number;
+    shippingCost: number;
     paymentMethod: string;
     paymentStatus: 'pending' | 'paid' | 'confirmed';
     shippingStatus: 'Menunggu Konfirmasi' | 'Menunggu Pembayaran' | 'Dikemas' | 'Dikirim' | 'Selesai';

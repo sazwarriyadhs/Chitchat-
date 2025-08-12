@@ -193,7 +193,6 @@ export default function ChatPage() {
             buyerId: currentUser.id,
             product: checkingOutProduct,
             qty: 1,
-            totalPrice: checkingOutProduct.price,
             paymentMethod: paymentMethod,
         });
 
@@ -201,10 +200,11 @@ export default function ChatPage() {
         
         // Send a new 'order' type message
         handleSendMessage({
-            type: 'order',
-            body: `Pesanan baru untuk ${checkingOutProduct.name}.`,
+            type: 'image',
+            body: `Saya telah memesan ${checkingOutProduct.name}. Menunggu konfirmasi dari ${seller?.name}.`,
             meta: {
                 orderId: newOrder.id,
+                fileUrl: checkingOutProduct.imageUrl,
             }
         });
         

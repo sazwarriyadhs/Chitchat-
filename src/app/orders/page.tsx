@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 
 export default function OrdersPage() {
   const { currentUser, getOrdersByUserId, users } = dataStore;
@@ -85,8 +86,8 @@ export default function OrdersPage() {
                            </div>
                            <Badge variant={getStatusVariant(order.shippingStatus)}>{order.shippingStatus}</Badge>
                         </CardHeader>
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-4">
+                        <CardContent className="p-4 space-y-4">
+                            <div className="flex items-start gap-4">
                                 <Image 
                                     src={order.productSnapshot.imageUrl} 
                                     alt={order.productSnapshot.name} 
@@ -96,8 +97,22 @@ export default function OrdersPage() {
                                 />
                                 <div className="flex-1">
                                     <p className="font-semibold">{order.productSnapshot.name}</p>
-                                    <p className="text-sm text-muted-foreground">{order.qty} barang x Rp{order.productSnapshot.price.toLocaleString('id-ID')}</p>
-                                    <p className="font-bold text-primary">Total: Rp{order.totalPrice.toLocaleString('id-ID')}</p>
+                                    <p className="text-sm text-muted-foreground">{order.qty} barang</p>
+                                </div>
+                            </div>
+                             <div className="space-y-1 text-sm">
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Subtotal</span>
+                                    <span>Rp{order.productSnapshot.price.toLocaleString('id-ID')}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Ongkos Kirim</span>
+                                    <span>Rp{order.shippingCost.toLocaleString('id-ID')}</span>
+                                </div>
+                                <Separator className="my-2"/>
+                                <div className="flex justify-between font-bold">
+                                    <span>Total</span>
+                                    <span className="text-primary">Rp{order.totalPrice.toLocaleString('id-ID')}</span>
                                 </div>
                             </div>
                         </CardContent>

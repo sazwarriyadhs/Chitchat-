@@ -293,9 +293,12 @@ class DataStore {
     return newUser;
   }
   
-  createOrder(orderData: Omit<Order, 'id' | 'createdAt' | 'paymentStatus' | 'shippingStatus' | 'productSnapshot' | 'sellerId'> & { product: Product }): Order {
+  createOrder(orderData: Omit<Order, 'id' | 'createdAt' | 'paymentStatus' | 'shippingStatus' | 'productSnapshot' | 'sellerId' | 'shippingCost' | 'totalPrice'> & { product: Product }): Order {
     const seller = this.users.find(u => u.id === orderData.product.sellerId);
     if (!seller) throw new Error("Seller not found for product");
+
+    const shippingCost = 15000; // Mock shipping cost
+    const totalPrice = orderData.product.price * orderData.qty + shippingCost;
 
     const newOrder: Order = {
       id: `ord-${Date.now()}`,
@@ -303,7 +306,8 @@ class DataStore {
       sellerId: seller.id,
       productSnapshot: orderData.product,
       qty: orderData.qty,
-      totalPrice: orderData.totalPrice,
+      shippingCost: shippingCost,
+      totalPrice: totalPrice,
       paymentMethod: orderData.paymentMethod,
       createdAt: new Date().toISOString(),
       paymentStatus: 'pending',

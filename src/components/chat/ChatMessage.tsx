@@ -5,13 +5,14 @@ import { Message, User, Order } from "@/lib/types";
 import { dataStore } from "@/lib/data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, Presentation, Image as ImageIcon, ShoppingCart, CheckCircle2, Upload, AlertCircle, Clock, Package } from "lucide-react";
+import { FileText, Presentation, Image as ImageIcon, ShoppingCart, CheckCircle2, Upload, AlertCircle, Clock, Package, Eye } from "lucide-react";
 import Image from "next/image";
 import { LocationMessage } from "./LocationMessage";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Separator } from "../ui/separator";
 
 type ChatMessageProps = {
   message: Message;
@@ -30,7 +31,7 @@ export function ChatMessage({ message, isCurrentUser, currentUser, onProductClic
   }
 
   // System message style for product announcements
-  if (message.meta?.productId && message.type !== 'product') {
+  if (message.meta?.productId && message.type !== 'product' && message.type !== 'image' && message.type !== 'order') {
     return (
       <div className="text-center text-xs text-muted-foreground my-2">
         <span className="font-semibold">{isCurrentUser ? 'Anda' : sender.name}</span> mendaftarkan item baru: <span className="font-semibold">{message.meta?.productName}</span>
@@ -68,11 +69,11 @@ export function ChatMessage({ message, isCurrentUser, currentUser, onProductClic
           isCurrentUser
             ? "bg-primary text-primary-foreground rounded-br-none"
             : "bg-card text-card-foreground rounded-bl-none shadow-sm",
-          message.type === 'order' ? 'p-0' : 'px-4 py-2' // No padding for order card wrapper
+          ['order', 'image'].includes(message.type) ? 'p-0 overflow-hidden' : 'px-4 py-2' // No padding for order card wrapper
         )}
         style={bubbleStyle}
       >
-        {!isCurrentUser && !['text', 'order'].includes(message.type) && (
+        {!isCurrentUser && !['text', 'order', 'image'].includes(message.type) && (
           <p className="text-xs font-semibold mb-1 px-4 pt-2">{sender.name}</p>
         )}
         <MessageContent 
@@ -96,10 +97,13 @@ const MessageContent = ({ message, isCurrentUser, currentUser, onProductClick, o
     case 'text':
       return <p className="text-sm" style={style}>{message.body}</p>;
     case 'image':
+      if (message.meta?.orderId) {
+        return <OrderCard meta={message.meta} currentUser={currentUser} onConfirmOrder={onConfirmOrder} onUploadProof={onUploadProof} messageBody={message.body} />
+      }
       return <Card className="bg-transparent border-0 shadow-none">
           <CardContent className="p-0">
             <Image src={message.meta?.fileUrl || "https://placehold.co/600x400.png"} width={250} height={150} alt="Shared image" className="rounded-lg" data-ai-hint="chat image" />
-            {message.body && <p className={cn("text-sm pt-2", textColor)} style={style}>{message.body}</p>}
+            {message.body && <p className={cn("text-sm pt-2", textColor, "px-3 pb-2")} style={style}>{message.body}</p>}
           </CardContent>
         </Card>
     case 'file':
@@ -166,14 +170,14 @@ const ProductCard = ({ meta, body, isCurrentUser, onProductClick }: { meta: any,
     )
 }
 
-function OrderCard({ meta, currentUser, onConfirmOrder, onUploadProof }: { meta: any, currentUser: User, onConfirmOrder: (orderId: string) => void, onUploadProof: (orderId: string, proofUrl: string) => void }) {
+function OrderCard({ meta, currentUser, onConfirmOrder, onUploadProof, messageBody }: { meta: any, currentUser: User, onConfirmOrder: (orderId: string) => void, onUploadProof: (orderId: string, proofUrl: string) => void, messageBody?: string }) {
   const { getOrderById } = dataStore;
   const order = getOrderById(meta.orderId);
   const proofInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   if (!order) {
-    return <div className="p-4 text-xs text-destructive-foreground">Order tidak ditemukan.</div>;
+    return <div className="p-4 text-xs text-destructive-foreground bg-destructive">Pesanan tidak ditemukan.</div>;
   }
 
   const { productSnapshot, sellerId, buyerId, shippingStatus } = order;
@@ -210,20 +214,34 @@ function OrderCard({ meta, currentUser, onConfirmOrder, onUploadProof }: { meta:
   const { icon: StatusIcon, text: statusText, color: statusColor } = getStatusInfo();
   
   return (
-    <Card className="w-64 bg-card border-border">
-      <CardContent className="p-3 space-y-3">
-        <div className="flex gap-3">
-          <Image src={productSnapshot.imageUrl} alt={productSnapshot.name} width={56} height={56} className="rounded-md object-cover h-14 w-14 border" data-ai-hint="product image thumbnail"/>
-          <div>
-            <p className="font-bold text-card-foreground text-sm">{productSnapshot.name}</p>
-            <p className="text-sm font-semibold text-primary">Rp{productSnapshot.price.toLocaleString('id-ID')}</p>
-          </div>
-        </div>
+    <Card className="w-64 bg-card border-none rounded-xl">
+        {meta.fileUrl && <Image src={meta.fileUrl} alt={productSnapshot.name} width={256} height={144} className="w-full h-36 object-cover" data-ai-hint="product image"/>}
+      <div className="p-3 space-y-3">
+        {messageBody && <p className="text-sm text-card-foreground">{messageBody}</p>}
         
         <div className={cn("flex items-center gap-2 text-xs font-medium p-2 rounded-md", statusColor.replace('text-', 'bg-') + '/10', statusColor)}>
             <StatusIcon className="w-4 h-4"/>
             <span>{statusText}</span>
         </div>
+
+        {order.paymentProof && (
+             <Card className="bg-muted/50">
+                <CardContent className="p-3 text-card-foreground">
+                    <h4 className="text-xs font-semibold mb-2">Rincian Pembayaran</h4>
+                    <div className="space-y-1 text-xs">
+                        <div className="flex justify-between"><span>Subtotal</span><span>Rp{order.productSnapshot.price.toLocaleString('id-ID')}</span></div>
+                        <div className="flex justify-between"><span>Ongkir</span><span>Rp{order.shippingCost.toLocaleString('id-ID')}</span></div>
+                        <Separator className="my-1 bg-border/50"/>
+                        <div className="flex justify-between font-bold"><span>Total</span><span>Rp{order.totalPrice.toLocaleString('id-ID')}</span></div>
+                    </div>
+                    <a href={order.paymentProof} target="_blank" rel="noopener noreferrer">
+                        <Button size="sm" variant="outline" className="w-full mt-3 h-8">
+                           <Eye className="w-4 h-4 mr-2"/> Lihat Bukti Bayar
+                        </Button>
+                    </a>
+                </CardContent>
+            </Card>
+        )}
 
         <div className="flex flex-col gap-2">
             {isSeller && shippingStatus === 'Menunggu Konfirmasi' && (
@@ -239,15 +257,8 @@ function OrderCard({ meta, currentUser, onConfirmOrder, onUploadProof }: { meta:
                     </Button>
                 </>
             )}
-            {order.paymentProof && (
-                 <a href={order.paymentProof} target="_blank" rel="noopener noreferrer">
-                    <Button size="sm" variant="link" className="w-full h-auto p-0 text-xs">
-                        Lihat Bukti Bayar
-                    </Button>
-                </a>
-            )}
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 }
