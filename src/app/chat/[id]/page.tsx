@@ -523,10 +523,15 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
 
 
   const backgrounds = [
-    '/image/background/theme1.jpeg',
     '/image/background/theme2.jpeg',
     '/image/background/theme3.jpeg',
     '/image/background/theme4.jpeg',
+    '/image/background/bg_1.png',
+    '/image/background/bg_2.png',
+    '/image/background/bg_3.png',
+    '/image/background/bg_4.png',
+    '/image/background/bg_5.png',
+    '/image/background/bg_6.png',
   ];
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -593,6 +598,7 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
   );
 }
     
+
 
 
 
