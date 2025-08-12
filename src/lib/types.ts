@@ -62,3 +62,18 @@ export type Product = {
   price: number;
   imageUrl: string;
 };
+
+export type Order = {
+    id: string;
+    buyerId: string;
+    sellerId: string;
+    productId: string;
+    productSnapshot: Product; // Store a copy of the product data at time of purchase
+    qty: number;
+    totalPrice: number;
+    paymentMethod: string;
+    paymentStatus: 'pending' | 'paid' | 'confirmed';
+    shippingStatus: 'pending' | 'Menunggu Konfirmasi' | 'Dikemas' | 'Dikirim' | 'Selesai';
+    paymentProof?: string; // URL to the image
+    createdAt: string;
+}

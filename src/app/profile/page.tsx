@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ArrowLeft, Camera, Edit, FileUp, Loader2, LogOut, Plus, Presentation as PresentationIcon, Share2, User, XCircle, Moon, Sun } from 'lucide-react';
+import { ArrowLeft, Camera, Edit, FileUp, Loader2, LogOut, Plus, Presentation as PresentationIcon, Share2, User, XCircle, Moon, Sun, ShoppingCart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { dataStore } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -253,6 +253,19 @@ export default function ProfilePage() {
                     )}
                 </div>
             </div>
+            
+            <Card>
+                <CardHeader>
+                    <CardTitle>Akun Saya</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                    <Link href="/orders" passHref>
+                        <Button variant="outline" className="w-full justify-start">
+                            <ShoppingCart className="mr-2 h-4 w-4"/> Pesanan Saya
+                        </Button>
+                    </Link>
+                </CardContent>
+            </Card>
 
             <Card>
                 <CardHeader>

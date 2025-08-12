@@ -31,13 +31,15 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 import { io, Socket } from "socket.io-client";
 import { UpgradeDialog } from '@/components/UpgradeDialog';
+import { useRouter } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
 export default function ChatPage() {
     const params = useParams<{ id: string }>();
     const chatId = params.id as string;
-    const { getChatById, currentUser, addMessageToChat, addProductToChat, updateProductInChat, deleteProductFromChat, users, updateChatBackgroundAndTheme } = dataStore;
+    const router = useRouter();
+    const { getChatById, currentUser, addMessageToChat, addProductToChat, updateProductInChat, deleteProductFromChat, users, updateChatBackgroundAndTheme, createOrder } = dataStore;
     const { toast } = useToast();
 
     const [chat, setChat] = useState<Chat | undefined>(undefined);
@@ -172,23 +174,34 @@ export default function ChatPage() {
 
     const handleConfirmCheckout = (paymentMethod: string, proofOfPaymentUrl?: string) => {
         if (!checkingOutProduct) return;
+        
+        // Create an order instead of just sending a message
+        const newOrder = createOrder({
+            buyerId: currentUser.id,
+            sellerId: checkingOutProduct.sellerId,
+            productId: checkingOutProduct.id,
+            productSnapshot: checkingOutProduct, // Store a snapshot of the product info
+            qty: 1,
+            totalPrice: checkingOutProduct.price,
+            paymentMethod: paymentMethod,
+            paymentProof: proofOfPaymentUrl
+        });
 
+        // Optionally send a notification message to the chat
         const seller = users.find(u => u.id === checkingOutProduct.sellerId);
         handleSendMessage({
-            type: 'product',
-            body: `Pembayaran untuk ${checkingOutProduct.name} via ${paymentMethod} telah dikonfirmasi.`,
-            meta: {
-                productId: checkingOutProduct.id,
-                productName: checkingOutProduct.name,
-                productPrice: checkingOutProduct.price,
-                productImage: checkingOutProduct.imageUrl,
-                paymentMethod: paymentMethod,
-                proofOfPaymentUrl: proofOfPaymentUrl
-            }
+            type: 'text',
+            body: `Saya telah memesan ${checkingOutProduct.name}. Menunggu konfirmasi dari ${seller?.name || 'penjual'}.`,
         });
+
         toast({
-            title: "Pembelian Berhasil!",
-            description: `Anda telah membeli ${checkingOutProduct.name}. Notifikasi pembayaran telah dikirim ke obrolan.`
+            title: "Pesanan Dibuat!",
+            description: `Pesanan Anda untuk ${checkingOutProduct.name} telah dibuat. Anda dapat melihat statusnya di halaman Pesanan Saya.`,
+            action: (
+                <Button variant="outline" size="sm" onClick={() => router.push('/orders')}>
+                    Lihat Pesanan
+                </Button>
+            )
         });
         setCheckingOutProduct(null);
     }
@@ -711,4 +724,3 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
   );
 }
     
-

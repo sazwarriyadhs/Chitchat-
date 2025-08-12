@@ -1,5 +1,6 @@
 
-import { User, Chat, Story, Message, Presentation, Product, ChatTheme } from './types';
+
+import { User, Chat, Story, Message, Presentation, Product, ChatTheme, Order } from './types';
 import { subHours, subMinutes, subDays } from 'date-fns';
 
 // NOTE: This file is being refactored to use a database.
@@ -11,6 +12,7 @@ class DataStore {
   public chats: Chat[];
   public stories: Story[];
   public presentations: Presentation[];
+  public orders: Order[];
   public currentUser: User;
 
   constructor() {
@@ -20,6 +22,7 @@ class DataStore {
     this.chats = [];
     this.stories = [];
     this.presentations = [];
+    this.orders = [];
     
     // Set a default mock user. The login flow will overwrite this.
     this.currentUser = { id: 'ec4241f4-1cc2-462e-81d7-7725b31a1a1f', name: 'Andi Saputra', avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/avatars/user-1_CPcW4a7-D.png', status: 'Ngopi dulu...', online: true, role: 'business' };
@@ -41,6 +44,8 @@ class DataStore {
     this.getStores = this.getStores.bind(this);
     this.setCurrentUser = this.setCurrentUser.bind(this);
     this.updateChatBackgroundAndTheme = this.updateChatBackgroundAndTheme.bind(this);
+    this.createOrder = this.createOrder.bind(this);
+    this.getOrdersByUserId = this.getOrdersByUserId.bind(this);
   }
 
   // NOTE: In a real implementation, all these methods would become async
@@ -284,6 +289,22 @@ class DataStore {
     this.users.push(newUser);
     return newUser;
   }
+  
+  createOrder(orderData: Omit<Order, 'id' | 'createdAt' | 'paymentStatus' | 'shippingStatus'>): Order {
+    const newOrder: Order = {
+      ...orderData,
+      id: `ord-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      paymentStatus: 'paid',
+      shippingStatus: 'Menunggu Konfirmasi'
+    };
+    this.orders.unshift(newOrder);
+    return newOrder;
+  }
+
+  getOrdersByUserId(userId: string): Order[] {
+    return this.orders.filter(o => o.buyerId === userId).sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
 }
 
 // Since we are moving to a database, we will export functions instead of a singleton instance.
@@ -386,6 +407,6 @@ dataStore.presentations = [
 ];
 
 // Set initial current user for components that rely on it.
-dataStore.currentUser = mockData.users[0];
+dataStore.currentUser = mockData.users[1];
 
     
