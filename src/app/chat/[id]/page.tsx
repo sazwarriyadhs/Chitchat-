@@ -18,7 +18,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Plus, ShoppingCart, MessageSquare, Package, Loader2, MoreVertical, Edit, Trash2, Camera, CreditCard, Image as ImageIcon, Upload } from 'lucide-react';
+import { Plus, ShoppingCart, MessageSquare, Package, Loader2, MoreVertical, Edit, Trash2, Camera, CreditCard, Image as ImageIcon, Upload, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -170,7 +170,8 @@ export default function ChatPage() {
             <BackgroundChangerDialog 
               isOpen={isBgChangerOpen} 
               onOpenChange={setIsBgChangerOpen} 
-              onSelectBackground={handleUpdateBackground}
+              onSaveBackground={handleUpdateBackground}
+              currentBackground={chat.backgroundUrl}
             />
         </AppContainer>
     );
@@ -509,9 +510,17 @@ function CheckoutDialog({ product, onConfirm }: { product: Product | null, onCon
     )
 }
 
-function BackgroundChangerDialog({ isOpen, onOpenChange, onSelectBackground }: { isOpen: boolean, onOpenChange: (open: boolean) => void, onSelectBackground: (url: string) => void }) {
+function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, currentBackground }: { isOpen: boolean, onOpenChange: (open: boolean) => void, onSaveBackground: (url: string) => void, currentBackground?: string }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const [selectedBg, setSelectedBg] = useState(currentBackground || '');
+
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedBg(currentBackground || '/image/bg-default.png');
+    }
+  }, [isOpen, currentBackground]);
+
 
   const backgrounds = [
     '/image/bg-default.png',
@@ -535,11 +544,15 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSelectBackground }: {
       }
       const reader = new FileReader();
       reader.onload = (event) => {
-        onSelectBackground(event.target?.result as string);
+        setSelectedBg(event.target?.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
+  
+  const handleSave = () => {
+    onSaveBackground(selectedBg);
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -550,7 +563,7 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSelectBackground }: {
             Pilih gambar atau unggah milik Anda untuk dijadikan latar belakang obrolan ini.
           </DialogDescription>
         </DialogHeader>
-        <div className="py-4 grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+        <div className="py-4 grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
           <input
             type="file"
             ref={fileInputRef}
@@ -563,7 +576,7 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSelectBackground }: {
               <p className="mt-2 text-xs text-center text-muted-foreground">Unggah dari Galeri</p>
           </div>
           {backgrounds.map((bg, index) => (
-            <div key={index} className="relative aspect-[9/16] cursor-pointer group" onClick={() => onSelectBackground(bg)}>
+            <div key={index} className={cn("relative aspect-[9/16] cursor-pointer group rounded-lg", selectedBg === bg && "ring-2 ring-primary ring-offset-2")} onClick={() => setSelectedBg(bg)}>
               <Image src={bg} alt={`Latar ${index + 1}`} layout="fill" objectFit="cover" className="rounded-lg" />
               <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-lg">
                 <ImageIcon className="w-8 h-8 text-white" />
@@ -571,9 +584,16 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSelectBackground }: {
             </div>
           ))}
         </div>
+        <DialogFooter>
+            <Button onClick={handleSave}>
+                <Save className="mr-2 h-4 w-4" />
+                Simpan Latar Belakang
+            </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
     
+
 
