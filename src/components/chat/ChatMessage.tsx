@@ -1,4 +1,5 @@
 
+
 import { cn } from "@/lib/utils";
 import { Message, User } from "@/lib/types";
 import { dataStore } from "@/lib/data";
@@ -12,9 +13,10 @@ import { Button } from "../ui/button";
 type ChatMessageProps = {
   message: Message;
   isCurrentUser: boolean;
+  onProductClick: (productId: string) => void;
 };
 
-export function ChatMessage({ message, isCurrentUser }: ChatMessageProps) {
+export function ChatMessage({ message, isCurrentUser, onProductClick }: ChatMessageProps) {
   const sender = dataStore.users.find((u) => u.id === message.senderId);
 
   if (!sender) {
@@ -66,13 +68,13 @@ export function ChatMessage({ message, isCurrentUser }: ChatMessageProps) {
         {!isCurrentUser && message.type !== 'text' && (
           <p className="text-xs font-semibold mb-1">{sender.name}</p>
         )}
-        <MessageContent message={message} isCurrentUser={isCurrentUser} />
+        <MessageContent message={message} isCurrentUser={isCurrentUser} onProductClick={onProductClick} />
       </div>
     </div>
   );
 }
 
-const MessageContent = ({ message, isCurrentUser }: { message: Message, isCurrentUser: boolean }) => {
+const MessageContent = ({ message, isCurrentUser, onProductClick }: { message: Message, isCurrentUser: boolean, onProductClick: (productId: string) => void }) => {
   const textColor = isCurrentUser ? 'text-primary-foreground' : 'text-card-foreground';
   const style = isCurrentUser ? { color: 'hsl(var(--chat-primary-foreground))' } : { color: 'hsl(var(--card-foreground))' };
   
@@ -94,7 +96,7 @@ const MessageContent = ({ message, isCurrentUser }: { message: Message, isCurren
     case 'presentation':
       return <FileCard icon={Presentation} title={message.meta?.fileName || 'Presentation'} description={message.body} isCurrentUser={isCurrentUser} />
     case 'product':
-        return <ProductCard meta={message.meta} isCurrentUser={isCurrentUser} />;
+        return <ProductCard meta={message.meta} isCurrentUser={isCurrentUser} onProductClick={onProductClick} />;
     default:
       return null;
   }
@@ -119,11 +121,15 @@ const FileCard = ({ icon: Icon, title, description, isCurrentUser }: { icon: Rea
     )
 }
 
-const ProductCard = ({ meta, isCurrentUser }: { meta: any, isCurrentUser: boolean }) => {
-    const cardBg = isCurrentUser ? 'bg-primary-foreground/10' : 'bg-card';
+const ProductCard = ({ meta, isCurrentUser, onProductClick }: { meta: any, isCurrentUser: boolean, onProductClick: (productId: string) => void }) => {
     const textColor = isCurrentUser ? 'text-primary-foreground' : 'text-card-foreground';
+    
+    const handleCardClick = () => {
+      onProductClick(meta.productId);
+    };
+
     return (
-        <Card className={cn("w-64", isCurrentUser ? 'bg-transparent border-primary-foreground/30' : 'bg-card border')}>
+        <Card className={cn("w-64 cursor-pointer", isCurrentUser ? 'bg-transparent border-primary-foreground/30' : 'bg-card border')} onClick={handleCardClick}>
             <CardContent className="p-2">
                 <div className="flex gap-3">
                     <Image src={meta.productImage} alt={meta.productName} width={64} height={64} className="rounded-md object-cover h-16 w-16" data-ai-hint="product image thumbnail"/>
@@ -132,7 +138,7 @@ const ProductCard = ({ meta, isCurrentUser }: { meta: any, isCurrentUser: boolea
                             <p className={cn("font-bold", textColor)}>{meta.productName}</p>
                             <p className={cn("text-sm font-semibold", isCurrentUser ? 'text-green-300' : 'text-green-500')}>Rp{meta.productPrice.toLocaleString('id-ID')}</p>
                         </div>
-                        <Button size="sm" variant={isCurrentUser ? 'secondary' : 'default'} className="h-7 mt-1">
+                        <Button size="sm" variant={isCurrentUser ? 'secondary' : 'default'} className="h-7 mt-1" onClick={handleCardClick}>
                             <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
                             Lihat
                         </Button>

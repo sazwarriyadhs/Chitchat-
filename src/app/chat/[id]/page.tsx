@@ -42,6 +42,7 @@ export default function ChatPage() {
     const [chat, setChat] = useState<Chat | undefined>(undefined);
     const [loading, setLoading] = useState(true);
     const [isBgChangerOpen, setIsBgChangerOpen] = useState(false);
+    const [checkingOutProduct, setCheckingOutProduct] = useState<Product | null>(null);
     const socketRef = useRef<Socket | null>(null);
     
     useEffect(() => {
@@ -168,6 +169,34 @@ export default function ChatPage() {
       '--chat-accent-foreground': chat.theme?.accentForeground,
     } as React.CSSProperties;
 
+    const handleConfirmCheckout = (paymentMethod: string) => {
+        if (!checkingOutProduct) return;
+
+        const seller = users.find(u => u.id === checkingOutProduct.sellerId);
+        handleSendMessage({
+            type: 'product',
+            body: `Membeli ${checkingOutProduct.name} dari ${seller?.name || 'penjual'} via ${paymentMethod}.`,
+            meta: {
+                productId: checkingOutProduct.id,
+                productName: checkingOutProduct.name,
+                productPrice: checkingOutProduct.price,
+                productImage: checkingOutProduct.imageUrl,
+            }
+        });
+        toast({
+            title: "Pembelian Berhasil!",
+            description: `Anda telah membeli ${checkingOutProduct.name}. Sebuah pesan telah dikirim ke obrolan.`
+        });
+        setCheckingOutProduct(null);
+    }
+    
+    const handleProductCardClick = (productId: string) => {
+      const product = chat.products?.find(p => p.id === productId);
+      if (product) {
+        setCheckingOutProduct(product);
+      }
+    };
+
     return (
         <AppContainer>
             <ChatHeader 
@@ -185,7 +214,12 @@ export default function ChatPage() {
                 </TabsList>
                
                 <TabsContent value="chat" className="flex-1 flex flex-col overflow-hidden mt-0">
-                    <ChatMessages messages={chat.messages} currentUser={currentUser} style={messageAreaStyle} />
+                    <ChatMessages 
+                      messages={chat.messages} 
+                      currentUser={currentUser} 
+                      style={messageAreaStyle} 
+                      onProductClick={handleProductCardClick}
+                    />
                     <ChatInput onSendMessage={handleSendMessage} chat={chat} />
                 </TabsContent>
 
@@ -196,7 +230,7 @@ export default function ChatPage() {
                         onAddProduct={handleAddProduct}
                         onUpdateProduct={handleUpdateProduct}
                         onDeleteProduct={handleDeleteProduct}
-                        onPurchase={handleSendMessage}
+                        onPurchase={(product) => setCheckingOutProduct(product)}
                         users={users} 
                         currentUser={currentUser}
                     />
@@ -208,11 +242,14 @@ export default function ChatPage() {
               onSaveBackground={handleUpdateBackground}
               currentBackground={chat.backgroundUrl}
             />
+            <Dialog open={!!checkingOutProduct} onOpenChange={(open) => !open && setCheckingOutProduct(null)}>
+                <CheckoutDialog product={checkingOutProduct} onConfirm={handleConfirmCheckout} />
+            </Dialog>
         </AppContainer>
     );
 }
 
-function ChatMessages({ messages, currentUser, style }: { messages: Message[], currentUser: User, style: React.CSSProperties }) {
+function ChatMessages({ messages, currentUser, style, onProductClick }: { messages: Message[], currentUser: User, style: React.CSSProperties, onProductClick: (productId: string) => void }) {
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         if (scrollAreaRef.current) {
@@ -231,6 +268,7 @@ function ChatMessages({ messages, currentUser, style }: { messages: Message[], c
                         key={message.id}
                         message={message}
                         isCurrentUser={message.senderId === currentUser.id}
+                        onProductClick={onProductClick}
                     />
                 ))}
             </div>
@@ -244,7 +282,7 @@ interface GroupStoreProps {
     onAddProduct: (data: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => void;
     onUpdateProduct: (productId: string, data: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => void;
     onDeleteProduct: (productId: string) => void;
-    onPurchase: (message: Omit<Message, 'id' | 'timestamp' | 'senderId' | 'read' | 'delivered'>) => void;
+    onPurchase: (product: Product) => void;
     users: User[];
     currentUser: User;
 }
@@ -254,29 +292,7 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
     const [isAddProductOpen, setIsAddProductOpen] = useState(false);
     const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-    const [checkingOutProduct, setCheckingOutProduct] = useState<Product | null>(null);
 
-    const handleConfirmCheckout = (paymentMethod: string) => {
-        if (!checkingOutProduct) return;
-
-        const seller = users.find(u => u.id === checkingOutProduct.sellerId);
-        onPurchase({
-            type: 'product',
-            body: `Membeli ${checkingOutProduct.name} dari ${seller?.name || 'penjual'} via ${paymentMethod}.`,
-            meta: {
-                productId: checkingOutProduct.id,
-                productName: checkingOutProduct.name,
-                productPrice: checkingOutProduct.price,
-                productImage: checkingOutProduct.imageUrl,
-            }
-        });
-        toast({
-            title: "Pembelian Berhasil!",
-            description: `Anda telah membeli ${checkingOutProduct.name}. Sebuah pesan telah dikirim ke obrolan.`
-        });
-        setCheckingOutProduct(null);
-    }
-    
     const handleProductAdded = (productData: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => {
         onAddProduct(productData);
         setIsAddProductOpen(false);
@@ -312,10 +328,6 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
 
             <Dialog open={!!editingProduct} onOpenChange={(open) => !open && setEditingProduct(null)}>
                 <AddProductDialog product={editingProduct} onProductSubmit={handleProductUpdated} />
-            </Dialog>
-
-            <Dialog open={!!checkingOutProduct} onOpenChange={(open) => !open && setCheckingOutProduct(null)}>
-                <CheckoutDialog product={checkingOutProduct} onConfirm={handleConfirmCheckout} />
             </Dialog>
 
             <UpgradeDialog isOpen={isUpgradeOpen} onOpenChange={setIsUpgradeOpen} featureName="menjual produk" />
@@ -376,7 +388,7 @@ function GroupStore({ products, onAddProduct, onUpdateProduct, onDeleteProduct, 
                                     </div>
                                 </CardContent>
                                 <CardFooter className="p-2">
-                                    <Button className="w-full" onClick={() => setCheckingOutProduct(product)}>
+                                    <Button className="w-full" onClick={() => onPurchase(product)}>
                                         <ShoppingCart className="w-4 h-4 mr-2" />
                                         Beli Sekarang
                                     </Button>
