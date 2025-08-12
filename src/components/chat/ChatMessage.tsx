@@ -5,10 +5,11 @@ import { Message, User } from "@/lib/types";
 import { dataStore } from "@/lib/data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, Presentation, Image as ImageIcon, ShoppingCart } from "lucide-react";
+import { FileText, Presentation, Image as ImageIcon, ShoppingCart, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import { LocationMessage } from "./LocationMessage";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 type ChatMessageProps = {
   message: Message;
@@ -96,7 +97,7 @@ const MessageContent = ({ message, isCurrentUser, onProductClick }: { message: M
     case 'presentation':
       return <FileCard icon={Presentation} title={message.meta?.fileName || 'Presentation'} description={message.body} isCurrentUser={isCurrentUser} />
     case 'product':
-        return <ProductCard meta={message.meta} isCurrentUser={isCurrentUser} onProductClick={onProductClick} />;
+        return <ProductCard meta={message.meta} body={message.body} isCurrentUser={isCurrentUser} onProductClick={onProductClick} />;
     default:
       return null;
   }
@@ -121,7 +122,7 @@ const FileCard = ({ icon: Icon, title, description, isCurrentUser }: { icon: Rea
     )
 }
 
-const ProductCard = ({ meta, isCurrentUser, onProductClick }: { meta: any, isCurrentUser: boolean, onProductClick: (productId: string) => void }) => {
+const ProductCard = ({ meta, body, isCurrentUser, onProductClick }: { meta: any, body: string, isCurrentUser: boolean, onProductClick: (productId: string) => void }) => {
     const textColor = isCurrentUser ? 'text-primary-foreground' : 'text-card-foreground';
     
     const handleCardClick = () => {
@@ -129,8 +130,9 @@ const ProductCard = ({ meta, isCurrentUser, onProductClick }: { meta: any, isCur
     };
 
     return (
-        <Card className={cn("w-64 cursor-pointer", isCurrentUser ? 'bg-transparent border-primary-foreground/30' : 'bg-card border')} onClick={handleCardClick}>
-            <CardContent className="p-2">
+        <Card className={cn("w-64", isCurrentUser ? 'bg-transparent border-primary-foreground/30' : 'bg-card border')}>
+            <CardContent className="p-2 space-y-2">
+                <p className={cn("text-xs", isCurrentUser ? "text-primary-foreground/80" : "text-muted-foreground")}>{body}</p>
                 <div className="flex gap-3">
                     <Image src={meta.productImage} alt={meta.productName} width={64} height={64} className="rounded-md object-cover h-16 w-16" data-ai-hint="product image thumbnail"/>
                     <div className="flex flex-col justify-between">
@@ -138,12 +140,20 @@ const ProductCard = ({ meta, isCurrentUser, onProductClick }: { meta: any, isCur
                             <p className={cn("font-bold", textColor)}>{meta.productName}</p>
                             <p className={cn("text-sm font-semibold", isCurrentUser ? 'text-green-300' : 'text-green-500')}>Rp{meta.productPrice.toLocaleString('id-ID')}</p>
                         </div>
-                        <Button size="sm" variant={isCurrentUser ? 'secondary' : 'default'} className="h-7 mt-1" onClick={handleCardClick}>
+                         <Button size="sm" variant={isCurrentUser ? 'secondary' : 'default'} className="h-7 mt-1" onClick={handleCardClick}>
                             <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
-                            Lihat
+                            Beli Lagi
                         </Button>
                     </div>
                 </div>
+                 {meta.proofOfPaymentUrl && (
+                    <div className="pt-2 border-t" style={{ borderColor: isCurrentUser ? 'hsla(var(--primary-foreground), 0.3)' : 'hsl(var(--border))' }}>
+                         <Link href={meta.proofOfPaymentUrl} target="_blank" rel="noopener noreferrer" className={cn("text-xs flex items-center gap-1.5 hover:underline", isCurrentUser ? "text-primary-foreground/90" : "text-primary")}>
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            Lihat Bukti Bayar
+                        </Link>
+                    </div>
+                )}
             </CardContent>
         </Card>
     )

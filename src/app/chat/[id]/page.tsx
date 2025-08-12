@@ -18,7 +18,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Plus, ShoppingCart, MessageSquare, Package, Loader2, MoreVertical, Edit, Trash2, Camera, CreditCard, Image as ImageIcon, Upload, Save, Palette } from 'lucide-react';
+import { Plus, ShoppingCart, MessageSquare, Package, Loader2, MoreVertical, Edit, Trash2, Camera, CreditCard, Image as ImageIcon, Upload, Save, Palette, Paperclip, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -170,23 +170,25 @@ export default function ChatPage() {
       '--chat-accent-foreground': chat.theme?.accentForeground,
     } as React.CSSProperties;
 
-    const handleConfirmCheckout = (paymentMethod: string) => {
+    const handleConfirmCheckout = (paymentMethod: string, proofOfPaymentUrl?: string) => {
         if (!checkingOutProduct) return;
 
         const seller = users.find(u => u.id === checkingOutProduct.sellerId);
         handleSendMessage({
             type: 'product',
-            body: `Membeli ${checkingOutProduct.name} dari ${seller?.name || 'penjual'} via ${paymentMethod}.`,
+            body: `Pembayaran untuk ${checkingOutProduct.name} via ${paymentMethod} telah dikonfirmasi.`,
             meta: {
                 productId: checkingOutProduct.id,
                 productName: checkingOutProduct.name,
                 productPrice: checkingOutProduct.price,
                 productImage: checkingOutProduct.imageUrl,
+                paymentMethod: paymentMethod,
+                proofOfPaymentUrl: proofOfPaymentUrl
             }
         });
         toast({
             title: "Pembelian Berhasil!",
-            description: `Anda telah membeli ${checkingOutProduct.name}. Sebuah pesan telah dikirim ke obrolan.`
+            description: `Anda telah membeli ${checkingOutProduct.name}. Notifikasi pembayaran telah dikirim ke obrolan.`
         });
         setCheckingOutProduct(null);
     }
@@ -498,9 +500,13 @@ function AddProductDialog({ product, onProductSubmit }: AddProductDialogProps) {
   )
 }
 
-function CheckoutDialog({ product, onConfirm }: { product: Product | null, onConfirm: (paymentMethod: string) => void }) {
+function CheckoutDialog({ product, onConfirm }: { product: Product | null, onConfirm: (paymentMethod: string, proofUrl?: string) => void }) {
     if (!product) return null;
     const [paymentMethod, setPaymentMethod] = useState("gopay");
+    const [proofImage, setProofImage] = useState<string | null>(null);
+    const [proofFileName, setProofFileName] = useState<string | null>(null);
+    const proofInputRef = useRef<HTMLInputElement>(null);
+    const { toast } = useToast();
     
     const paymentMethods = [
       { id: "gopay", name: "GoPay", icon: "https://upload.wikimedia.org/wikipedia/commons/4/46/GoPay_logo.png"},
@@ -509,12 +515,28 @@ function CheckoutDialog({ product, onConfirm }: { product: Product | null, onCon
       { id: "dana", name: "DANA", icon: "https://upload.wikimedia.org/wikipedia/commons/6/66/Logo_dana_blue.png"},
     ];
 
+    const handleProofUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                toast({ variant: 'destructive', title: 'File Terlalu Besar', description: 'Ukuran gambar tidak boleh melebihi 2MB.' });
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                setProofImage(event.target?.result as string);
+                setProofFileName(file.name);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     return (
         <DialogContent>
             <DialogHeader>
                 <DialogTitle>Konfirmasi Pembelian</DialogTitle>
                 <DialogDescription>
-                    Anda akan membeli item berikut. Silakan konfirmasi untuk melanjutkan.
+                    Anda akan membeli item berikut. Silakan konfirmasi dan unggah bukti pembayaran.
                 </DialogDescription>
             </DialogHeader>
             <div className="py-2">
@@ -543,12 +565,25 @@ function CheckoutDialog({ product, onConfirm }: { product: Product | null, onCon
                   </div>
                 </RadioGroup>
             </div>
+            <div className="space-y-2">
+                <Label>Bukti Pembayaran</Label>
+                <input type="file" accept="image/*" ref={proofInputRef} onChange={handleProofUpload} className="hidden" />
+                <Button variant="outline" className="w-full justify-start text-muted-foreground" onClick={() => proofInputRef.current?.click()}>
+                    <Paperclip className="mr-2 h-4 w-4" />
+                    {proofFileName || "Unggah Bukti Bayar..."}
+                </Button>
+                {proofImage && (
+                    <div className="p-2 border rounded-md">
+                        <Image src={proofImage} alt="Bukti pembayaran" width={100} height={100} className="w-24 h-auto rounded-md" />
+                    </div>
+                )}
+            </div>
             <DialogFooter className="mt-4">
                 <DialogClose asChild>
                     <Button variant="outline">Batal</Button>
                 </DialogClose>
                 <DialogClose asChild>
-                  <Button onClick={() => onConfirm(paymentMethod)}>
+                  <Button onClick={() => onConfirm(paymentMethod, proofImage || undefined)}>
                       <CreditCard className="w-4 h-4 mr-2" />
                       Konfirmasi & Bayar
                   </Button>
