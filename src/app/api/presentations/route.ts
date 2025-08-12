@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { chats } from '@/lib/data';
+import { dataStore } from '@/lib/data';
 import { Message } from '@/lib/types';
 
 // Mock in-memory store for presentations
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   }
 
   // Find presentations from mock data (or chats)
-  const userChats = chats.filter(c => c.participants.some(p => p.id === senderId));
+  const userChats = dataStore.chats.filter(c => c.participants.some(p => p.id === senderId));
   const presentationMessages: any[] = [];
   userChats.forEach(c => {
     c.messages.forEach(m => {
