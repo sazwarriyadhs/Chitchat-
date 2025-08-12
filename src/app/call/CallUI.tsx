@@ -19,7 +19,7 @@ export function CallUI() {
   const roomName = searchParams.get('id') || 'default-room';
   const isVideoCall = searchParams.get('video') === 'true';
   const { currentUser, users } = dataStore;
-  const otherUser = users[1]; // Mock other user
+  const otherUser = users.find(u => u.id !== currentUser.id) || users[1]; // Mock other user
 
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(isVideoCall);
@@ -148,6 +148,12 @@ export function CallUI() {
     if(room) room.disconnect();
     router.back();
   };
+  
+  const getTopBarTitle = () => {
+    if(connecting) return 'Menghubungkan...';
+    if(remoteParticipant) return otherUser.name;
+    return `Menunggu ${otherUser.name}...`;
+  }
 
   return (
     <AppContainer className="bg-slate-800 text-white">
@@ -160,25 +166,21 @@ export function CallUI() {
             
             {(!remoteParticipant || !isRemoteVideoOn) && (
               <div className="text-center">
+                <Avatar className="w-32 h-32">
+                    <AvatarImage src={otherUser.avatar} />
+                    <AvatarFallback><User className="w-16 h-16" /></AvatarFallback>
+                </Avatar>
                 {connecting ? (
                    <>
-                       <Loader2 className="w-12 h-12 text-slate-500 animate-spin" />
-                       <p className="mt-4 text-slate-400">Menghubungkan...</p>
+                       <Loader2 className="w-12 h-12 text-slate-500 animate-spin mt-4" />
+                       <p className="mt-2 text-slate-400">Menghubungkan...</p>
                    </>
                 ) : !remoteParticipant ? (
                     <>
-                       <Avatar className="w-32 h-32">
-                           <AvatarImage src={otherUser.avatar} />
-                           <AvatarFallback><User className="w-16 h-16" /></AvatarFallback>
-                       </Avatar>
                        <p className="mt-4 text-slate-400">Menunggu {otherUser.name}...</p>
                     </>
                 ) : (
                    <>
-                       <Avatar className="w-32 h-32">
-                           <AvatarImage src={otherUser.avatar} />
-                           <AvatarFallback><User className="w-16 h-16" /></AvatarFallback>
-                       </Avatar>
                        <p className="mt-4 text-slate-400">Kamera {otherUser.name} mati</p>
                    </>
                 )}
@@ -198,7 +200,7 @@ export function CallUI() {
 
         {/* Call Info */}
         <div className="mt-8 text-center z-10 bg-black/30 px-4 py-2 rounded-lg">
-            <h2 className="text-2xl font-bold">{remoteParticipant ? otherUser.name : 'Menghubungkan...'}</h2>
+            <h2 className="text-2xl font-bold">{getTopBarTitle()}</h2>
             <p className="text-sm text-slate-300">{formatDuration(callDuration)}</p>
         </div>
 

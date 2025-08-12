@@ -294,6 +294,7 @@ class DataStore {
   }
   
   createOrder(orderData: Omit<Order, 'id' | 'createdAt' | 'paymentStatus' | 'shippingStatus' | 'productSnapshot' | 'sellerId' | 'shippingCost' | 'totalPrice'> & { product: Product }): Order {
+    // This would be: INSERT INTO orders (...) VALUES (...);
     const seller = this.users.find(u => u.id === orderData.product.sellerId);
     if (!seller) throw new Error("Seller not found for product");
 
@@ -318,16 +319,18 @@ class DataStore {
   }
 
   getOrdersByUserId(userId: string): Order[] {
-    // This will get orders where the user is either the buyer or the seller
+    // This would be: SELECT * FROM orders WHERE buyer_id = $1 or seller_id = $1;
     return this.orders.filter(o => o.buyerId === userId || o.sellerId === userId)
       .sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
   getOrderById(orderId: string): Order | undefined {
+    // This would be: SELECT * FROM orders WHERE id = $1;
     return this.orders.find(o => o.id === orderId);
   }
 
   confirmOrder(orderId: string): Order | undefined {
+    // This would be: UPDATE orders SET shipping_status = 'Menunggu Pembayaran' WHERE id = $1;
     const orderIndex = this.orders.findIndex(o => o.id === orderId);
     if (orderIndex !== -1) {
       this.orders[orderIndex].shippingStatus = 'Menunggu Pembayaran';
@@ -337,6 +340,7 @@ class DataStore {
   }
 
   uploadProofOfPayment(orderId: string, proofUrl: string): Order | undefined {
+    // This would be: UPDATE orders SET payment_proof_url = $1, payment_status = 'paid', shipping_status = 'Dikemas' WHERE id = $2;
     const orderIndex = this.orders.findIndex(o => o.id === orderId);
     if (orderIndex !== -1) {
       this.orders[orderIndex].paymentProof = proofUrl;
@@ -420,7 +424,7 @@ dataStore.chats = [
         avatar: '/image/stores/download (1).jpeg',
         participants: mockData.users,
         messages: [
-          { id: 'msg-s1-1', senderId: mockData.users[0].id, body: 'Selamat datang di Toko Satu!', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
+          { id: 'msg-s1-1', senderId: '11111111-1111-1111-1111-111111111111', body: 'Selamat datang di Toko Satu!', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
         ],
         products: [
             { id: 'prod-a', chatId: 'store-1', sellerId: '11111111-1111-1111-1111-111111111111', name: 'Produk A', description: 'Deskripsi Produk A dari Toko Satu', price: 100000, imageUrl: '/image/products/produk_a.jpg'},
@@ -435,7 +439,7 @@ dataStore.chats = [
         avatar: '/image/stores/download (2).jpeg',
         participants: mockData.users,
         messages: [
-          { id: 'msg-s2-1', senderId: mockData.users[1].id, body: 'Selamat datang di Toko Dua!', timestamp: subHours(new Date(), 3), type: 'text', read: true, delivered: true },
+          { id: 'msg-s2-1', senderId: '22222222-2222-2222-2222-222222222222', body: 'Selamat datang di Toko Dua!', timestamp: subHours(new Date(), 3), type: 'text', read: true, delivered: true },
         ],
         products: [
             { id: 'prod-c', chatId: 'store-2', sellerId: '22222222-2222-2222-2222-222222222222', name: 'Produk C', description: 'Deskripsi Produk C dari Toko Dua', price: 200000, imageUrl: '/image/products/produk_c.jpg'},
@@ -449,7 +453,7 @@ dataStore.chats = [
         avatar: '/image/stores/download (3).jpeg',
         participants: mockData.users,
         messages: [
-          { id: 'msg-s3-1', senderId: mockData.users[2].id, body: 'Selamat datang di Toko Tiga!', timestamp: subHours(new Date(), 4), type: 'text', read: true, delivered: true },
+          { id: 'msg-s3-1', senderId: '33333333-3333-3333-3333-333333333333', body: 'Selamat datang di Toko Tiga!', timestamp: subHours(new Date(), 4), type: 'text', read: true, delivered: true },
         ],
         products: [
             { id: 'prod-d', chatId: 'store-3', sellerId: '33333333-3333-3333-3333-333333333333', name: 'Produk D', description: 'Deskripsi Produk D dari Toko Tiga', price: 250000, imageUrl: '/image/products/produk_d.jpg'},
@@ -463,7 +467,7 @@ dataStore.chats = [
         avatar: '/image/stores/images (1).jpeg',
         participants: mockData.users,
         messages: [
-          { id: 'msg-s4-1', senderId: mockData.users[3].id, body: 'Selamat datang di Toko Empat!', timestamp: subHours(new Date(), 5), type: 'text', read: true, delivered: true },
+          { id: 'msg-s4-1', senderId: '44444444-4444-4444-4444-444444444444', body: 'Selamat datang di Toko Empat!', timestamp: subHours(new Date(), 5), type: 'text', read: true, delivered: true },
         ],
         products: [
             { id: 'prod-e', chatId: 'store-4', sellerId: '44444444-4444-4444-4444-444444444444', name: 'Produk E', description: 'Deskripsi Produk E dari Toko Empat', price: 300000, imageUrl: '/image/products/produk_e.jpg'},
