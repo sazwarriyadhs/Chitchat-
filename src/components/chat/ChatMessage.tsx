@@ -30,6 +30,16 @@ export function ChatMessage({ message, isCurrentUser }: ChatMessageProps) {
     )
   }
 
+  const bubbleStyle = isCurrentUser 
+    ? { 
+        backgroundColor: 'hsl(var(--chat-primary))', 
+        color: 'hsl(var(--chat-primary-foreground))' 
+      }
+    : {
+        backgroundColor: 'hsl(var(--card))',
+        color: 'hsl(var(--card-foreground))'
+      };
+
 
   return (
     <div
@@ -51,6 +61,7 @@ export function ChatMessage({ message, isCurrentUser }: ChatMessageProps) {
             ? "bg-primary text-primary-foreground rounded-br-none"
             : "bg-card text-card-foreground rounded-bl-none shadow-sm"
         )}
+        style={bubbleStyle}
       >
         {!isCurrentUser && message.type !== 'text' && (
           <p className="text-xs font-semibold mb-1">{sender.name}</p>
@@ -63,14 +74,16 @@ export function ChatMessage({ message, isCurrentUser }: ChatMessageProps) {
 
 const MessageContent = ({ message, isCurrentUser }: { message: Message, isCurrentUser: boolean }) => {
   const textColor = isCurrentUser ? 'text-primary-foreground' : 'text-card-foreground';
+  const style = isCurrentUser ? { color: 'hsl(var(--chat-primary-foreground))' } : { color: 'hsl(var(--card-foreground))' };
+  
   switch (message.type) {
     case 'text':
-      return <p className="text-sm">{message.body}</p>;
+      return <p className="text-sm" style={style}>{message.body}</p>;
     case 'image':
       return <Card className="bg-transparent border-0 shadow-none">
           <CardContent className="p-0">
             <Image src={message.meta?.fileUrl || "https://placehold.co/600x400.png"} width={250} height={150} alt="Shared image" className="rounded-lg" data-ai-hint="chat image" />
-            {message.body && <p className={cn("text-sm pt-2", textColor)}>{message.body}</p>}
+            {message.body && <p className={cn("text-sm pt-2", textColor)} style={style}>{message.body}</p>}
           </CardContent>
         </Card>
     case 'file':
@@ -88,27 +101,29 @@ const MessageContent = ({ message, isCurrentUser }: { message: Message, isCurren
 }
 
 const FileCard = ({ icon: Icon, title, description, isCurrentUser }: { icon: React.ElementType, title: string, description: string, isCurrentUser: boolean }) => {
-    const textColor = isCurrentUser ? 'text-primary-foreground' : 'text-card-foreground';
-    const mutedColor = isCurrentUser ? 'text-primary-foreground/80' : 'text-muted-foreground';
-    const iconBg = isCurrentUser ? 'bg-primary-foreground/20' : 'bg-muted';
+    const textColor = isCurrentUser ? 'var(--chat-primary-foreground)' : 'var(--card-foreground)';
+    const mutedColor = isCurrentUser ? 'var(--chat-primary-foreground)' : 'var(--muted-foreground)';
+    const iconBg = isCurrentUser ? 'hsla(var(--chat-primary-foreground), 0.2)' : 'hsl(var(--muted))';
+    const descriptionOpacity = isCurrentUser ? '0.8' : '1';
+
     return (
         <a href={ "https://placehold.co/1x1.png" } target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 not-prose">
-            <div className={cn("p-2 rounded-lg", iconBg)}>
-                <Icon className={cn("w-6 h-6", textColor)} />
+            <div className="p-2 rounded-lg" style={{ backgroundColor: iconBg }}>
+                <Icon className="w-6 h-6" style={{ color: `hsl(${textColor})`}} />
             </div>
             <div>
-                <p className={cn("font-semibold text-sm", textColor)}>{title}</p>
-                <p className={cn("text-xs", mutedColor)}>{description}</p>
+                <p className="font-semibold text-sm" style={{ color: `hsl(${textColor})`}}>{title}</p>
+                <p className="text-xs" style={{ color: `hsl(${mutedColor})`, opacity: descriptionOpacity }}>{description}</p>
             </div>
         </a>
     )
 }
 
 const ProductCard = ({ meta, isCurrentUser }: { meta: any, isCurrentUser: boolean }) => {
-    const cardBg = isCurrentUser ? 'bg-primary-foreground/10' : 'bg-muted';
+    const cardBg = isCurrentUser ? 'bg-primary-foreground/10' : 'bg-card';
     const textColor = isCurrentUser ? 'text-primary-foreground' : 'text-card-foreground';
     return (
-        <Card className={cn("w-64", isCurrentUser ? 'bg-primary-foreground/10 border-0' : 'bg-card border')}>
+        <Card className={cn("w-64", isCurrentUser ? 'bg-transparent border-primary-foreground/30' : 'bg-card border')}>
             <CardContent className="p-2">
                 <div className="flex gap-3">
                     <Image src={meta.productImage} alt={meta.productName} width={64} height={64} className="rounded-md object-cover h-16 w-16" data-ai-hint="product image thumbnail"/>

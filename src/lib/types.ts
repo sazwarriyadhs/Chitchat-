@@ -18,6 +18,13 @@ export type Message = {
   read: boolean;
 };
 
+export type ChatTheme = {
+  primary: string;
+  primaryForeground: string;
+  accent: string;
+  accentForeground: string;
+};
+
 export type Chat = {
   id: string;
   type: 'private' | 'group';
@@ -27,6 +34,7 @@ export type Chat = {
   avatar?: string;
   products?: Product[];
   backgroundUrl?: string;
+  theme?: ChatTheme;
 };
 
 export type Story = {

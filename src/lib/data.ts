@@ -1,5 +1,5 @@
 
-import { User, Chat, Story, Message, Presentation, Product } from './types';
+import { User, Chat, Story, Message, Presentation, Product, ChatTheme } from './types';
 import { subHours, subMinutes, subDays } from 'date-fns';
 
 // NOTE: This file is being refactored to use a database.
@@ -40,7 +40,7 @@ class DataStore {
     this.createUser = this.createUser.bind(this);
     this.getStores = this.getStores.bind(this);
     this.setCurrentUser = this.setCurrentUser.bind(this);
-    this.updateChatBackground = this.updateChatBackground.bind(this);
+    this.updateChatBackgroundAndTheme = this.updateChatBackgroundAndTheme.bind(this);
   }
 
   // NOTE: In a real implementation, all these methods would become async
@@ -144,10 +144,11 @@ class DataStore {
       }
   }
 
-  updateChatBackground(chatId: string, backgroundUrl: string) {
+  updateChatBackgroundAndTheme(chatId: string, backgroundUrl: string, theme: ChatTheme) {
     const chatIndex = this.chats.findIndex(c => c.id === chatId);
     if (chatIndex !== -1) {
       this.chats[chatIndex].backgroundUrl = backgroundUrl;
+      this.chats[chatIndex].theme = theme;
       return this.chats[chatIndex];
     }
     return null;

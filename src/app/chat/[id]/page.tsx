@@ -7,7 +7,7 @@ import { ChatInput } from '@/components/chat/ChatInput';
 import { ChatMessage } from '@/components/chat/ChatMessage';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { dataStore } from '@/lib/data';
-import { Chat, Message, User, Product } from '@/lib/types';
+import { Chat, Message, User, Product, ChatTheme } from '@/lib/types';
 import { notFound, useParams } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -18,7 +18,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Plus, ShoppingCart, MessageSquare, Package, Loader2, MoreVertical, Edit, Trash2, Camera, CreditCard, Image as ImageIcon, Upload, Save } from 'lucide-react';
+import { Plus, ShoppingCart, MessageSquare, Package, Loader2, MoreVertical, Edit, Trash2, Camera, CreditCard, Image as ImageIcon, Upload, Save, Palette } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -35,7 +35,7 @@ export const dynamic = 'force-dynamic';
 export default function ChatPage() {
     const params = useParams<{ id: string }>();
     const chatId = params.id as string;
-    const { getChatById, currentUser, addMessageToChat, addProductToChat, updateProductInChat, deleteProductFromChat, users, updateChatBackground } = dataStore;
+    const { getChatById, currentUser, addMessageToChat, addProductToChat, updateProductInChat, deleteProductFromChat, users, updateChatBackgroundAndTheme } = dataStore;
 
     const [chat, setChat] = useState<Chat | undefined>(undefined);
     const [loading, setLoading] = useState(true);
@@ -109,8 +109,8 @@ export default function ChatPage() {
         if(updatedChat) setChat(updatedChat);
     };
     
-    const handleUpdateBackground = (bgUrl: string) => {
-      updateChatBackground(chat.id, bgUrl);
+    const handleUpdateBackground = (bgUrl: string, theme: ChatTheme) => {
+      updateChatBackgroundAndTheme(chat.id, bgUrl, theme);
       setIsBgChangerOpen(false);
     }
 
@@ -127,11 +127,15 @@ export default function ChatPage() {
     const isStore = chat.type === 'group' && chat.products && chat.products.length > 0;
     const defaultTab = isStore ? "store" : "chat";
 
-    const messageAreaStyle = {
+    const messageAreaStyle: React.CSSProperties = {
       backgroundImage: chat.backgroundUrl ? `url(${chat.backgroundUrl})` : 'none',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
-    };
+      '--chat-primary': chat.theme?.primary,
+      '--chat-primary-foreground': chat.theme?.primaryForeground,
+      '--chat-accent': chat.theme?.accent,
+      '--chat-accent-foreground': chat.theme?.accentForeground,
+    } as React.CSSProperties;
 
     return (
         <AppContainer>
@@ -510,10 +514,18 @@ function CheckoutDialog({ product, onConfirm }: { product: Product | null, onCon
     )
 }
 
-function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, currentBackground }: { isOpen: boolean, onOpenChange: (open: boolean) => void, onSaveBackground: (url: string) => void, currentBackground?: string }) {
+type BackgroundChangerDialogProps = {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSaveBackground: (url: string, theme: ChatTheme) => void;
+  currentBackground?: string;
+};
+
+function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, currentBackground }: BackgroundChangerDialogProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const [selectedBg, setSelectedBg] = useState(currentBackground || '');
+  const [isGeneratingTheme, setIsGeneratingTheme] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -553,8 +565,30 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
     }
   };
   
-  const handleSave = () => {
-    onSaveBackground(selectedBg);
+  const handleSave = async () => {
+    if (!selectedBg) return;
+    setIsGeneratingTheme(true);
+    try {
+        const response = await fetch('/api/theme-from-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageUrl: selectedBg }),
+        });
+        if (!response.ok) {
+            throw new Error('Gagal menghasilkan tema dari gambar.');
+        }
+        const theme = await response.json();
+        onSaveBackground(selectedBg, theme);
+
+    } catch (error: any) {
+        toast({
+            variant: 'destructive',
+            title: 'Gagal Menyimpan Tema',
+            description: error.message || 'Silakan coba gambar lain.',
+        });
+    } finally {
+        setIsGeneratingTheme(false);
+    }
   }
 
   return (
@@ -563,7 +597,7 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
         <DialogHeader>
           <DialogTitle>Ubah Latar Belakang Obrolan</DialogTitle>
           <DialogDescription>
-            Pilih gambar atau unggah milik Anda untuk dijadikan latar belakang obrolan ini.
+            Pilih gambar atau unggah milik Anda. Warna tema obrolan akan disesuaikan secara otomatis.
           </DialogDescription>
         </DialogHeader>
         <div className="py-4 grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
@@ -588,9 +622,9 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
           ))}
         </div>
         <DialogFooter>
-            <Button onClick={handleSave}>
-                <Save className="mr-2 h-4 w-4" />
-                Simpan Latar Belakang
+            <Button onClick={handleSave} disabled={isGeneratingTheme}>
+                {isGeneratingTheme ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                {isGeneratingTheme ? 'Menghasilkan Tema...' : 'Simpan Latar Belakang'}
             </Button>
         </DialogFooter>
       </DialogContent>
@@ -598,6 +632,7 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
   );
 }
     
+
 
 
 
