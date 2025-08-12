@@ -524,11 +524,10 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
 
   const backgrounds = [
     '/image/bg-default.png',
-    'https://placehold.co/400x800.png?text=Abstract+1',
-    'https://placehold.co/400x800.png?text=Abstract+2',
-    'https://placehold.co/400x800.png?text=Nature+1',
-    'https://placehold.co/400x800.png?text=Gradient+1',
-    'https://placehold.co/400x800.png?text=Pattern'
+    '/image/background/theme1.jpeg',
+    '/image/background/theme2.jpeg',
+    '/image/background/theme3.jpeg',
+    '/image/background/theme4.jpeg',
   ];
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -595,5 +594,6 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
   );
 }
     
+
 
 
