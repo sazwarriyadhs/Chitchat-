@@ -1,4 +1,5 @@
 
+
 "use client"
 import { AppContainer } from '@/components/AppContainer';
 import { ChatHeader } from '@/components/chat/ChatHeader';
@@ -17,7 +18,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Plus, ShoppingCart, MessageSquare, Package, Loader2, MoreVertical, Edit, Trash2, Camera, CreditCard, Image as ImageIcon } from 'lucide-react';
+import { Plus, ShoppingCart, MessageSquare, Package, Loader2, MoreVertical, Edit, Trash2, Camera, CreditCard, Image as ImageIcon, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -509,6 +510,9 @@ function CheckoutDialog({ product, onConfirm }: { product: Product | null, onCon
 }
 
 function BackgroundChangerDialog({ isOpen, onOpenChange, onSelectBackground }: { isOpen: boolean, onOpenChange: (open: boolean) => void, onSelectBackground: (url: string) => void }) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
   const backgrounds = [
     '/image/bg-default.png',
     'https://placehold.co/400x800.png?text=Abstract+1',
@@ -518,16 +522,46 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSelectBackground }: {
     'https://placehold.co/400x800.png?text=Pattern'
   ];
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        toast({
+          variant: 'destructive',
+          title: 'File Terlalu Besar',
+          description: 'Ukuran gambar tidak boleh melebihi 2MB.',
+        });
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        onSelectBackground(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Ubah Latar Belakang Obrolan</DialogTitle>
           <DialogDescription>
-            Pilih gambar untuk dijadikan latar belakang obrolan ini.
+            Pilih gambar atau unggah milik Anda untuk dijadikan latar belakang obrolan ini.
           </DialogDescription>
         </DialogHeader>
         <div className="py-4 grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/png, image/jpeg, image/gif"
+            className="hidden"
+          />
+          <div className="relative aspect-[9/16] cursor-pointer group flex flex-col items-center justify-center bg-muted/50 rounded-lg border-2 border-dashed" onClick={() => fileInputRef.current?.click()}>
+              <Upload className="w-8 h-8 text-muted-foreground" />
+              <p className="mt-2 text-xs text-center text-muted-foreground">Unggah dari Galeri</p>
+          </div>
           {backgrounds.map((bg, index) => (
             <div key={index} className="relative aspect-[9/16] cursor-pointer group" onClick={() => onSelectBackground(bg)}>
               <Image src={bg} alt={`Latar ${index + 1}`} layout="fill" objectFit="cover" className="rounded-lg" />
@@ -542,3 +576,4 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSelectBackground }: {
   );
 }
     
+
