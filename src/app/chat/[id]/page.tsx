@@ -190,8 +190,11 @@ export default function ChatPage() {
         // Optionally send a notification message to the chat
         const seller = users.find(u => u.id === checkingOutProduct.sellerId);
         handleSendMessage({
-            type: 'text',
+            type: 'image',
             body: `Saya telah memesan ${checkingOutProduct.name}. Menunggu konfirmasi dari ${seller?.name || 'penjual'}.`,
+            meta: {
+                fileUrl: checkingOutProduct.imageUrl,
+            }
         });
         
         if (socketRef.current) {
@@ -660,7 +663,7 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
       reader.onload = (event) => {
         setSelectedBg(event.target?.result as string);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(e.target.files[0]);
     }
   };
   
