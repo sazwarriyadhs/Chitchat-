@@ -7,7 +7,7 @@ import { ChatInput } from '@/components/chat/ChatInput';
 import { ChatMessage } from '@/components/chat/ChatMessage';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { dataStore } from '@/lib/data';
-import { Chat, Message, User, Product, ChatTheme } from '@/lib/types';
+import { Chat, Message, User, Product, ChatTheme, Order } from '@/lib/types';
 import { notFound, useParams } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -39,7 +39,7 @@ export default function ChatPage() {
     const params = useParams<{ id: string }>();
     const chatId = params.id as string;
     const router = useRouter();
-    const { getChatById, currentUser, addMessageToChat, addProductToChat, updateProductInChat, deleteProductFromChat, users, updateChatBackgroundAndTheme, createOrder } = dataStore;
+    const { getChatById, currentUser, addMessageToChat, addProductToChat, updateProductInChat, deleteProductFromChat, users, updateChatBackgroundAndTheme, createOrder, confirmOrder, uploadProofOfPayment } = dataStore;
     const { toast } = useToast();
 
     const [chat, setChat] = useState<Chat | undefined>(undefined);
@@ -48,6 +48,20 @@ export default function ChatPage() {
     const [checkingOutProduct, setCheckingOutProduct] = useState<Product | null>(null);
     const socketRef = useRef<Socket | null>(null);
     
+    // Force re-render to update order statuses
+    const [_, setForceUpdate] = useState(0);
+    const forceUpdate = () => setForceUpdate(f => f + 1);
+
+    const handleConfirmOrder = (orderId: string) => {
+        confirmOrder(orderId);
+        forceUpdate(); // Re-render to show updated status
+    };
+
+    const handleUploadProof = (orderId: string, proofUrl: string) => {
+        uploadProofOfPayment(orderId, proofUrl);
+        forceUpdate(); // Re-render to show updated status
+    };
+
     useEffect(() => {
         if (!chatId) return;
 
@@ -172,28 +186,25 @@ export default function ChatPage() {
       '--chat-accent-foreground': chat.theme?.accentForeground,
     } as React.CSSProperties;
 
-    const handleConfirmCheckout = (paymentMethod: string, proofOfPaymentUrl?: string) => {
+    const handleConfirmCheckout = (paymentMethod: string) => {
         if (!checkingOutProduct) return;
         
-        // Create an order instead of just sending a message
         const newOrder = createOrder({
             buyerId: currentUser.id,
-            sellerId: checkingOutProduct.sellerId,
-            productId: checkingOutProduct.id,
-            productSnapshot: checkingOutProduct, // Store a snapshot of the product info
+            product: checkingOutProduct,
             qty: 1,
             totalPrice: checkingOutProduct.price,
             paymentMethod: paymentMethod,
-            paymentProof: proofOfPaymentUrl
         });
 
-        // Optionally send a notification message to the chat
-        const seller = users.find(u => u.id === checkingOutProduct.sellerId);
+        const seller = users.find(u => u.id === newOrder.sellerId);
+        
+        // Send a new 'order' type message
         handleSendMessage({
-            type: 'image',
-            body: `Saya telah memesan ${checkingOutProduct.name}. Menunggu konfirmasi dari ${seller?.name || 'penjual'}.`,
+            type: 'order',
+            body: `Pesanan baru untuk ${checkingOutProduct.name}.`,
             meta: {
-                fileUrl: checkingOutProduct.imageUrl,
+                orderId: newOrder.id,
             }
         });
         
@@ -206,12 +217,7 @@ export default function ChatPage() {
 
         toast({
             title: "Pesanan Dibuat!",
-            description: `Pesanan Anda untuk ${checkingOutProduct.name} telah dibuat. Anda dapat melihat statusnya di halaman Pesanan Saya.`,
-            action: (
-                <Button variant="outline" size="sm" onClick={() => router.push('/orders')}>
-                    Lihat Pesanan
-                </Button>
-            )
+            description: `Pesanan Anda untuk ${checkingOutProduct.name} telah dibuat. Silakan tunggu konfirmasi penjual.`,
         });
         setCheckingOutProduct(null);
     }
@@ -245,6 +251,8 @@ export default function ChatPage() {
                       currentUser={currentUser} 
                       style={messageAreaStyle} 
                       onProductClick={handleProductCardClick}
+                      onConfirmOrder={handleConfirmOrder}
+                      onUploadProof={handleUploadProof}
                     />
                     <ChatInput onSendMessage={handleSendMessage} chat={chat} />
                 </TabsContent>
@@ -275,7 +283,7 @@ export default function ChatPage() {
     );
 }
 
-function ChatMessages({ messages, currentUser, style, onProductClick }: { messages: Message[], currentUser: User, style: React.CSSProperties, onProductClick: (productId: string) => void }) {
+function ChatMessages({ messages, currentUser, style, onProductClick, onConfirmOrder, onUploadProof }: { messages: Message[], currentUser: User, style: React.CSSProperties, onProductClick: (productId: string) => void, onConfirmOrder: (orderId: string) => void, onUploadProof: (orderId: string, proofUrl: string) => void }) {
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         if (scrollAreaRef.current) {
@@ -294,7 +302,10 @@ function ChatMessages({ messages, currentUser, style, onProductClick }: { messag
                         key={message.id}
                         message={message}
                         isCurrentUser={message.senderId === currentUser.id}
+                        currentUser={currentUser}
                         onProductClick={onProductClick}
+                        onConfirmOrder={onConfirmOrder}
+                        onUploadProof={onUploadProof}
                     />
                 ))}
             </div>
@@ -523,13 +534,9 @@ function AddProductDialog({ product, onProductSubmit }: AddProductDialogProps) {
   )
 }
 
-function CheckoutDialog({ product, onConfirm }: { product: Product | null, onConfirm: (paymentMethod: string, proofUrl?: string) => void }) {
+function CheckoutDialog({ product, onConfirm }: { product: Product | null, onConfirm: (paymentMethod: string) => void }) {
     if (!product) return null;
     const [paymentMethod, setPaymentMethod] = useState("gopay");
-    const [proofImage, setProofImage] = useState<string | null>(null);
-    const [proofFileName, setProofFileName] = useState<string | null>(null);
-    const proofInputRef = useRef<HTMLInputElement>(null);
-    const { toast } = useToast();
     
     const paymentMethods = [
       { id: "gopay", name: "GoPay", icon: "/image/ewallet/gopay.png"},
@@ -538,28 +545,12 @@ function CheckoutDialog({ product, onConfirm }: { product: Product | null, onCon
       { id: "dana", name: "DANA", icon: "/image/ewallet/dana.png"},
     ];
 
-    const handleProofUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            if (file.size > 2 * 1024 * 1024) { // 2MB limit
-                toast({ variant: 'destructive', title: 'File Terlalu Besar', description: 'Ukuran gambar tidak boleh melebihi 2MB.' });
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                setProofImage(event.target?.result as string);
-                setProofFileName(file.name);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
     return (
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Konfirmasi Pembelian</DialogTitle>
+                <DialogTitle>Konfirmasi Pesanan</DialogTitle>
                 <DialogDescription>
-                    Anda akan membeli item berikut. Silakan konfirmasi dan unggah bukti pembayaran.
+                    Anda akan memesan item berikut. Pilih metode pembayaran Anda.
                 </DialogDescription>
             </DialogHeader>
             <div className="py-2">
@@ -588,27 +579,14 @@ function CheckoutDialog({ product, onConfirm }: { product: Product | null, onCon
                   </div>
                 </RadioGroup>
             </div>
-            <div className="space-y-2">
-                <Label>Bukti Pembayaran</Label>
-                <input type="file" accept="image/*" ref={proofInputRef} onChange={handleProofUpload} className="hidden" />
-                <Button variant="outline" className="w-full justify-start text-muted-foreground" onClick={() => proofInputRef.current?.click()}>
-                    <Paperclip className="mr-2 h-4 w-4" />
-                    {proofFileName || "Unggah Bukti Bayar..."}
-                </Button>
-                {proofImage && (
-                    <div className="p-2 border rounded-md">
-                        <Image src={proofImage} alt="Bukti pembayaran" width={100} height={100} className="w-24 h-auto rounded-md" />
-                    </div>
-                )}
-            </div>
             <DialogFooter className="mt-4">
                 <DialogClose asChild>
                     <Button variant="outline">Batal</Button>
                 </DialogClose>
                 <DialogClose asChild>
-                  <Button onClick={() => onConfirm(paymentMethod, proofImage || undefined)}>
+                  <Button onClick={() => onConfirm(paymentMethod)}>
                       <CreditCard className="w-4 h-4 mr-2" />
-                      Konfirmasi & Bayar
+                      Konfirmasi Pesanan
                   </Button>
                 </DialogClose>
             </DialogFooter>

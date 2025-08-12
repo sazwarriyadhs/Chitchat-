@@ -46,6 +46,9 @@ class DataStore {
     this.updateChatBackgroundAndTheme = this.updateChatBackgroundAndTheme.bind(this);
     this.createOrder = this.createOrder.bind(this);
     this.getOrdersByUserId = this.getOrdersByUserId.bind(this);
+    this.getOrderById = this.getOrderById.bind(this);
+    this.confirmOrder = this.confirmOrder.bind(this);
+    this.uploadProofOfPayment = this.uploadProofOfPayment.bind(this);
   }
 
   // NOTE: In a real implementation, all these methods would become async
@@ -290,12 +293,20 @@ class DataStore {
     return newUser;
   }
   
-  createOrder(orderData: Omit<Order, 'id' | 'createdAt' | 'paymentStatus' | 'shippingStatus'>): Order {
+  createOrder(orderData: Omit<Order, 'id' | 'createdAt' | 'paymentStatus' | 'shippingStatus' | 'productSnapshot' | 'sellerId'> & { product: Product }): Order {
+    const seller = this.users.find(u => u.id === orderData.product.sellerId);
+    if (!seller) throw new Error("Seller not found for product");
+
     const newOrder: Order = {
-      ...orderData,
       id: `ord-${Date.now()}`,
+      buyerId: orderData.buyerId,
+      sellerId: seller.id,
+      productSnapshot: orderData.product,
+      qty: orderData.qty,
+      totalPrice: orderData.totalPrice,
+      paymentMethod: orderData.paymentMethod,
       createdAt: new Date().toISOString(),
-      paymentStatus: 'paid',
+      paymentStatus: 'pending',
       shippingStatus: 'Menunggu Konfirmasi'
     };
     this.orders.unshift(newOrder);
@@ -303,7 +314,33 @@ class DataStore {
   }
 
   getOrdersByUserId(userId: string): Order[] {
-    return this.orders.filter(o => o.buyerId === userId).sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    // This will get orders where the user is either the buyer or the seller
+    return this.orders.filter(o => o.buyerId === userId || o.sellerId === userId)
+      .sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  getOrderById(orderId: string): Order | undefined {
+    return this.orders.find(o => o.id === orderId);
+  }
+
+  confirmOrder(orderId: string): Order | undefined {
+    const orderIndex = this.orders.findIndex(o => o.id === orderId);
+    if (orderIndex !== -1) {
+      this.orders[orderIndex].shippingStatus = 'Menunggu Pembayaran';
+      return this.orders[orderIndex];
+    }
+    return undefined;
+  }
+
+  uploadProofOfPayment(orderId: string, proofUrl: string): Order | undefined {
+    const orderIndex = this.orders.findIndex(o => o.id === orderId);
+    if (orderIndex !== -1) {
+      this.orders[orderIndex].paymentProof = proofUrl;
+      this.orders[orderIndex].paymentStatus = 'paid';
+      this.orders[orderIndex].shippingStatus = 'Dikemas';
+      return this.orders[orderIndex];
+    }
+    return undefined;
   }
 }
 

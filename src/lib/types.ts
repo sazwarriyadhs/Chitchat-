@@ -12,7 +12,7 @@ export type Message = {
   senderId: string;
   body: string;
   timestamp: Date;
-  type: 'text' | 'image' | 'file' | 'location' | 'presentation' | 'product';
+  type: 'text' | 'image' | 'file' | 'location' | 'presentation' | 'product' | 'order';
   meta?: { [key: string]: any };
   delivered: boolean;
   read: boolean;
@@ -26,7 +26,7 @@ export type ChatTheme = {
 };
 
 export type Chat = {
-  id: string;
+  id:string;
   type: 'private' | 'group';
   participants: User[];
   messages: Message[];
@@ -67,13 +67,12 @@ export type Order = {
     id: string;
     buyerId: string;
     sellerId: string;
-    productId: string;
     productSnapshot: Product; // Store a copy of the product data at time of purchase
     qty: number;
     totalPrice: number;
     paymentMethod: string;
     paymentStatus: 'pending' | 'paid' | 'confirmed';
-    shippingStatus: 'pending' | 'Menunggu Konfirmasi' | 'Dikemas' | 'Dikirim' | 'Selesai';
+    shippingStatus: 'Menunggu Konfirmasi' | 'Menunggu Pembayaran' | 'Dikemas' | 'Dikirim' | 'Selesai';
     paymentProof?: string; // URL to the image
     createdAt: string;
 }

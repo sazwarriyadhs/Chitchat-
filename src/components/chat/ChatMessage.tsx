@@ -1,23 +1,28 @@
 
 
 import { cn } from "@/lib/utils";
-import { Message, User } from "@/lib/types";
+import { Message, User, Order } from "@/lib/types";
 import { dataStore } from "@/lib/data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, Presentation, Image as ImageIcon, ShoppingCart, CheckCircle2 } from "lucide-react";
+import { FileText, Presentation, Image as ImageIcon, ShoppingCart, CheckCircle2, Upload, AlertCircle, Clock, Package } from "lucide-react";
 import Image from "next/image";
 import { LocationMessage } from "./LocationMessage";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { useRef } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 type ChatMessageProps = {
   message: Message;
   isCurrentUser: boolean;
+  currentUser: User;
   onProductClick: (productId: string) => void;
+  onConfirmOrder: (orderId: string) => void;
+  onUploadProof: (orderId: string, proofUrl: string) => void;
 };
 
-export function ChatMessage({ message, isCurrentUser, onProductClick }: ChatMessageProps) {
+export function ChatMessage({ message, isCurrentUser, currentUser, onProductClick, onConfirmOrder, onUploadProof }: ChatMessageProps) {
   const sender = dataStore.users.find((u) => u.id === message.senderId);
 
   if (!sender) {
@@ -59,23 +64,31 @@ export function ChatMessage({ message, isCurrentUser, onProductClick }: ChatMess
       )}
       <div
         className={cn(
-          "max-w-xs md:max-w-md lg:max-w-lg rounded-xl px-4 py-2",
+          "max-w-xs md:max-w-md lg:max-w-lg rounded-xl",
           isCurrentUser
             ? "bg-primary text-primary-foreground rounded-br-none"
-            : "bg-card text-card-foreground rounded-bl-none shadow-sm"
+            : "bg-card text-card-foreground rounded-bl-none shadow-sm",
+          message.type === 'order' ? 'p-0' : 'px-4 py-2' // No padding for order card wrapper
         )}
         style={bubbleStyle}
       >
-        {!isCurrentUser && message.type !== 'text' && (
-          <p className="text-xs font-semibold mb-1">{sender.name}</p>
+        {!isCurrentUser && !['text', 'order'].includes(message.type) && (
+          <p className="text-xs font-semibold mb-1 px-4 pt-2">{sender.name}</p>
         )}
-        <MessageContent message={message} isCurrentUser={isCurrentUser} onProductClick={onProductClick} />
+        <MessageContent 
+          message={message} 
+          isCurrentUser={isCurrentUser} 
+          currentUser={currentUser}
+          onProductClick={onProductClick}
+          onConfirmOrder={onConfirmOrder}
+          onUploadProof={onUploadProof}
+        />
       </div>
     </div>
   );
 }
 
-const MessageContent = ({ message, isCurrentUser, onProductClick }: { message: Message, isCurrentUser: boolean, onProductClick: (productId: string) => void }) => {
+const MessageContent = ({ message, isCurrentUser, currentUser, onProductClick, onConfirmOrder, onUploadProof }: Omit<ChatMessageProps, 'currentUser'> & { currentUser: User }) => {
   const textColor = isCurrentUser ? 'text-primary-foreground' : 'text-card-foreground';
   const style = isCurrentUser ? { color: 'hsl(var(--chat-primary-foreground))' } : { color: 'hsl(var(--card-foreground))' };
   
@@ -98,6 +111,8 @@ const MessageContent = ({ message, isCurrentUser, onProductClick }: { message: M
       return <FileCard icon={Presentation} title={message.meta?.fileName || 'Presentation'} description={message.body} isCurrentUser={isCurrentUser} />
     case 'product':
         return <ProductCard meta={message.meta} body={message.body} isCurrentUser={isCurrentUser} onProductClick={onProductClick} />;
+    case 'order':
+        return <OrderCard meta={message.meta} currentUser={currentUser} onConfirmOrder={onConfirmOrder} onUploadProof={onUploadProof} />
     default:
       return null;
   }
@@ -146,15 +161,93 @@ const ProductCard = ({ meta, body, isCurrentUser, onProductClick }: { meta: any,
                         </Button>
                     </div>
                 </div>
-                 {meta.proofOfPaymentUrl && (
-                    <div className="pt-2 border-t" style={{ borderColor: isCurrentUser ? 'hsla(var(--primary-foreground), 0.3)' : 'hsl(var(--border))' }}>
-                         <Link href={meta.proofOfPaymentUrl} target="_blank" rel="noopener noreferrer" className={cn("text-xs flex items-center gap-1.5 hover:underline", isCurrentUser ? "text-primary-foreground/90" : "text-primary")}>
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            Lihat Bukti Bayar
-                        </Link>
-                    </div>
-                )}
             </CardContent>
         </Card>
     )
+}
+
+function OrderCard({ meta, currentUser, onConfirmOrder, onUploadProof }: { meta: any, currentUser: User, onConfirmOrder: (orderId: string) => void, onUploadProof: (orderId: string, proofUrl: string) => void }) {
+  const { getOrderById } = dataStore;
+  const order = getOrderById(meta.orderId);
+  const proofInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  if (!order) {
+    return <div className="p-4 text-xs text-destructive-foreground">Order tidak ditemukan.</div>;
+  }
+
+  const { productSnapshot, sellerId, buyerId, shippingStatus } = order;
+  const isSeller = currentUser.id === sellerId;
+  const isBuyer = currentUser.id === buyerId;
+
+  const handleProofUploadClick = () => {
+    proofInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const result = event.target?.result as string;
+            onUploadProof(order.id, result);
+            toast({ title: "Bukti pembayaran terunggah!", description: "Status pesanan telah diperbarui." });
+        };
+        reader.readAsDataURL(file);
+    }
+  };
+
+  const getStatusInfo = () => {
+    switch (shippingStatus) {
+      case 'Menunggu Konfirmasi': return { icon: AlertCircle, text: 'Menunggu Konfirmasi Penjual', color: 'text-amber-500' };
+      case 'Menunggu Pembayaran': return { icon: Clock, text: 'Menunggu Pembayaran Pembeli', color: 'text-blue-500' };
+      case 'Dikemas': return { icon: Package, text: 'Pesanan Sedang Dikemas', color: 'text-indigo-500' };
+      case 'Dikirim': return { icon: CheckCircle2, text: 'Pesanan Telah Dikirim', color: 'text-green-500' };
+      case 'Selesai': return { icon: CheckCircle2, text: 'Pesanan Selesai', color: 'text-gray-500' };
+      default: return { icon: AlertCircle, text: 'Status Tidak Diketahui', color: 'text-red-500' };
+    }
+  };
+  const { icon: StatusIcon, text: statusText, color: statusColor } = getStatusInfo();
+  
+  return (
+    <Card className="w-64 bg-card border-border">
+      <CardContent className="p-3 space-y-3">
+        <div className="flex gap-3">
+          <Image src={productSnapshot.imageUrl} alt={productSnapshot.name} width={56} height={56} className="rounded-md object-cover h-14 w-14 border" data-ai-hint="product image thumbnail"/>
+          <div>
+            <p className="font-bold text-card-foreground text-sm">{productSnapshot.name}</p>
+            <p className="text-sm font-semibold text-primary">Rp{productSnapshot.price.toLocaleString('id-ID')}</p>
+          </div>
+        </div>
+        
+        <div className={cn("flex items-center gap-2 text-xs font-medium p-2 rounded-md", statusColor.replace('text-', 'bg-') + '/10', statusColor)}>
+            <StatusIcon className="w-4 h-4"/>
+            <span>{statusText}</span>
+        </div>
+
+        <div className="flex flex-col gap-2">
+            {isSeller && shippingStatus === 'Menunggu Konfirmasi' && (
+                <Button size="sm" onClick={() => onConfirmOrder(order.id)}>
+                    Konfirmasi Pesanan
+                </Button>
+            )}
+            {isBuyer && shippingStatus === 'Menunggu Pembayaran' && (
+                <>
+                    <input type="file" ref={proofInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
+                    <Button size="sm" variant="outline" onClick={handleProofUploadClick}>
+                        <Upload className="w-4 h-4 mr-2" /> Unggah Bukti Bayar
+                    </Button>
+                </>
+            )}
+            {order.paymentProof && (
+                 <a href={order.paymentProof} target="_blank" rel="noopener noreferrer">
+                    <Button size="sm" variant="link" className="w-full h-auto p-0 text-xs">
+                        Lihat Bukti Bayar
+                    </Button>
+                </a>
+            )}
+        </div>
+      </CardContent>
+    </Card>
+  );
 }
