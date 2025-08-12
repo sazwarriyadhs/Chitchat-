@@ -422,7 +422,10 @@ dataStore.chats = [
         messages: [
           { id: 'msg-s1-1', senderId: mockData.users[0].id, body: 'Selamat datang di Toko Satu!', timestamp: subHours(new Date(), 2), type: 'text', read: true, delivered: true },
         ],
-        products: [],
+        products: [
+            { id: 'prod-a', chatId: 'store-1', sellerId: '11111111-1111-1111-1111-111111111111', name: 'Produk A', description: 'Deskripsi Produk A dari Toko Satu', price: 100000, imageUrl: '/image/products/produk_a.jpg'},
+            { id: 'prod-b', chatId: 'store-1', sellerId: '11111111-1111-1111-1111-111111111111', name: 'Produk B', description: 'Deskripsi Produk B dari Toko Satu', price: 150000, imageUrl: '/image/products/produk_b.jpg'},
+        ],
         backgroundUrl: '/image/background/theme3.jpeg'
       },
       {
@@ -434,7 +437,9 @@ dataStore.chats = [
         messages: [
           { id: 'msg-s2-1', senderId: mockData.users[1].id, body: 'Selamat datang di Toko Dua!', timestamp: subHours(new Date(), 3), type: 'text', read: true, delivered: true },
         ],
-        products: [],
+        products: [
+            { id: 'prod-c', chatId: 'store-2', sellerId: '22222222-2222-2222-2222-222222222222', name: 'Produk C', description: 'Deskripsi Produk C dari Toko Dua', price: 200000, imageUrl: '/image/products/produk_c.jpg'},
+        ],
         backgroundUrl: '/image/background/theme4.jpeg'
       },
       {
@@ -446,7 +451,9 @@ dataStore.chats = [
         messages: [
           { id: 'msg-s3-1', senderId: mockData.users[2].id, body: 'Selamat datang di Toko Tiga!', timestamp: subHours(new Date(), 4), type: 'text', read: true, delivered: true },
         ],
-        products: [],
+        products: [
+            { id: 'prod-d', chatId: 'store-3', sellerId: '33333333-3333-3333-3333-333333333333', name: 'Produk D', description: 'Deskripsi Produk D dari Toko Tiga', price: 250000, imageUrl: '/image/products/produk_d.jpg'},
+        ],
         backgroundUrl: '/image/background/bg_1.png'
       },
       {
@@ -458,7 +465,9 @@ dataStore.chats = [
         messages: [
           { id: 'msg-s4-1', senderId: mockData.users[3].id, body: 'Selamat datang di Toko Empat!', timestamp: subHours(new Date(), 5), type: 'text', read: true, delivered: true },
         ],
-        products: [],
+        products: [
+            { id: 'prod-e', chatId: 'store-4', sellerId: '44444444-4444-4444-4444-444444444444', name: 'Produk E', description: 'Deskripsi Produk E dari Toko Empat', price: 300000, imageUrl: '/image/products/produk_e.jpg'},
+        ],
         backgroundUrl: '/image/background/bg_2.png'
       }
 ];
