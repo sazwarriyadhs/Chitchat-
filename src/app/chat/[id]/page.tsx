@@ -517,13 +517,12 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
 
   useEffect(() => {
     if (isOpen) {
-      setSelectedBg(currentBackground || '/image/bg-default.png');
+      setSelectedBg(currentBackground || '/image/background/theme1.jpeg');
     }
   }, [isOpen, currentBackground]);
 
 
   const backgrounds = [
-    '/image/bg-default.png',
     '/image/background/theme1.jpeg',
     '/image/background/theme2.jpeg',
     '/image/background/theme3.jpeg',
@@ -576,7 +575,7 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
           </div>
           {backgrounds.map((bg, index) => (
             <div key={index} className={cn("relative aspect-[9/16] cursor-pointer group rounded-lg", selectedBg === bg && "ring-2 ring-primary ring-offset-2")} onClick={() => setSelectedBg(bg)}>
-              <Image src={bg} alt={`Latar ${index + 1}`} layout="fill" objectFit="cover" className="rounded-lg" />
+              <Image src={bg} alt={`Latar Belakang ${index + 1}`} layout="fill" objectFit="cover" className="rounded-lg" />
               <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-lg">
                 <ImageIcon className="w-8 h-8 text-white" />
               </div>
@@ -594,6 +593,7 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
   );
 }
     
+
 
 
 
