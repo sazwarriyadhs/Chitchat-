@@ -40,6 +40,7 @@ class DataStore {
     this.createUser = this.createUser.bind(this);
     this.getStores = this.getStores.bind(this);
     this.setCurrentUser = this.setCurrentUser.bind(this);
+    this.updateChatBackground = this.updateChatBackground.bind(this);
   }
 
   // NOTE: In a real implementation, all these methods would become async
@@ -107,6 +108,7 @@ class DataStore {
         },
       ],
       products: [],
+      backgroundUrl: '/image/bg-default.png'
     };
 
     this.chats.unshift(newGroup);
@@ -140,6 +142,15 @@ class DataStore {
               this.currentUser = this.users[userIndex];
           }
       }
+  }
+
+  updateChatBackground(chatId: string, backgroundUrl: string) {
+    const chatIndex = this.chats.findIndex(c => c.id === chatId);
+    if (chatIndex !== -1) {
+      this.chats[chatIndex].backgroundUrl = backgroundUrl;
+      return this.chats[chatIndex];
+    }
+    return null;
   }
 
   addStory(userId: string, imageUrl: string) {
@@ -320,6 +331,7 @@ dataStore.chats = [
           { id: 'msg-1-3', senderId: mockData.users[1].id, body: 'Keren banget! Tampilannya bersih dan modern.', timestamp: subMinutes(new Date(), 3), type: 'text', read: false, delivered: true },
         ],
         products: [],
+        backgroundUrl: '/image/bg-default.png'
       },
       {
         id: 'chat-2',
@@ -330,6 +342,7 @@ dataStore.chats = [
           { id: 'msg-2-2', senderId: mockData.users[0].id, body: 'Tentu, ini filenya.', timestamp: subHours(new Date(), 1), type: 'file', meta: { fileName: 'rencana-proyek.pdf', fileUrl: '#' }, read: true, delivered: true },
         ],
         products: [],
+        backgroundUrl: '/image/bg-default.png'
       },
        {
         id: 'store-1',
@@ -343,7 +356,8 @@ dataStore.chats = [
         products: [
             { id: 'prod-s1-1', chatId: 'store-1', sellerId: mockData.users[0].id, name: 'Kaos Polos Putih', description: 'Kaos katun berkualitas tinggi, nyaman dipakai sehari-hari.', price: 75000, imageUrl: '/image/kaosputih.jpeg' },
             { id: 'prod-s1-2', chatId: 'store-1', sellerId: mockData.users[0].id, name: 'Jaket Bomber Hitam', description: 'Jaket bomber stylish untuk segala cuaca.', price: 250000, imageUrl: 'https://via.placeholder.com/400?text=Jaket+Bomber+Hitam' },
-        ]
+        ],
+        backgroundUrl: '/image/bg-default.png'
       },
       {
         id: 'store-2',
@@ -357,7 +371,8 @@ dataStore.chats = [
         products: [
             { id: 'prod-s2-1', chatId: 'store-2', sellerId: mockData.users[4].id, name: 'Headphone Over-Ear', description: 'Kualitas suara jernih dengan bass mendalam.', price: 350000, imageUrl: '/image/headset.png' },
             { id: 'prod-s2-2', chatId: 'store-2', sellerId: mockData.users[4].id, name: 'Charger USB-C 65W', description: 'Pengisian daya super cepat untuk semua perangkat Anda.', price: 120000, imageUrl: 'https://via.placeholder.com/400?text=Charger+USB-C' },
-        ]
+        ],
+        backgroundUrl: '/image/bg-default.png'
       }
 ];
 dataStore.stories = [

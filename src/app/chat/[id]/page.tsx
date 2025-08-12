@@ -17,7 +17,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Plus, ShoppingCart, MessageSquare, Package, Loader2, MoreVertical, Edit, Trash2, Camera, CreditCard } from 'lucide-react';
+import { Plus, ShoppingCart, MessageSquare, Package, Loader2, MoreVertical, Edit, Trash2, Camera, CreditCard, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -34,10 +34,11 @@ export const dynamic = 'force-dynamic';
 export default function ChatPage() {
     const params = useParams<{ id: string }>();
     const chatId = params.id as string;
-    const { getChatById, currentUser, addMessageToChat, addProductToChat, updateProductInChat, deleteProductFromChat, users } = dataStore;
+    const { getChatById, currentUser, addMessageToChat, addProductToChat, updateProductInChat, deleteProductFromChat, users, updateChatBackground } = dataStore;
 
     const [chat, setChat] = useState<Chat | undefined>(undefined);
     const [loading, setLoading] = useState(true);
+    const [isBgChangerOpen, setIsBgChangerOpen] = useState(false);
     
     useEffect(() => {
         if (!chatId) return;
@@ -58,7 +59,7 @@ export default function ChatPage() {
             const updatedChat = getChatById(chatId as string);
              if (updatedChat) {
                 setChat(prevChat => {
-                    if (prevChat && JSON.stringify(prevChat.messages) === JSON.stringify(updatedChat.messages) && JSON.stringify(prevChat.products) === JSON.stringify(updatedChat.products)) {
+                    if (prevChat && JSON.stringify(prevChat) === JSON.stringify(updatedChat)) {
                         return prevChat;
                     }
                     return updatedChat;
@@ -106,6 +107,11 @@ export default function ChatPage() {
         const updatedChat = getChatById(chat.id);
         if(updatedChat) setChat(updatedChat);
     };
+    
+    const handleUpdateBackground = (bgUrl: string) => {
+      updateChatBackground(chat.id, bgUrl);
+      setIsBgChangerOpen(false);
+    }
 
     const getChatInfo = (chat: Chat, currentUser: User): { name: string, avatar: string, status?: string } => {
         if (chat.type === 'group') {
@@ -120,6 +126,12 @@ export default function ChatPage() {
     const isStore = chat.type === 'group' && chat.products && chat.products.length > 0;
     const defaultTab = isStore ? "store" : "chat";
 
+    const messageAreaStyle = {
+      backgroundImage: chat.backgroundUrl ? `url(${chat.backgroundUrl})` : 'none',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    };
+
     return (
         <AppContainer>
             <ChatHeader 
@@ -128,6 +140,7 @@ export default function ChatPage() {
                 status={status || ''} 
                 chatId={chat.id}
                 chatType={chat.type}
+                onOpenBackgroundChanger={() => setIsBgChangerOpen(true)}
             />
             <Tabs defaultValue={defaultTab} className="flex-1 flex flex-col overflow-hidden">
                 <TabsList className="grid w-full grid-cols-2">
@@ -136,7 +149,7 @@ export default function ChatPage() {
                 </TabsList>
                
                 <TabsContent value="chat" className="flex-1 flex flex-col overflow-hidden mt-0">
-                    <ChatMessages messages={chat.messages} currentUser={currentUser} />
+                    <ChatMessages messages={chat.messages} currentUser={currentUser} style={messageAreaStyle} />
                     <ChatInput onSendMessage={handleSendMessage} chat={chat} />
                 </TabsContent>
 
@@ -153,11 +166,16 @@ export default function ChatPage() {
                     />
                 </TabsContent>
             </Tabs>
+            <BackgroundChangerDialog 
+              isOpen={isBgChangerOpen} 
+              onOpenChange={setIsBgChangerOpen} 
+              onSelectBackground={handleUpdateBackground}
+            />
         </AppContainer>
     );
 }
 
-function ChatMessages({ messages, currentUser }: { messages: Message[], currentUser: User }) {
+function ChatMessages({ messages, currentUser, style }: { messages: Message[], currentUser: User, style: React.CSSProperties }) {
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         if (scrollAreaRef.current) {
@@ -169,8 +187,8 @@ function ChatMessages({ messages, currentUser }: { messages: Message[], currentU
     }, [messages]);
 
     return (
-        <ScrollArea className="flex-1 bg-muted/30" ref={scrollAreaRef}>
-            <div className="p-4 space-y-4">
+        <ScrollArea className="flex-1 bg-muted/30" ref={scrollAreaRef} style={style}>
+            <div className="p-4 space-y-4 bg-black/10 min-h-full">
                 {messages.map(message => (
                     <ChatMessage
                         key={message.id}
@@ -490,4 +508,37 @@ function CheckoutDialog({ product, onConfirm }: { product: Product | null, onCon
     )
 }
 
+function BackgroundChangerDialog({ isOpen, onOpenChange, onSelectBackground }: { isOpen: boolean, onOpenChange: (open: boolean) => void, onSelectBackground: (url: string) => void }) {
+  const backgrounds = [
+    '/image/bg-default.png',
+    'https://placehold.co/400x800.png?text=Abstract+1',
+    'https://placehold.co/400x800.png?text=Abstract+2',
+    'https://placehold.co/400x800.png?text=Nature+1',
+    'https://placehold.co/400x800.png?text=Gradient+1',
+    'https://placehold.co/400x800.png?text=Pattern'
+  ];
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Ubah Latar Belakang Obrolan</DialogTitle>
+          <DialogDescription>
+            Pilih gambar untuk dijadikan latar belakang obrolan ini.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="py-4 grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+          {backgrounds.map((bg, index) => (
+            <div key={index} className="relative aspect-[9/16] cursor-pointer group" onClick={() => onSelectBackground(bg)}>
+              <Image src={bg} alt={`Latar ${index + 1}`} layout="fill" objectFit="cover" className="rounded-lg" />
+              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-lg">
+                <ImageIcon className="w-8 h-8 text-white" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
     

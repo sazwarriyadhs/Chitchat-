@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, MoreVertical, Phone, Video, User as UserIcon, LogOut, Edit } from "lucide-react";
+import { ArrowLeft, MoreVertical, Phone, Video, User as UserIcon, LogOut, Edit, Image as ImageIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,9 +21,10 @@ type ChatHeaderProps = {
   status: string;
   chatId: string;
   chatType: 'private' | 'group';
+  onOpenBackgroundChanger: () => void;
 };
 
-export function ChatHeader({ name, avatarUrl, status, chatId, chatType }: ChatHeaderProps) {
+export function ChatHeader({ name, avatarUrl, status, chatId, chatType, onOpenBackgroundChanger }: ChatHeaderProps) {
   const router = useRouter();
   
   const handleLogout = () => {
@@ -73,6 +74,10 @@ export function ChatHeader({ name, avatarUrl, status, chatId, chatType }: ChatHe
               <span>Ubah Grup</span>
             </DropdownMenuItem>
           )}
+          <DropdownMenuItem onClick={onOpenBackgroundChanger}>
+            <ImageIcon className="mr-2 h-4 w-4" />
+            <span>Ubah Latar</span>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
            <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive focus:bg-destructive/10">
             <LogOut className="mr-2 h-4 w-4" />

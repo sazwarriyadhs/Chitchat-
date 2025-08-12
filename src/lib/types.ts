@@ -26,6 +26,7 @@ export type Chat = {
   name?: string;
   avatar?: string;
   products?: Product[];
+  backgroundUrl?: string;
 };
 
 export type Story = {
