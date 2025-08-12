@@ -509,10 +509,10 @@ function CheckoutDialog({ product, onConfirm }: { product: Product | null, onCon
     const { toast } = useToast();
     
     const paymentMethods = [
-      { id: "gopay", name: "GoPay", icon: "https://upload.wikimedia.org/wikipedia/commons/4/46/GoPay_logo.png"},
-      { id: "ovo", name: "OVO", icon: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Logo_ovo_purple.png"},
-      { id: "shopeepay", name: "ShopeePay", icon: "https://upload.wikimedia.org/wikipedia/commons/f/f2/ShopeePay_logo.png"},
-      { id: "dana", name: "DANA", icon: "https://upload.wikimedia.org/wikipedia/commons/6/66/Logo_dana_blue.png"},
+      { id: "gopay", name: "GoPay", icon: "/image/ewallet/gopay.png"},
+      { id: "ovo", name: "OVO", icon: "/image/ewallet/ovo.png"},
+      { id: "shopeepay", name: "ShopeePay", icon: "/image/ewallet/shopeepay.png"},
+      { id: "dana", name: "DANA", icon: "/image/ewallet/dana.png"},
     ];
 
     const handleProofUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -711,3 +711,4 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
   );
 }
     
+
