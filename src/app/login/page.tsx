@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -73,7 +72,7 @@ export default function LoginPage() {
     <AppContainer className="bg-transparent shadow-none">
       <div className="flex flex-col items-center justify-center p-8 bg-card md:rounded-2xl h-full overflow-y-auto">
         <div className="flex flex-col items-center text-center mb-8">
-          <Image src="/image/logomarker.png" alt="ChitChat Logo" width={240} height={120} className="w-auto h-36 mb-4" />
+          <Image src="/image/logomarker.png" alt="ChitChat Logo" width={180} height={90} className="w-auto h-20 mb-4" />
           <p className="text-muted-foreground">Masuk untuk melanjutkan</p>
         </div>
 
