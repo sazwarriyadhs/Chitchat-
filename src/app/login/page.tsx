@@ -70,8 +70,8 @@ export default function LoginPage() {
 
   return (
     <AppContainer className="bg-transparent shadow-none">
-      <div className="flex flex-col items-center justify-center p-8 bg-card md:rounded-2xl h-full overflow-y-auto">
-        <div className="flex flex-col items-center text-center mb-8">
+      <div className="flex flex-col items-center p-8 bg-card md:rounded-2xl h-full overflow-y-auto">
+        <div className="flex flex-col items-center text-center my-8">
           <Image src="/image/logomarker.png" alt="ChitChat Logo" width={180} height={90} className="w-auto h-20 mb-4" />
           <p className="text-muted-foreground">Masuk untuk melanjutkan</p>
         </div>
