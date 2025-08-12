@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
+import { io, Socket } from "socket.io-client";
 
 export const dynamic = 'force-dynamic';
 
@@ -40,6 +41,7 @@ export default function ChatPage() {
     const [chat, setChat] = useState<Chat | undefined>(undefined);
     const [loading, setLoading] = useState(true);
     const [isBgChangerOpen, setIsBgChangerOpen] = useState(false);
+    const socketRef = useRef<Socket | null>(null);
     
     useEffect(() => {
         if (!chatId) return;
@@ -56,19 +58,35 @@ export default function ChatPage() {
         
         loadChat();
 
-        const interval = setInterval(() => {
-            const updatedChat = getChatById(chatId as string);
-             if (updatedChat) {
-                setChat(prevChat => {
-                    if (prevChat && JSON.stringify(prevChat) === JSON.stringify(updatedChat)) {
-                        return prevChat;
-                    }
-                    return updatedChat;
-                });
+        // Socket.io connection
+        const socket = io({ path: "/api/socket" });
+        socketRef.current = socket;
+
+        socket.on('connect', () => {
+            console.log('Socket connected:', socket.id);
+            socket.emit('join-chat', chatId);
+        });
+
+        socket.on('new-message', (message: Message) => {
+            setChat(prevChat => {
+                if (!prevChat) return prevChat;
+                const newMessages = [...prevChat.messages, message];
+                // Prevent duplicate messages
+                const uniqueMessages = newMessages.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i)
+                return { ...prevChat, messages: uniqueMessages };
+            });
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Socket disconnected');
+        });
+
+        return () => {
+            if (socket) {
+                socket.emit('leave-chat', chatId);
+                socket.disconnect();
             }
-        }, 1000); // Refresh data every second for real-time feel
-        
-        return () => clearInterval(interval);
+        };
     }, [chatId, getChatById]);
     
     if (loading) {
@@ -85,16 +103,26 @@ export default function ChatPage() {
         return notFound();
     }
     
-    const handleSendMessage = (newMessage: Omit<Message, 'id' | 'timestamp' | 'senderId' | 'read' | 'delivered'>) => {
-        addMessageToChat(chat.id, newMessage);
-        const updatedChat = getChatById(chat.id);
-        if(updatedChat) setChat(updatedChat);
+    const handleSendMessage = (newMessageData: Omit<Message, 'id' | 'timestamp' | 'senderId' | 'read' | 'delivered'>) => {
+        const message = addMessageToChat(chat.id, newMessageData);
+        if (socketRef.current && message) {
+            socketRef.current.emit('chat-message', {
+                chatId: chat.id,
+                message: message,
+            });
+        }
     };
 
     const handleAddProduct = (productData: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => {
-        addProductToChat(chat.id, productData);
+        const newProduct = addProductToChat(chat.id, productData);
         const updatedChat = getChatById(chat.id);
         if(updatedChat) setChat(updatedChat);
+        if(socketRef.current && updatedChat?.messages[updatedChat.messages.length - 1]){
+            socketRef.current.emit('chat-message', {
+                chatId: chat.id,
+                message: updatedChat.messages[updatedChat.messages.length - 1]
+            });
+        }
     };
 
     const handleUpdateProduct = (productId: string, productData: Omit<Product, 'id' | 'sellerId' | 'chatId'>) => {
@@ -111,6 +139,8 @@ export default function ChatPage() {
     
     const handleUpdateBackground = (bgUrl: string, theme: ChatTheme) => {
       updateChatBackgroundAndTheme(chat.id, bgUrl, theme);
+      const updatedChat = getChatById(chat.id);
+      if(updatedChat) setChat(updatedChat);
       setIsBgChangerOpen(false);
     }
 
@@ -187,7 +217,7 @@ function ChatMessages({ messages, currentUser, style }: { messages: Message[], c
         if (scrollAreaRef.current) {
             const viewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
             if (viewport) {
-                viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'auto' });
+                viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
             }
         }
     }, [messages]);
@@ -632,6 +662,7 @@ function BackgroundChangerDialog({ isOpen, onOpenChange, onSaveBackground, curre
   );
 }
     
+
 
 
 

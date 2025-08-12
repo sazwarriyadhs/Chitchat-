@@ -37,6 +37,14 @@ const nextConfig: NextConfig = {
       }
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/socket.io',
+        destination: '/api/socket',
+      },
+    ]
+  },
 };
 
 export default nextConfig;
