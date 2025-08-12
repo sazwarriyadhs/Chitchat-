@@ -25,7 +25,7 @@ class DataStore {
     this.orders = [];
     
     // Set a default mock user. The login flow will overwrite this.
-    this.currentUser = { id: 'ec4241f4-1cc2-462e-81d7-7725b31a1a1f', name: 'Andi Saputra', avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/avatars/user-1_CPcW4a7-D.png', status: 'Ngopi dulu...', online: true, role: 'business' };
+    this.currentUser = { id: '11111111-1111-1111-1111-111111111111', name: 'User 1', avatar: '/profileuser/04_tania_kusuma.jpg', status: 'Hello there!', online: true, role: 'business' };
 
     // Bind methods
     this.getChatById = this.getChatById.bind(this);
@@ -62,7 +62,7 @@ class DataStore {
         this.currentUser = user;
     } else {
         // Fallback to a default user if not found, to prevent crashes
-        this.currentUser = { id: 'ec4241f4-1cc2-462e-81d7-7725b31a1a1f', name: 'Andi Saputra', avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/avatars/user-1_CPcW4a7-D.png', status: 'Ngopi dulu...', online: true, role: 'business' };
+        this.currentUser = { id: '11111111-1111-1111-1111-111111111111', name: 'User 1', avatar: '/profileuser/04_tania_kusuma.jpg', status: 'Hello there!', online: true, role: 'business' };
     }
   }
 
@@ -353,13 +353,19 @@ class DataStore {
 // prepares for a full database integration.
 
 const mockData = {
-    users: [
-      { id: 'ec4241f4-1cc2-462e-81d7-7725b31a1a1f', name: 'Andi Saputra', avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/avatars/user-1_CPcW4a7-D.png', status: 'Ngopi dulu...', online: true, role: 'business', membership_id: 2 },
-      { id: '65a40f57-c574-438d-a21b-cd8472d3c769', name: 'Budi Santoso', avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/avatars/user-2_m-OUtW6n1.png', status: 'Kerja keras, tidur nyenyak', online: false, role: 'regular', membership_id: 1 },
-      { id: '969f5a5e-5ff0-406e-9650-821aa22bc886', name: 'Citra Dewi', avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/avatars/user-3_xR-f-4_Yy.png', status: 'Lagi liburan', online: true, role: 'regular', membership_id: 1 },
-      { id: 'd90de2e2-ea68-43e2-a0aa-92ab4a7b414b', name: 'Dina Pratiwi', avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/avatars/user-4_vQW-j-b_t.png', status: 'Belajar coding', online: false, role: 'regular', membership_id: 1 },
-      { id: '36190390-d9fc-45ba-862d-155811dbd129', name: 'Eko Prabowo', avatar: 'https://ik.imagekit.io/y3w0fa1s9/UpWork/chattie/avatars/user-5_b_g-2-g_a.png', status: 'Selalu semangat!', online: true, role: 'business', membership_id: 2 },
-    ],
+  users: [
+    { id: '11111111-1111-1111-1111-111111111111', name: 'Tania Kusuma', avatar: '/profileuser/04_tania_kusuma.jpg', status: 'Hello there!', online: true, role: 'business' },
+    { id: '22222222-2222-2222-2222-222222222222', name: 'Melati Anggraeni', avatar: '/profileuser/05_melati_anggraeni.jpg', status: 'Available', online: false, role: 'regular' },
+    { id: '33333333-3333-3333-3333-333333333333', name: 'Citra Kirana', avatar: '/profileuser/closeup-young-female-professional-making-eye-contact-against-colored-background.jpg', status: 'Feeling good', online: true, role: 'regular' },
+    { id: '44444444-4444-4444-4444-444444444444', name: 'Dion Mahendra', avatar: '/profileuser/front-view-smiley-man-seaside.jpg', status: 'Busy', online: false, role: 'business' },
+    { id: '55555555-5555-5555-5555-555555555555', name: 'Eliza Sari', avatar: '/profileuser/horizontal-portrait-smiling-happy-young-pleasant-looking-female-wears-denim-shirt-stylish-glasses-with-straight-blonde-hair-expresses-positiveness-poses.jpg', status: 'Happy', online: true, role: 'regular' },
+    { id: '66666666-6666-6666-6666-666666666666', name: 'Fitria Lestari', avatar: '/profileuser/portrait-expressive-young-woman.jpg', status: 'Available', online: true, role: 'regular' },
+    { id: '77777777-7777-7777-7777-777777777777', name: 'Gilang Ramadhan', avatar: '/profileuser/portrait-man-laughing.jpg', status: 'Helping others', online: false, role: 'regular' },
+    { id: '88888888-8888-8888-8888-888888888888', name: 'Hana Yulita', avatar: '/profileuser/portrait-smiling-blonde-woman.jpg', status: 'Chilling', online: true, role: 'business' },
+    { id: '99999999-9999-9999-9999-999999999999', name: 'Indra Gunawan', avatar: '/profileuser/portrait-volunteer-who-organized-donations-charity.jpg', status: 'At the office', online: false, role: 'regular' },
+    { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'Joko Widodo', avatar: '/profileuser/portrait-white-man-isolated.jpg', status: 'Ready to go', online: true, role: 'regular' },
+    { id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'Kevin Sanjaya', avatar: '/profileuser/young-bearded-man-with-striped-shirt (1).jpg', status: 'On vacation', online: false, role: 'business' },
+  ],
     memberships: [
         { id: 1, name: 'Basic' /* ...other fields */ },
         { id: 2, name: 'Bisnis' /* ...other fields */ },
